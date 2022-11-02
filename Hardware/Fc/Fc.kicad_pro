@@ -334,6 +334,10 @@
     [
       "08dc9d2a-773f-4a84-bb7a-78a6e34159d5",
       "FcPeripherals"
+    ],
+    [
+      "0bf7d237-09ff-4253-a477-08fe6feff0e0",
+      "Status"
     ]
   ],
   "text_variables": {}
