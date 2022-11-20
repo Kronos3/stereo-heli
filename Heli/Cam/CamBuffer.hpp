@@ -18,19 +18,23 @@ namespace Rpi
 
         U32 id;
 
-        CompletedRequest* request;
+        CompletedRequest* left_request;
+        CompletedRequest* right_request;
+
         StreamInfo info;
-        libcamera::FrameBuffer* buffer;
-        libcamera::Span<U8> span;
+        libcamera::FrameBuffer* left_fb;
+        libcamera::Span<U8> left_span;
+        libcamera::FrameBuffer* right_fb;
+        libcamera::Span<U8> right_span;
 
         void incref();
         void decref();
         bool in_use() const;
 
-        void register_callback(std::function<void(CompletedRequest*)> return_cb);
+        void register_callback(std::function<void(CompletedRequest*, CompletedRequest*)> return_cb);
 
     private:
-        std::function<void(CompletedRequest*)> return_buffer;
+        std::function<void(CompletedRequest*, CompletedRequest*)> return_buffer;
         std::atomic<I32> ref_count;
 
         void clear();

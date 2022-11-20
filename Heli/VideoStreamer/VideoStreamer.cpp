@@ -17,7 +17,8 @@ namespace Rpi
       m_net(nullptr),
       m_capture{.requesting=false},
       tlm_packets_sent(0),
-      tlm_total_frames(0)
+      tlm_total_frames(0),
+      m_eye(CamSelect::LEFT)
     {
     }
 
@@ -44,8 +45,11 @@ namespace Rpi
 
     void VideoStreamer::frame_handler(NATIVE_INT_TYPE portNum, U32 frameId)
     {
-        CamFrame frame;
-        bool frameValid = frameGet_out(0, frameId, frame);
+        CamFrame left, right;
+        bool frameValid = frameGet_out(0, frameId, left, right);
+
+        CamFrame& frame = (m_eye == CamSelect::LEFT) ? left : right;
+
         if (!frameValid)
         {
             log_WARNING_LO_InvalidFrameBuffer(frameId);
@@ -199,10 +203,20 @@ namespace Rpi
     }
 
     void
-    VideoStreamer::DISPLAY_cmdHandler(U32 opCode, U32 cmdSeq, VideoStreamer_DisplayLocation where)
+    VideoStreamer::DISPLAY_cmdHandler(U32 opCode, U32 cmdSeq,
+                                      VideoStreamer_DisplayLocation where,
+                                      Rpi::CamSelect eye)
     {
+        if (m_eye == CamSelect::BOTH)
+        {
+            log_WARNING_LO_EyeNotSupport();
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+            return;
+        }
+
         clean();
         m_displaying = where;
+        m_eye = eye;
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 

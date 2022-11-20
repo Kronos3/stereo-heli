@@ -58,6 +58,7 @@ module Rpi {
         @ Start camera stream
         async command DISPLAY(
             where: DisplayLocation @< Where to display frames
+            eye: CamSelect @< Which camera to stream
             )
 
         # -----------------------------
@@ -71,6 +72,10 @@ module Rpi {
         event InvalidFrameBuffer(frameId: U32) \
             severity warning low \
             format "Received an invalid frame id {}"
+
+        event EyeNotSupport() \
+            severity warning low \
+            format "Cannot display both eyes"
 
         @ Frame output rate
         telemetry FramesPerSecond: U32 format "{} fps"

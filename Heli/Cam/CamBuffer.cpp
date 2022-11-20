@@ -32,15 +32,21 @@ namespace Rpi
     void CamBuffer::clear()
     {
         FW_ASSERT(ref_count == 1, ref_count);
-        FW_ASSERT(request);
+        FW_ASSERT(left_request);
+        FW_ASSERT(right_request);
 
         // Returns the buffer back to the camera
-        return_buffer(request);
+        return_buffer(left_request, right_request);
 
-        request = nullptr;
-        buffer = nullptr;
+        left_request = nullptr;
+        right_request = nullptr;
+
+        left_fb = nullptr;
+        right_fb = nullptr;
+
         size_t s = 0;
-        span = libcamera::Span<U8>(nullptr, s);
+        left_span = libcamera::Span<U8>(nullptr, s);
+        right_span = libcamera::Span<U8>(nullptr, s);
         ref_count = 0;
     }
 
@@ -49,13 +55,15 @@ namespace Rpi
         return ref_count > 0;
     }
 
-    void CamBuffer::register_callback(std::function<void(CompletedRequest*)> return_cb)
+    void CamBuffer::register_callback(std::function<void(CompletedRequest*, CompletedRequest*)> return_cb)
     {
         return_buffer = std::move(return_cb);
     }
 
     CamBuffer::CamBuffer()
-    : id(0), request(nullptr), buffer(nullptr), ref_count(0)
+    : id(0),
+    left_request(nullptr), right_request(nullptr),
+    left_fb(nullptr), right_fb(nullptr), ref_count(0)
     {
     }
 }

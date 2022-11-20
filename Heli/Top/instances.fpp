@@ -177,13 +177,10 @@ module Rpi {
             priority 100 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        cam.configure(/* video capture width */ 2028,
-                      /* video capture height */ 1080,
-                      /* still capture width */ 4056,
-                      /* still capture height */ 3040,
-                      /* rotation */ 0,
-                      /* vflip */ false,
-                      /* hflip */ false);
+        cam.configure(/* (width,height) */ 640, 240,
+                      /* left id, right id */ 0, 1,
+                      /* left eye (rotation,vflip,hflip) */ 0, false, false,
+                      /* right eye (rotation,vflip,hflip) */ 0, false, false);
         """
 
         phase Fpp.ToCpp.Phases.startTasks """

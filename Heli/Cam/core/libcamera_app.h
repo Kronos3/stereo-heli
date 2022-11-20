@@ -44,13 +44,6 @@ namespace Rpi
     class LibcameraApp
     {
     public:
-        enum StreamId
-        {
-            VIDEO_STREAM,
-            STILL_STREAM,
-            STREAM_N
-        };
-
         using Stream = libcamera::Stream;
         using FrameBuffer = libcamera::FrameBuffer;
         using ControlList = libcamera::ControlList;
@@ -76,15 +69,14 @@ namespace Rpi
 
         struct Msg
         {
-            explicit Msg(MsgType const &t) : id(STREAM_N), type(t)
+            explicit Msg(MsgType const &t) : type(t)
             {}
 
             template<typename T>
-            Msg(StreamId id_, MsgType const &t, T p) : id(id_), type(t), payload(std::forward<T>(p))
+            Msg(MsgType const &t, T p) : type(t), payload(std::forward<T>(p))
             {
             }
 
-            StreamId id;
             MsgType type;
             MsgPayload payload = nullptr;
         };
@@ -100,7 +92,6 @@ namespace Rpi
         void CloseCamera();
 
         void ConfigureCameraStream(Size videoSize,
-                                   Size stillSize,
                                    int rotation = 0,
                                    bool hflip = false,
                                    bool vflip = false);
@@ -117,7 +108,7 @@ namespace Rpi
 
         void Quit();
 
-        Stream* GetStream(StreamId id, StreamInfo *info = nullptr) const;
+        Stream* GetStream(StreamInfo *info = nullptr) const;
 
         std::vector<libcamera::Span<uint8_t>> Mmap(FrameBuffer *buffer) const;
 
@@ -199,7 +190,7 @@ namespace Rpi
         bool camera_acquired_ = false;
         std::unique_ptr<CameraConfiguration> configuration_;
         std::map<FrameBuffer *, std::vector<libcamera::Span<uint8_t>>> mapped_buffers_;
-        Stream* streams[STREAM_N];
+        Stream* stream = nullptr;
         FrameBufferAllocator *allocator_ = nullptr;
         std::map<Stream *, std::queue<FrameBuffer *>> frame_buffers_;
         std::vector<std::unique_ptr<Request>> requests_;

@@ -5,14 +5,12 @@
 namespace Rpi
 {
 
-    Cam::Cam(const char* compName)
+    Cam::Cam(const char *compName)
             : CamComponentBase(compName),
-              m_camera(new LibcameraApp()),
+              m_left(new LibcameraApp()),
+              m_right(new LibcameraApp()),
               tlm_dropped(0),
               tlm_captured(0),
-              m_cmdSeq(0),
-              m_opcode(0),
-              m_capturing(false),
               m_streaming(false)
     {
     }
@@ -23,89 +21,100 @@ namespace Rpi
     }
 
     void Cam::configure(I32 videoWidth, I32 videoHeight,
-                        I32 stillWidth, I32 stillHeight,
-                        I32 rotation, bool vflip, bool hflip)
+                        I32 left_id, I32 right_id,
+                        I32 l_rotation, bool l_vflip, bool l_hflip,
+                        I32 r_rotation, bool r_vflip, bool r_hflip)
     {
-        for (auto& buffer : m_buffers)
+        for (auto &buffer: m_buffers)
         {
-            buffer.register_callback([this](CompletedRequest* cr) { m_camera->queueRequest(cr); });
+            buffer.register_callback([this](CompletedRequest *cr_l, CompletedRequest *cr_r)
+                                     {  m_left->queueRequest(cr_l);
+                                        m_right->queueRequest(cr_r); });
         }
 
-        m_camera->OpenCamera(0);
-        m_camera->ConfigureCameraStream(libcamera::Size(videoWidth, videoHeight),
-                                        libcamera::Size(stillWidth, stillHeight),
-                                        rotation, hflip, vflip);
+        m_left->OpenCamera(left_id);
+        m_right->OpenCamera(right_id);
+
+        m_left->ConfigureCameraStream(libcamera::Size(videoWidth, videoHeight),
+                                      l_rotation, l_vflip, l_hflip);
+        m_right->ConfigureCameraStream(libcamera::Size(videoWidth, videoHeight),
+                                       r_rotation, r_vflip, r_hflip);
     }
 
     Cam::~Cam()
     {
-        delete m_camera;
+        delete m_left;
+        delete m_right;
     }
 
     void Cam::streaming_thread()
     {
         while (true)
         {
-            LibcameraApp::Msg msg = m_camera->Wait();
-            if (msg.type == LibcameraApp::MsgType::Quit)
+            // Wait for both camera to respond
+            LibcameraApp::Msg msg_l = m_left->Wait();
+            LibcameraApp::Msg msg_r = m_right->Wait();
+
+            // Exit the stream thread if either of the camera request quit
+            if (msg_l.type == LibcameraApp::MsgType::Quit
+                || msg_r.type == LibcameraApp::MsgType::Quit)
             {
                 break;
             }
 
-            FW_ASSERT(msg.type == LibcameraApp::MsgType::RequestComplete, (I32)msg.type);
+            FW_ASSERT(msg_l.type == LibcameraApp::MsgType::RequestComplete, (I32) msg_l.type);
+            FW_ASSERT(msg_r.type == LibcameraApp::MsgType::RequestComplete, (I32) msg_r.type);
 
             tlm_captured++;
             tlmWrite_FramesCapture(tlm_captured);
 
             // Get an internal frame buffer
-            CamBuffer* buffer = get_buffer();
+            CamBuffer *buffer = get_buffer();
             if (!buffer)
             {
                 // Ran out of frame buffers
                 tlm_dropped++;
                 tlmWrite_FramesDropped(tlm_dropped);
-                m_camera->queueRequest(msg.payload);
+                m_left->queueRequest(msg_l.payload);
+                m_right->queueRequest(msg_r.payload);
                 continue;
             }
 
-            buffer->request = msg.payload;
+            buffer->left_request = msg_l.payload;
+            buffer->right_request = msg_l.payload;
 
-            libcamera::Stream* stream;
-            if (m_streaming)
-            {
-                stream = m_camera->GetStream(LibcameraApp::VIDEO_STREAM);
-            }
-            else
-            {
-                FW_ASSERT(m_capturing);
-                stream = m_camera->GetStream(LibcameraApp::STILL_STREAM);
-            }
+            libcamera::Stream* left_stream = m_left->GetStream();
+            libcamera::Stream* right_stream = m_right->GetStream();
 
             // Get the DMA buffer
-            buffer->buffer = msg.payload->buffers[stream];
-            FW_ASSERT(buffer->buffer);
+            buffer->left_fb = msg_l.payload->buffers[left_stream];
+            buffer->right_fb = msg_r.payload->buffers[right_stream];
+
+            // Make sure we got DMA buffers from the request
+            FW_ASSERT(buffer->left_fb);
+            FW_ASSERT(buffer->right_fb);
 
             // Get the userland pointer
-            buffer->span = m_camera->Mmap(buffer->buffer)[0];
-            buffer->info = Rpi::LibcameraApp::GetStreamInfo(stream);
+            buffer->left_span = m_left->Mmap(buffer->left_fb)[0];
+            buffer->right_span = m_right->Mmap(buffer->right_fb)[0];
+
+            // Stream info should be identical on both streams
+            // They are configured with identical parameters
+            buffer->info = Rpi::LibcameraApp::GetStreamInfo(left_stream);
 
             // Send the frame to the requester on the same port
             frame_out(0, buffer->id);
-
-            if (m_capturing)
-            {
-                finishCapture();
-            }
         }
 
         log_ACTIVITY_LO_CameraStopping();
-        m_camera->StopCamera();
+        m_left->StopCamera();
+        m_right->StopCamera();
     }
 
-    CamBuffer* Cam::get_buffer()
+    CamBuffer *Cam::get_buffer()
     {
         m_buffer_mutex.lock();
-        for (auto &buf : m_buffers)
+        for (auto &buf: m_buffers)
         {
             if (!buf.in_use())
             {
@@ -119,47 +128,6 @@ namespace Rpi
         return nullptr;
     }
 
-    void
-    Cam::CAPTURE_cmdHandler(U32 opCode, U32 cmdSeq,
-                            Rpi::Cam_CamSelect cam_select,
-                            const Fw::CmdStringArg &left_dest,
-                            const Fw::CmdStringArg &right_dest)
-    {
-        switch(cam_select.e)
-        {
-            case Cam_CamSelect::BOTH:
-                break;
-            case Cam_CamSelect::LEFT:
-                break;
-            case Cam_CamSelect::RIGHT:
-                break;
-        }
-    }
-
-    void Cam::capture(U32 opcode, U32 cmdSeq)
-    {
-        if (m_capturing || m_streaming)
-        {
-            log_WARNING_LO_CameraBusy();
-            cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::BUSY);
-            return;
-        }
-
-        m_opcode = opcode;
-        m_cmdSeq = cmdSeq;
-        m_capturing = true;
-    }
-
-    void Cam::finishCapture()
-    {
-        FW_ASSERT(m_capturing);
-        cmdResponse_out(m_opcode, m_cmdSeq, Fw::CmdResponse::OK);
-        m_opcode = 0;
-        m_cmdSeq = 0;
-        m_capturing = false;
-        m_camera->StopCamera();
-    }
-
     void Cam::start()
     {
         if (m_streaming)
@@ -167,17 +135,20 @@ namespace Rpi
             log_WARNING_LO_CameraBusy();
         }
 
-        m_camera->StopCamera();
+        m_left->StopCamera();
+        m_right->StopCamera();
 
         log_ACTIVITY_LO_CameraStarting();
         m_streaming = true;
-        m_camera->StartCamera();
+        m_left->StartCamera();
+        m_right->StartCamera();
     }
 
     void Cam::stop()
     {
         log_ACTIVITY_LO_CameraStopping();
-        m_camera->StopCamera();
+        m_left->StopCamera();
+        m_right->StopCamera();
         m_streaming = false;
     }
 
@@ -222,18 +193,20 @@ namespace Rpi
         m_task.start(name, streaming_thread_entry, this);
     }
 
-    void Cam::streaming_thread_entry(void* this_)
+    void Cam::streaming_thread_entry(void *this_)
     {
-        reinterpret_cast<Cam*>(this_)->streaming_thread();
+        reinterpret_cast<Cam *>(this_)->streaming_thread();
     }
 
     void Cam::quitStreamThread()
     {
         // Stop the stream
-        m_camera->StopCamera();
+        m_left->StopCamera();
+        m_right->StopCamera();
 
         // Wait for the camera to exit
-        m_camera->Quit();
+        m_left->Quit();
+        m_right->Quit();
         m_task.join(nullptr);
     }
 
@@ -251,12 +224,14 @@ namespace Rpi
 
     void Cam::parametersLoaded()
     {
+        // TODO(tumbar) Support asymmetric camera config
         CamComponentBase::parametersLoaded();
 
         CameraConfig config;
         get_config(config);
         log_ACTIVITY_LO_CameraConfiguring();
-        m_camera->ConfigureCamera(config);
+        m_left->ConfigureCamera(config);
+        m_right->ConfigureCamera(config);
     }
 
     void Cam::parameterUpdated()
@@ -264,13 +239,14 @@ namespace Rpi
         CameraConfig config;
         get_config(config);
         log_ACTIVITY_LO_CameraConfiguring();
-        m_camera->ConfigureCamera(config);
+        m_left->ConfigureCamera(config);
+        m_right->ConfigureCamera(config);
     }
 
-    bool Cam::frameGet_handler(NATIVE_INT_TYPE portNum, U32 frameId, CamFrame &frame)
+    bool Cam::frameGet_handler(NATIVE_INT_TYPE portNum, U32 frameId, CamFrame &left, CamFrame &right)
     {
         FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
-        const auto& buf = m_buffers[frameId];
+        const auto &buf = m_buffers[frameId];
 
         if (!buf.in_use())
         {
@@ -278,14 +254,23 @@ namespace Rpi
             return false;
         }
 
-        frame = CamFrame(
-                buf.id, buf.span.data(),
-                buf.span.size(),
+        left = CamFrame(
+                buf.id, buf.left_span.data(),
+                buf.left_span.size(),
                 buf.info.width, buf.info.height,
                 buf.info.stride,
-                buf.buffer->metadata().timestamp / 1000,
-                buf.buffer->planes()[0].fd.get()
-                );
+                buf.left_fb->metadata().timestamp / 1000,
+                buf.left_fb->planes()[0].fd.get()
+        );
+
+        right = CamFrame(
+                buf.id, buf.right_span.data(),
+                buf.right_span.size(),
+                buf.info.width, buf.info.height,
+                buf.info.stride,
+                buf.right_fb->metadata().timestamp / 1000,
+                buf.right_fb->planes()[0].fd.get()
+        );
 
         return true;
     }
@@ -294,7 +279,7 @@ namespace Rpi
     {
         FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
 
-        auto& buf = m_buffers[frameId];
+        auto &buf = m_buffers[frameId];
         if (!buf.in_use())
         {
             log_WARNING_LO_CameraInvalidIncref(frameId);
@@ -308,7 +293,7 @@ namespace Rpi
     {
         FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
 
-        auto& buf = m_buffers[frameId];
+        auto &buf = m_buffers[frameId];
         if (!buf.in_use())
         {
             log_WARNING_LO_CameraInvalidDecref(frameId);
