@@ -4,7 +4,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
 
-namespace Rpi
+namespace Heli
 {
     class Oled
     {

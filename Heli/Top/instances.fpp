@@ -1,4 +1,4 @@
-module Rpi {
+module Heli {
 
     # ----------------------------------------------------------------------
     # Defaults
@@ -171,24 +171,6 @@ module Rpi {
 
     instance systemResources: Svc.SystemResources base id 1600
 
-    instance cam: Cam base id 6000 \
-            queue size Default.queueSize \
-            stack size Default.stackSize \
-            priority 100 \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-        cam.configure(/* (width,height) */ 640, 240,
-                      /* left id, right id */ 0, 1,
-                      /* left eye (rotation,vflip,hflip) */ 0, false, false,
-                      /* right eye (rotation,vflip,hflip) */ 0, false, false);
-        """
-
-        phase Fpp.ToCpp.Phases.startTasks """
-        Fw::String camTaskName = "CAM";
-        cam.startStreamThread(camTaskName);
-        """
-    }
-
     instance cmdSeq: Svc.CmdSequencer base id 2000 \
             queue size Default.queueSize \
             stack size Default.stackSize \
@@ -293,10 +275,22 @@ module Rpi {
 
     }
 
-    instance framePipe: VideoStreamer base id 6100 \
-        queue size Default.queueSize \
-        stack size Default.stackSize \
-        priority 100
+    instance cam: Cam base id 6000 \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        cam.configure(/* (width,height) */ 640, 240,
+                      /* left id, right id */ 0, 1,
+                      /* left eye (rotation,vflip,hflip) */ 0, false, false,
+                      /* right eye (rotation,vflip,hflip) */ 0, false, false);
+        """
+
+        phase Fpp.ToCpp.Phases.startTasks """
+        Fw::String camTaskName = "CAM";
+        cam.startStreamThread(camTaskName);
+        """
+    }
+
+    instance framePipe: FramePipe base id 6100
 
     instance videoStreamer: VideoStreamer base id 6200 \
         queue size Default.queueSize \
@@ -304,5 +298,10 @@ module Rpi {
         priority 100
 
     instance display: Display base id 6300
+
+    instance stereo: Stereo base id 6400 \
+        queue size Default.queueSize \
+        stack size Default.stackSize \
+        priority 100
 
 }

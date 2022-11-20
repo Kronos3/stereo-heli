@@ -1,7 +1,7 @@
 #include <cstring>
 #include <Heli/Display/oled.hpp>
 
-namespace Rpi
+namespace Heli
 {
     enum
     {

@@ -1,19 +1,17 @@
 module Heli {
 
-    port Ready()
-
-    passive component FramePipe {
+    active component Stereo {
 
         # -----------------------------
         # General ports
         # -----------------------------
 
-        sync input port ready: Ready
+        output port ready: Ready
         output port incdec: FrameRef
+        output port frameGet: FrameGet
 
-        sync input port frame: Frame
+        async input port frame: Frame
         output port frameOut: Frame
-
     }
 
 }

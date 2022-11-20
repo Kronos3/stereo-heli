@@ -39,7 +39,7 @@
 namespace controls = libcamera::controls;
 namespace properties = libcamera::properties;
 
-namespace Rpi
+namespace Heli
 {
     class LibcameraApp
     {

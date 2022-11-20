@@ -1,11 +1,11 @@
-module Rpi {
+module Heli {
 
     enum Port_RateGroups {
         rg1Hz
         rg5Hz
     }
 
-    topology Rpi {
+    topology Heli {
         # Core components
         instance systemTime
         instance eventLogger
@@ -29,6 +29,7 @@ module Rpi {
         instance framePipe
         instance display
         instance videoStreamer
+        instance stereo
 
         # ---------------------------------
         # Pattern graph connections
@@ -75,13 +76,20 @@ module Rpi {
 
         connections Camera {
             # Frame buffer control
-            videoStreamer.incref -> cam.incref
-            videoStreamer.decref -> cam.decref
-            videoStreamer.frameGet -> cam.frameGet
+            videoStreamer.incdec -> cam.incdec
+            framePipe.incdec -> cam.incdec
+            stereo.incdec -> cam.incdec
 
-            # Frame pipeline
-            # TODO(tumbar) Add processing steps
-            cam.frame -> videoStreamer.frame
+            videoStreamer.frameGet -> cam.frameGet
+            stereo.frameGet -> cam.frameGet
+
+            # Video Streamer pipeline
+            cam.frame[0] -> videoStreamer.frame
+
+            # Stereo Processing Pipeline
+            cam.frame[1] -> framePipe.frame
+            framePipe.frameOut -> stereo.frame
+            stereo.frameOut -> videoStreamer.frame
         }
 
         # --------------------------------

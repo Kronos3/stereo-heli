@@ -8,7 +8,7 @@
 #include <functional>
 #include <atomic>
 
-namespace Rpi
+namespace Heli
 {
     class CamBuffer
     {

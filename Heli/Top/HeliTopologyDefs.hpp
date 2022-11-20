@@ -8,7 +8,7 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 
-namespace Rpi
+namespace Heli
 {
     namespace Allocation {
 

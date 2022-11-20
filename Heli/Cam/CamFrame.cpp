@@ -4,7 +4,7 @@
 
 #include <Heli/Cam/CamFrame.hpp>
 
-namespace Rpi
+namespace Heli
 {
 
     CamFrame::CamFrame() = default;

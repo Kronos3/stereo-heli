@@ -10,7 +10,7 @@
 #include <queue>
 #include <mutex>
 
-namespace Rpi
+namespace Heli
 {
     class LibcameraApp;
     class Cam : public CamComponentBase
@@ -21,7 +21,7 @@ namespace Rpi
         explicit Cam(const char* compName);
         ~Cam() override;
 
-        void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance);
+        void init(NATIVE_INT_TYPE instance);
 
         void configure(I32 videoWidth, I32 videoHeight,
                        I32 left_id, I32 right_id,
@@ -36,12 +36,11 @@ namespace Rpi
         void parameterUpdated();
 
         void get_config(CameraConfig& config);
-        bool frameGet_handler(NATIVE_INT_TYPE portNum, U32 frameId, Rpi::CamFrame &left, Rpi::CamFrame &right) override;
-        void incref_handler(NATIVE_INT_TYPE portNum, U32 frameId) override;
-        void decref_handler(NATIVE_INT_TYPE portNum, U32 frameId) override;
+        bool frameGet_handler(NATIVE_INT_TYPE portNum, U32 frameId, CamFrame &left, CamFrame &right) override;
+        void incdec_handler(NATIVE_INT_TYPE portNum, U32 frameId, const ReferenceCounter &dir) override;
 
         void STOP_cmdHandler(U32 opCode, U32 cmdSeq) override;
-        void START_cmdHandler(U32 opCode, U32 cmdSeq) override;
+        void START_cmdHandler(U32 opCode, U32 cmdSeq, Cam_Streamer streamer) override;
 
         CamBuffer* get_buffer();
 
@@ -49,7 +48,7 @@ namespace Rpi
         void streaming_thread();
 
     PRIVATE:
-        void start();
+        void start(const Cam_Streamer& streamer);
         void stop();
 
         std::mutex m_buffer_mutex;
@@ -62,6 +61,7 @@ namespace Rpi
         U32 tlm_dropped;
         U32 tlm_captured;
 
+        Cam_Streamer m_streamer;
         bool m_streaming;
     };
 }

@@ -2,7 +2,7 @@
 #include <Heli/Display/Display.hpp>
 #include <Fw/Logger/Logger.hpp>
 
-namespace Rpi
+namespace Heli
 {
     Display::Display(const char* name)
     : DisplayComponentBase(name), Oled()

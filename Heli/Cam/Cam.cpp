@@ -2,7 +2,7 @@
 #include "Cam.hpp"
 #include <core/libcamera_app.h>
 
-namespace Rpi
+namespace Heli
 {
 
     Cam::Cam(const char *compName)
@@ -11,13 +11,14 @@ namespace Rpi
               m_right(new LibcameraApp()),
               tlm_dropped(0),
               tlm_captured(0),
+              m_streamer(Cam_Streamer::VIDEO_STREAMER),
               m_streaming(false)
     {
     }
 
-    void Cam::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
+    void Cam::init(NATIVE_INT_TYPE instance)
     {
-        CamComponentBase::init(queueDepth, instance);
+        CamComponentBase::init(instance);
     }
 
     void Cam::configure(I32 videoWidth, I32 videoHeight,
@@ -100,10 +101,10 @@ namespace Rpi
 
             // Stream info should be identical on both streams
             // They are configured with identical parameters
-            buffer->info = Rpi::LibcameraApp::GetStreamInfo(left_stream);
+            buffer->info = LibcameraApp::GetStreamInfo(left_stream);
 
             // Send the frame to the requester on the same port
-            frame_out(0, buffer->id);
+            frame_out(m_streamer.e, buffer->id);
         }
 
         log_ACTIVITY_LO_CameraStopping();
@@ -128,7 +129,7 @@ namespace Rpi
         return nullptr;
     }
 
-    void Cam::start()
+    void Cam::start(const Cam_Streamer& streamer)
     {
         if (m_streaming)
         {
@@ -139,6 +140,7 @@ namespace Rpi
         m_right->StopCamera();
 
         log_ACTIVITY_LO_CameraStarting();
+        m_streamer = streamer;
         m_streaming = true;
         m_left->StartCamera();
         m_right->StartCamera();
@@ -216,26 +218,21 @@ namespace Rpi
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void Cam::START_cmdHandler(U32 opCode, U32 cmdSeq)
+    void Cam::START_cmdHandler(U32 opCode, U32 cmdSeq, Cam_Streamer streamer)
     {
-        start();
+        start(streamer);
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
     void Cam::parametersLoaded()
     {
-        // TODO(tumbar) Support asymmetric camera config
         CamComponentBase::parametersLoaded();
-
-        CameraConfig config;
-        get_config(config);
-        log_ACTIVITY_LO_CameraConfiguring();
-        m_left->ConfigureCamera(config);
-        m_right->ConfigureCamera(config);
+        parameterUpdated();
     }
 
     void Cam::parameterUpdated()
     {
+        // TODO(tumbar) Support asymmetric camera config
         CameraConfig config;
         get_config(config);
         log_ACTIVITY_LO_CameraConfiguring();
@@ -275,31 +272,29 @@ namespace Rpi
         return true;
     }
 
-    void Cam::incref_handler(NATIVE_INT_TYPE portNum, U32 frameId)
+    void Cam::incdec_handler(NATIVE_INT_TYPE portNum, U32 frameId, const ReferenceCounter& dir)
     {
         FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
 
         auto &buf = m_buffers[frameId];
-        if (!buf.in_use())
+        switch(dir.e)
         {
-            log_WARNING_LO_CameraInvalidIncref(frameId);
-            return;
+            case ReferenceCounter::INCREMENT:
+                if (!buf.in_use())
+                {
+                    log_WARNING_LO_CameraInvalidIncref(frameId);
+                    return;
+                }
+                buf.incref();
+                break;
+            case ReferenceCounter::DECREMENT:
+                if (!buf.in_use())
+                {
+                    log_WARNING_LO_CameraInvalidDecref(frameId);
+                    return;
+                }
+                buf.decref();
+                break;
         }
-
-        buf.incref();
-    }
-
-    void Cam::decref_handler(NATIVE_INT_TYPE portNum, U32 frameId)
-    {
-        FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
-
-        auto &buf = m_buffers[frameId];
-        if (!buf.in_use())
-        {
-            log_WARNING_LO_CameraInvalidDecref(frameId);
-            return;
-        }
-
-        buf.decref();
     }
 }

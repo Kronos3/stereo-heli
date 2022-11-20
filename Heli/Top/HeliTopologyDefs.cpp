@@ -2,9 +2,9 @@
 // Created by tumbar on 9/21/22.
 //
 
-#include <Heli/Top/RpiTopologyDefs.hpp>
+#include <Heli/Top/HeliTopologyDefs.hpp>
 
-namespace Rpi
+namespace Heli
 {
     namespace Allocation
     {

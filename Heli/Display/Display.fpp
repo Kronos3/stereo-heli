@@ -1,4 +1,4 @@
-module Rpi {
+module Heli {
 
     passive component Display {
 

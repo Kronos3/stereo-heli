@@ -23,7 +23,7 @@
 #include <cstring>
 #include <Assert.hpp>
 
-namespace Rpi
+namespace Heli
 {
     // If we definitely appear to be running the old camera stack, complain and give up.
     // Everything else, Pi or not, we let through.

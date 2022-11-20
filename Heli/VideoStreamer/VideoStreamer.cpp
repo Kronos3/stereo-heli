@@ -6,7 +6,7 @@
 #include <preview/preview.hpp>
 #include <functional>
 
-namespace Rpi
+namespace Heli
 {
     VideoStreamer::VideoStreamer(const char* compName)
     : VideoStreamerComponentBase(compName),
@@ -84,7 +84,7 @@ namespace Rpi
 
                     // Drop the reference to the oldest frame buffer we sent to the encoder
                     // This assumed that the H264 encoding will reply with in order frames...
-                    decref_out(0, encoding_buffers.front());
+                    incdec_out(0, encoding_buffers.front(), ReferenceCounter::DECREMENT);
                     encoding_buffers.pop();
                 });
 
@@ -97,7 +97,7 @@ namespace Rpi
 
             // Once the encoder is finished it will send the data to the network
             // This will get written out as a UDP stream
-            incref_out(0, frame.getBufId());
+            incdec_out(0, frameId, ReferenceCounter::INCREMENT);
             encoding_buffers.push(frame.getBufId());
             m_encoder->EncodeBuffer(frame.getPlane(),
                                     frame.getBufSize(),
@@ -110,12 +110,12 @@ namespace Rpi
         if ((m_displaying == VideoStreamer_DisplayLocation::BOTH ||
             m_displaying == VideoStreamer_DisplayLocation::HDMI) && m_preview)
         {
-            incref_out(0, frame.getBufId());
+            incdec_out(0, frameId, ReferenceCounter::INCREMENT);
             m_preview->Show(frame);
 
             if (is_showing)
             {
-                decref_out(0, m_showing.getBufId());
+                incdec_out(0, m_showing.getBufId(), ReferenceCounter::DECREMENT);
             }
 
             is_showing = true;
@@ -163,7 +163,7 @@ namespace Rpi
         }
 #endif
 
-        decref_out(0, frame.getBufId());
+        incdec_out(0, frameId, ReferenceCounter::DECREMENT);
     }
 
     void VideoStreamer::OPEN_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg& address, U16 portN)
@@ -205,7 +205,7 @@ namespace Rpi
     void
     VideoStreamer::DISPLAY_cmdHandler(U32 opCode, U32 cmdSeq,
                                       VideoStreamer_DisplayLocation where,
-                                      Rpi::CamSelect eye)
+                                      CamSelect eye)
     {
         if (m_eye == CamSelect::BOTH)
         {
@@ -224,14 +224,14 @@ namespace Rpi
     {
         if (is_showing)
         {
-            decref_out(0, m_showing.getBufId());
+            incdec_out(0, m_showing.getBufId(), ReferenceCounter::DECREMENT);
             m_showing = {};
             is_showing = false;
         }
 
         while (!encoding_buffers.empty())
         {
-            decref_out(0, encoding_buffers.front());
+            incdec_out(0, encoding_buffers.front(), ReferenceCounter::DECREMENT);
             encoding_buffers.pop();
         }
     }

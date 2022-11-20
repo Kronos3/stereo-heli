@@ -1,4 +1,4 @@
-module Rpi {
+module Heli {
 
     struct CamFrameBase {
         bufId: U32 @< Buffer id
@@ -17,25 +17,33 @@ module Rpi {
         BOTH
     }
 
+    enum ReferenceCounter {
+        INCREMENT,
+        DECREMENT
+    }
+
     type CamFrame
 
     port Frame(frameId: U32)
+    port FrameRef(frameId: U32, dir: ReferenceCounter)
     port FrameGet(frameId: U32, ref left: CamFrame, ref right: CamFrame) -> bool
 
-    active component Cam {
+    passive component Cam {
+
+        enum Streamer {
+            VIDEO_STREAMER,
+            STEREO
+        }
 
         # -----------------------------
         # General ports
         # -----------------------------
 
-        @ Increment reference count on frame
-        sync input port incref: Frame
-
-        @ Decrement reference count on frame
-        sync input port decref: Frame
+        @ Increment/Decrement reference count on frame
+        sync input port incdec: FrameRef
 
         @ Output frames
-        output port frame: Frame
+        output port frame: [2] Frame
 
         @ Get frame data
         sync input port frameGet: FrameGet
@@ -76,10 +84,12 @@ module Rpi {
         # -----------------------------
 
         @ Stop active image capture from the camera
-        async command STOP()
+        sync command STOP()
 
         @ Start camera stream
-        async command START()
+        sync command START(
+            streamer: Streamer @< Where to stream frames to
+            )
 
         # -----------------------------
         # Events

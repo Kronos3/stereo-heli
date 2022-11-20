@@ -28,7 +28,7 @@ public:
 	virtual void SetInfoText(const std::string &text) {}
 	// Display the buffer. You get given the fd back in the BufferDoneCallback
 	// once its available for re-use.
-	virtual void Show(const Rpi::CamFrame& frame) = 0;
+	virtual void Show(const Heli::CamFrame& frame) = 0;
 	// Reset the preview window, clearing the current buffers and being ready to
 	// show new ones.
 	virtual void Reset() = 0;

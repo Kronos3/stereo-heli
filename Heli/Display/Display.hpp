@@ -6,7 +6,7 @@
 #include "oled.hpp"
 #include <Os/Mutex.hpp>
 
-namespace Rpi
+namespace Heli
 {
     class Display :
             public DisplayComponentBase,

@@ -1,4 +1,4 @@
-module Rpi {
+module Heli {
 
     active component VideoStreamer {
 
@@ -6,8 +6,7 @@ module Rpi {
         # General ports
         # -----------------------------
 
-        output port incref: Frame
-        output port decref: Frame
+        output port incdec: FrameRef
         output port frameGet: FrameGet
 
         @ Output frames

@@ -1,22 +1,22 @@
 #include <Logger.hpp>
 #include <csignal>
 
-#include <Heli/Top/RpiTopologyAc.hpp>
+#include <Heli/Top/HeliTopologyAc.hpp>
 
 static volatile bool terminate = false;
-static Rpi::TopologyState state;
+static Heli::TopologyState state;
 
 static void sighandler(int signum)
 {
     (void) signum;
-    Rpi::teardown(state);
+    Heli::teardown(state);
     terminate = true;
 }
 
 void run_cycle()
 {
     // call interrupt to emulate a clock
-    Rpi::blockDrv.callIsr();
+    Heli::blockDrv.callIsr();
     Os::Task::delay(200); // 5Hz
 }
 
@@ -27,8 +27,8 @@ I32 main()
     signal(SIGTERM, sighandler);
 
     Fw::Logger::logMsg("Booting up\n");
-    state = Rpi::TopologyState();
-    Rpi::setup(state);
+    state = Heli::TopologyState();
+    Heli::setup(state);
 
     while (!terminate)
     {

@@ -3,9 +3,9 @@
 #include <utility>
 #include "Assert.hpp"
 
-namespace Rpi
+namespace Heli
 {
-    Rpi::CamBuffer::CamBuffer(U32 id_)
+    CamBuffer::CamBuffer(U32 id_)
     : CamBuffer()
     {
         this->id = id_;

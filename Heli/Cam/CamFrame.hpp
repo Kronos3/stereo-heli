@@ -4,7 +4,7 @@
 #include <Heli/Cam/CamFrameBaseSerializableAc.hpp>
 #include "core/stream_info.hpp"
 
-namespace Rpi
+namespace Heli
 {
     class CamFrame : private CamFrameBase
     {
