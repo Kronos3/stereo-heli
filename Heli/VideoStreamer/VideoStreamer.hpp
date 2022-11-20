@@ -2,7 +2,7 @@
 #ifndef HELI_VIDEOSTREAMER_HPP
 #define HELI_VIDEOSTREAMER_HPP
 
-#include <Rpi/VideoStreamer/VideoStreamerComponentAc.hpp>
+#include <Heli/VideoStreamer/VideoStreamerComponentAc.hpp>
 
 #include <preview/preview.hpp>
 #include <encoder/encoder.hpp>

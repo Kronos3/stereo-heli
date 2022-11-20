@@ -34,6 +34,7 @@
 //#include <core/post_processor.hpp>
 #include <core/stream_info.hpp>
 #include <CameraConfig.hpp>
+#include <map>
 
 namespace controls = libcamera::controls;
 namespace properties = libcamera::properties;
@@ -65,6 +66,7 @@ namespace Rpi
         using BufferMap = Request::BufferMap;
         using Size = libcamera::Size;
         using Rectangle = libcamera::Rectangle;
+
         enum class MsgType
         {
             RequestComplete,

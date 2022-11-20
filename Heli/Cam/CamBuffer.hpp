@@ -2,9 +2,8 @@
 #define HELI_CAMBUFFER_HPP
 
 #include "fprime/Fw/Types/Serializable.hpp"
-#include "libcamera/libcamera/framebuffer.h"
-#include "Rpi/Cam/core/stream_info.hpp"
-#include "Rpi/Cam/core/completed_request.hpp"
+#include "Heli/Cam/core/stream_info.hpp"
+#include "Heli/Cam/core/completed_request.hpp"
 
 #include <functional>
 #include <atomic>

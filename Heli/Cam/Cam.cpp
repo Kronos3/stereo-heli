@@ -17,9 +17,9 @@ namespace Rpi
     {
     }
 
-    void Cam::init(NATIVE_INT_TYPE instance)
+    void Cam::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
     {
-        CamComponentBase::init(instance);
+        CamComponentBase::init(queueDepth, instance);
     }
 
     void Cam::configure(I32 videoWidth, I32 videoHeight,
@@ -119,9 +119,21 @@ namespace Rpi
         return nullptr;
     }
 
-    void Cam::CAPTURE_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &destination)
+    void
+    Cam::CAPTURE_cmdHandler(U32 opCode, U32 cmdSeq,
+                            Rpi::Cam_CamSelect cam_select,
+                            const Fw::CmdStringArg &left_dest,
+                            const Fw::CmdStringArg &right_dest)
     {
-        capture(opCode, cmdSeq);
+        switch(cam_select.e)
+        {
+            case Cam_CamSelect::BOTH:
+                break;
+            case Cam_CamSelect::LEFT:
+                break;
+            case Cam_CamSelect::RIGHT:
+                break;
+        }
     }
 
     void Cam::capture(U32 opcode, U32 cmdSeq)

@@ -172,6 +172,9 @@ module Rpi {
     instance systemResources: Svc.SystemResources base id 1600
 
     instance cam: Cam base id 6000 \
+            queue size Default.queueSize \
+            stack size Default.stackSize \
+            priority 100 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         cam.configure(/* video capture width */ 2028,

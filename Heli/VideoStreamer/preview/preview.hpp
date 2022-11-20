@@ -11,9 +11,9 @@
 #include <string>
 
 #include <libcamera/base/span.h>
-#include <Rpi/Cam/CamFrame.hpp>
+#include <Heli/Cam/CamFrame.hpp>
 
-#include "Rpi/Cam/core/stream_info.hpp"
+#include "Heli/Cam/core/stream_info.hpp"
 #include "libcamera/geometry.h"
 
 class Preview

@@ -2,7 +2,7 @@
 #ifndef HELI_DISPLAYIMPL_H
 #define HELI_DISPLAYIMPL_H
 
-#include <Rpi/Display/DisplayComponentAc.hpp>
+#include <Heli/Display/DisplayComponentAc.hpp>
 #include "oled.hpp"
 #include <Os/Mutex.hpp>
 

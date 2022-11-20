@@ -7,10 +7,11 @@
 
 //#include "preview/preview.hpp"
 
-#include <Rpi/Cam/core/frame_info.hpp>
-#include <Rpi/Cam/core/libcamera_app.h>
-#include <Rpi/VideoStreamer/preview/preview.hpp>
-#include <Rpi/Cam/CamCfg.h>
+#include <memory>
+
+#include <Heli/Cam/core/libcamera_app.h>
+#include <Heli/VideoStreamer/preview/preview.hpp>
+#include <Heli/Cam/CamCfg.h>
 
 #include <fcntl.h>
 
@@ -100,8 +101,7 @@ namespace Rpi
                                              int rotation,
                                              bool hflip, bool vflip)
     {
-//        StreamRoles stream_roles = {StreamRole::Raw};
-        StreamRoles stream_roles = {StreamRole::Raw, StreamRole::StillCapture};
+        StreamRoles stream_roles = {libcamera::StreamRole::Raw, libcamera::StreamRole::StillCapture};
 
         configuration_ = camera_->generateConfiguration(stream_roles);
         if (!configuration_)
@@ -164,7 +164,7 @@ namespace Rpi
         // Framerate is a bit weird. If it was set programmatically, we go with that, but
         // otherwise it applies only to preview/video modes. For stills capture we set it
         // as long as possible so that we get whatever the exposure profile wants.
-        if (!controls_.contains(controls::FrameDurationLimits))
+        if (!controls_.contains(controls::FrameDurationLimits.id()))
         {
             if (options.frame_rate > 0)
             {

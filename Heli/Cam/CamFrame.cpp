@@ -2,7 +2,7 @@
 // Created by tumbar on 9/21/22.
 //
 
-#include <Rpi/Cam/CamFrame.hpp>
+#include <Heli/Cam/CamFrame.hpp>
 
 namespace Rpi
 {

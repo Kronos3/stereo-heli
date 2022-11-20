@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(ASAN_BUILD "Build FSW with AddressSanitizer" OFF)
 option(TSAN_BUILD "Build FSW with ThreadSanitizer" OFF)
 
-enable_language(C CXX ASM)
+enable_language(C CXX)
 
 if (ASAN_BUILD)
     add_compile_options(-fsanitize=address -fno-omit-frame-pointer -O1)
@@ -45,4 +45,7 @@ include(${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake)
 # Set the framework libraries provided by FPrime
 include(${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake)
 
-add_subdirectory(Stm32)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
+
+set(CMAKE_CXX_STANDARD 17)
+add_subdirectory(Heli)

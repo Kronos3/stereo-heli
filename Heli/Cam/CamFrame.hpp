@@ -1,7 +1,7 @@
 #ifndef HELI_CAMFRAME_HPP
 #define HELI_CAMFRAME_HPP
 
-#include <Rpi/Cam/CamFrameBaseSerializableAc.hpp>
+#include <Heli/Cam/CamFrameBaseSerializableAc.hpp>
 #include "core/stream_info.hpp"
 
 namespace Rpi

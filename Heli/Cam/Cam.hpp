@@ -2,7 +2,7 @@
 #ifndef HELI_CAM_HPP
 #define HELI_CAM_HPP
 
-#include <Rpi/Cam/CamComponentAc.hpp>
+#include <Heli/Cam/CamComponentAc.hpp>
 #include "CamCfg.h"
 #include "CameraConfig.hpp"
 #include "CamBuffer.hpp"
@@ -21,7 +21,7 @@ namespace Rpi
         explicit Cam(const char* compName);
         ~Cam() override;
 
-        void init(NATIVE_INT_TYPE instance);
+        void init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance);
 
         void configure(I32 videoWidth, I32 videoHeight,
                        I32 stillWidth, I32 stillHeight,
@@ -40,7 +40,10 @@ namespace Rpi
         void incref_handler(NATIVE_INT_TYPE portNum, U32 frameId) override;
         void decref_handler(NATIVE_INT_TYPE portNum, U32 frameId) override;
 
-        void CAPTURE_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &destination) override;
+        void CAPTURE_cmdHandler(U32 opCode, U32 cmdSeq,
+                                Rpi::Cam_CamSelect cam_select,
+                                const Fw::CmdStringArg &left_dest,
+                                const Fw::CmdStringArg &right_dest) override;
         void STOP_cmdHandler(U32 opCode, U32 cmdSeq) override;
         void START_cmdHandler(U32 opCode, U32 cmdSeq) override;
 

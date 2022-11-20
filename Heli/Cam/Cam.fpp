@@ -16,7 +16,7 @@ module Rpi {
     port Frame(frameId: U32)
     port FrameGet(frameId: U32, ref frame: CamFrame) -> bool
 
-    passive component Cam {
+    active component Cam {
 
         # -----------------------------
         # General ports
@@ -65,20 +65,28 @@ module Rpi {
         @ A port for setting parameter values
         param set port ParamSet
 
+        enum CamSelect {
+            BOTH,
+            LEFT,
+            RIGHT
+        }
+
         # -----------------------------
         # Commands
         # -----------------------------
 
         @ Capture a single image and save it to a file
-        sync command CAPTURE(
-                destination: string size 80 @< Path to save file to
+        async command CAPTURE(
+                cam_select: CamSelect @< Which camera to image with
+                left_dest: string size 80 @< Path to save left file to
+                right_dest: string size 80 @< Path to save right file to
                 )
 
         @ Stop active image capture from the camera
-        sync command STOP()
+        async command STOP()
 
         @ Start camera stream
-        sync command START()
+        async command START()
 
         # -----------------------------
         # Events

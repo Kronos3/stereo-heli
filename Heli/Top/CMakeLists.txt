@@ -32,8 +32,6 @@ set(OPENCV_LIBRARIES
         )
 
 target_link_libraries(rpi PUBLIC
-        pthread
-
         # Work through dependencies
 #        ${OPENCV_LIBRARIES}
 #        ${OPENCV_LIBRARIES}
@@ -41,24 +39,8 @@ target_link_libraries(rpi PUBLIC
 #        opencv_imgproc
 #        opencv_calib3d
 #        opencv_core
-        p11-kit
-        idn2
-        unistring
-        tasn1
-        nettle
-        hogweed
-        gmp
-        elf
-        z
-        lzma
-        bz2
-        drm
-        gnutls
-        udev
-        dw
-        unwind
-        unwind-aarch64
-        ffi
-        camera
-        camera-base
+#        camera
+#        camera-base
 )
+
+target_link_options(rpi PUBLIC -Wl,--unresolved-symbols=ignore-in-object-files)
