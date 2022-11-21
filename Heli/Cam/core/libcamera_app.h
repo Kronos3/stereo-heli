@@ -185,7 +185,6 @@ namespace Heli
 
         void requestComplete(Request *request);
 
-        std::unique_ptr<CameraManager> camera_manager_;
         std::shared_ptr<Camera> camera_;
         bool camera_acquired_ = false;
         std::unique_ptr<CameraConfiguration> configuration_;

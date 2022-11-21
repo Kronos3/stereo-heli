@@ -11,7 +11,6 @@ namespace Heli
               m_right(new LibcameraApp()),
               tlm_dropped(0),
               tlm_captured(0),
-              m_streamer(Cam_Streamer::VIDEO_STREAMER),
               m_streaming(false)
     {
     }
@@ -104,7 +103,7 @@ namespace Heli
             buffer->info = LibcameraApp::GetStreamInfo(left_stream);
 
             // Send the frame to the requester on the same port
-            frame_out(m_streamer.e, buffer->id);
+            frame_out(0, buffer->id);
         }
 
         log_ACTIVITY_LO_CameraStopping();
@@ -129,7 +128,7 @@ namespace Heli
         return nullptr;
     }
 
-    void Cam::start(const Cam_Streamer& streamer)
+    void Cam::start()
     {
         if (m_streaming)
         {
@@ -140,7 +139,6 @@ namespace Heli
         m_right->StopCamera();
 
         log_ACTIVITY_LO_CameraStarting();
-        m_streamer = streamer;
         m_streaming = true;
         m_left->StartCamera();
         m_right->StartCamera();
@@ -210,6 +208,15 @@ namespace Heli
         m_left->Quit();
         m_right->Quit();
         m_task.join(nullptr);
+
+        m_left->CloseCamera();
+        m_right->CloseCamera();
+
+        delete m_left;
+        delete m_right;
+
+        m_left = nullptr;
+        m_right = nullptr;
     }
 
     void Cam::STOP_cmdHandler(U32 opCode, U32 cmdSeq)
@@ -218,9 +225,9 @@ namespace Heli
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void Cam::START_cmdHandler(U32 opCode, U32 cmdSeq, Cam_Streamer streamer)
+    void Cam::START_cmdHandler(U32 opCode, U32 cmdSeq)
     {
-        start(streamer);
+        start();
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 

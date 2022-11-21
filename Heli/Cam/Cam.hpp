@@ -2,11 +2,13 @@
 #ifndef HELI_CAM_HPP
 #define HELI_CAM_HPP
 
+#include <CamCfg.hpp>
+
 #include <Heli/Cam/CamComponentAc.hpp>
-#include "CamCfg.h"
-#include "CameraConfig.hpp"
-#include "CamBuffer.hpp"
-#include <core/completed_request.hpp>
+#include <Heli/Cam/CameraConfig.hpp>
+#include <Heli/Cam/CamBuffer.hpp>
+#include <Heli/Cam/core/completed_request.hpp>
+
 #include <queue>
 #include <mutex>
 
@@ -15,8 +17,6 @@ namespace Heli
     class LibcameraApp;
     class Cam : public CamComponentBase
     {
-//        friend LibcameraApp;
-
     public:
         explicit Cam(const char* compName);
         ~Cam() override;
@@ -40,7 +40,7 @@ namespace Heli
         void incdec_handler(NATIVE_INT_TYPE portNum, U32 frameId, const ReferenceCounter &dir) override;
 
         void STOP_cmdHandler(U32 opCode, U32 cmdSeq) override;
-        void START_cmdHandler(U32 opCode, U32 cmdSeq, Cam_Streamer streamer) override;
+        void START_cmdHandler(U32 opCode, U32 cmdSeq) override;
 
         CamBuffer* get_buffer();
 
@@ -48,7 +48,7 @@ namespace Heli
         void streaming_thread();
 
     PRIVATE:
-        void start(const Cam_Streamer& streamer);
+        void start();
         void stop();
 
         std::mutex m_buffer_mutex;
@@ -61,7 +61,6 @@ namespace Heli
         U32 tlm_dropped;
         U32 tlm_captured;
 
-        Cam_Streamer m_streamer;
         bool m_streaming;
     };
 }

@@ -27,8 +27,9 @@ target_link_libraries(${EXECUTABLE_NAME} PUBLIC
 #        opencv_imgproc
 #        opencv_calib3d
 #        opencv_core
-#        camera
-#        camera-base
+        ${HELI_LIB_PATH}/libcamera.so.0.0.1
+        ${HELI_LIB_PATH}/libcamera-base.so.0.0.1
+        ${HELI_LIB_PATH}/libdrm.so
 )
 
-target_link_options(${EXECUTABLE_NAME} PUBLIC -Wl,--unresolved-symbols=ignore-in-object-files)
+target_link_options(${EXECUTABLE_NAME} PUBLIC -Wl,--unresolved-symbols=ignore-all)

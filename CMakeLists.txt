@@ -20,8 +20,8 @@ endif()
 add_compile_options(-pipe)
 
 # Override default FPrime configuration
-#set(FPRIME_CONFIG_DIR "${PROJECT_SOURCE_DIR}/Cfg")
-#set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_CONFIG_DIR}/AcConstants.ini")
+set(FPRIME_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}/config")
+set(FPRIME_AC_CONSTANTS_FILE "${FPRIME_CONFIG_DIR}/AcConstants.ini")
 
 ##
 # Required for FSW FPrime CMake configuration
@@ -36,6 +36,8 @@ set(FPRIME_LIBRARY_LOCATIONS
         ${PROJECT_SOURCE_DIR}
         )
 
+set(HELI_LIB_PATH ${CMAKE_CURRENT_LIST_DIR}/lib)
+
 ##
 # FPrime instantiation
 ##
@@ -45,7 +47,10 @@ include(${FPRIME_FRAMEWORK_PATH}/cmake/FPrime.cmake)
 # Set the framework libraries provided by FPrime
 include(${FPRIME_FRAMEWORK_PATH}/cmake/FPrime-Code.cmake)
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
+include_directories(
+        ${CMAKE_CURRENT_LIST_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR}/include/libdrm
+)
 
 set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(Heli)

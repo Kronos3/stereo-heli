@@ -31,7 +31,7 @@ public:
 
     // Display the buffer. You get given the fd back in the BufferDoneCallback
     // once its available for re-use.
-    void Show(const Rpi::CamFrame &frame) override;
+    void Show(const Heli::CamFrame &frame) override;
 
     // Reset the preview window, clearing the current buffers and being ready to
     // show new ones.
@@ -290,7 +290,7 @@ static void get_colour_space_info(std::optional<libcamera::ColorSpace> const &cs
     encoding = encoding_601;
     range = range_limited;
 
-    if (cs == libcamera::ColorSpace::Jpeg)
+    if (cs == libcamera::ColorSpace::Srgb)
         range = range_full;
     else if (cs == libcamera::ColorSpace::Smpte170m)
         /* all good */;
@@ -381,7 +381,7 @@ void DrmPreview::makeBuffer(int fd, size_t size, StreamInfo const &info, Buffer 
         throw std::runtime_error("drmModeAddFB2 failed: " + std::string(ERRSTR));
 }
 
-void DrmPreview::Show(const Rpi::CamFrame &frame)
+void DrmPreview::Show(const Heli::CamFrame &frame)
 {
     I32 fd = frame.getPlane();
     auto info = frame.getInfo();

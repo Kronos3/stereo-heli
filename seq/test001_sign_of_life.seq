@@ -1,0 +1,27 @@
+; Initialize the camera config
+R00:00:00 cmdSeq.CS_RUN "/seqs/cam001_config.bin" BLOCK
+
+R00:00:00 cam.STOP
+
+; Build the frame pipeline
+; (Flow of the camera stream frames)
+R00:00:00 framePipe.CLEAR
+R00:00:00 framePipe.PUSH VIS DROP_ON_FULL
+R00:00:00 framePipe.PUSH STREAMER NO_REPLY
+R00:00:00 framePipe.CHECK
+
+R00:00:00 framePipe.SHOW
+
+; Vision pipeline
+R00:00:00 vis.CLEAR
+R00:00:00 vis.RECTIFY "/fsw/data/rectify.xml" ; rectifies both left and right
+R00:00:00 vis.STEREO BLOCK_MATCHING ; places disparity map in left
+
+; Use colormap to better visualize the disparity
+R00:00:00 vis.COLORMAP JET LEFT
+
+; Set up on screen display
+; 
+R00:00:00 videoStreamer.DISPLAY HDMI LEFT
+
+R00:00:00 cam.START

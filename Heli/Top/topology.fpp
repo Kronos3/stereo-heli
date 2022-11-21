@@ -29,7 +29,7 @@ module Heli {
         instance framePipe
         instance display
         instance videoStreamer
-        instance stereo
+        instance vis
 
         # ---------------------------------
         # Pattern graph connections
@@ -78,18 +78,17 @@ module Heli {
             # Frame buffer control
             videoStreamer.incdec -> cam.incdec
             framePipe.incdec -> cam.incdec
-            stereo.incdec -> cam.incdec
 
             videoStreamer.frameGet -> cam.frameGet
-            stereo.frameGet -> cam.frameGet
+            vis.frameGet -> cam.frameGet
 
             # Video Streamer pipeline
-            cam.frame[0] -> videoStreamer.frame
+            cam.frame -> framePipe.camFrame
 
-            # Stereo Processing Pipeline
-            cam.frame[1] -> framePipe.frame
-            framePipe.frameOut -> stereo.frame
-            stereo.frameOut -> videoStreamer.frame
+            # Frame pipeline
+            framePipe.frame[0] -> videoStreamer.frame
+            framePipe.frame[1] -> vis.frame
+            vis.frameOut -> framePipe.frameIn
         }
 
         # --------------------------------

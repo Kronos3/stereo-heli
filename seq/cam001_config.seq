@@ -1,0 +1,30 @@
+; Maximum rate of the camera bus at this resolution
+R00:00:00 cam.FRAME_RATE_PRM_SET 40
+R00:00:00 cam.FRAME_RATE_PRM_SAVE
+
+; Exposure doesn't do anything during video stream
+R00:00:00 cam.EXPOSURE_TIME_PRM_SET 0
+R00:00:00 cam.EXPOSURE_TIME_PRM_SAVE
+
+; This can be adjusted as needed for light levels
+; 10 seems to be pretty good for most indoor lighting
+R00:00:00 cam.GAIN_PRM_SET 10.0
+R00:00:00 cam.GAIN_PRM_SAVE
+
+R00:00:00 cam.METERING_MODE_PRM_SET CENTRE_WEIGHTED
+R00:00:00 cam.METERING_MODE_PRM_SAVE
+
+R00:00:00 cam.EXPOSURE_MODE_PRM_SET NORMAL
+R00:00:00 cam.EXPOSURE_MODE_PRM_SAVE
+
+R00:00:00 cam.AWB_PRM_SET AUTO
+R00:00:00 cam.AWB_PRM_SAVE
+
+; TODO(tumbar) Add the rest here
+; ......
+
+; Color images
+; TODO(tumbar) What format does this come in as?
+; How should I process this?
+R00:00:00 cam.SATURATION_PRM_SET 1.0
+R00:00:00 cam.SATURATION_PRM_SAVE

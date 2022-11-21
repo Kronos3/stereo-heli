@@ -48,7 +48,7 @@ module Heli {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        rg1Hz.configure(
+        rg5Hz.configure(
             ConfigObjects::rg5Hz::context,
             FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg5Hz::context)
         );
@@ -288,6 +288,10 @@ module Heli {
         Fw::String camTaskName = "CAM";
         cam.startStreamThread(camTaskName);
         """
+
+        phase Fpp.ToCpp.Phases.stopTasks """
+        cam.quitStreamThread();
+        """
     }
 
     instance framePipe: FramePipe base id 6100
@@ -299,7 +303,7 @@ module Heli {
 
     instance display: Display base id 6300
 
-    instance stereo: Stereo base id 6400 \
+    instance vis: Vis base id 6400 \
         queue size Default.queueSize \
         stack size Default.stackSize \
         priority 100

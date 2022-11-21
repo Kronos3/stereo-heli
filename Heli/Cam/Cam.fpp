@@ -30,11 +30,6 @@ module Heli {
 
     passive component Cam {
 
-        enum Streamer {
-            VIDEO_STREAMER,
-            STEREO
-        }
-
         # -----------------------------
         # General ports
         # -----------------------------
@@ -43,7 +38,7 @@ module Heli {
         sync input port incdec: FrameRef
 
         @ Output frames
-        output port frame: [2] Frame
+        output port frame: Frame
 
         @ Get frame data
         sync input port frameGet: FrameGet
@@ -87,9 +82,7 @@ module Heli {
         sync command STOP()
 
         @ Start camera stream
-        sync command START(
-            streamer: Streamer @< Where to stream frames to
-            )
+        sync command START()
 
         # -----------------------------
         # Events

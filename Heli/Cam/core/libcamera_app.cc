@@ -11,7 +11,7 @@
 
 #include <Heli/Cam/core/libcamera_app.h>
 #include <Heli/VideoStreamer/preview/preview.hpp>
-#include <Heli/Cam/CamCfg.h>
+#include <CamCfg.hpp>
 
 #include <fcntl.h>
 
@@ -25,6 +25,8 @@
 
 namespace Heli
 {
+    static libcamera::CameraManager camera_manager;
+
     // If we definitely appear to be running the old camera stack, complain and give up.
     // Everything else, Pi or not, we let through.
     static void check_camera_stack()
@@ -65,18 +67,17 @@ namespace Heli
 
     void LibcameraApp::OpenCamera(U32 camera)
     {
-        camera_manager_ = std::make_unique<CameraManager>();
-        int ret = camera_manager_->start();
+        int ret = camera_manager.start();
         if (ret)
             throw std::runtime_error("camera manager failed to start, code " + std::to_string(-ret));
 
-        if (camera_manager_->cameras().empty())
+        if (camera_manager.cameras().empty())
             throw std::runtime_error("no cameras available");
-        if (camera >= camera_manager_->cameras().size())
+        if (camera >= camera_manager.cameras().size())
             throw std::runtime_error("selected camera is not available");
 
-        std::string const &cam_id = camera_manager_->cameras()[camera]->id();
-        camera_ = camera_manager_->get(cam_id);
+        std::string const &cam_id = camera_manager.cameras()[camera]->id();
+        camera_ = camera_manager.get(cam_id);
         if (!camera_)
             throw std::runtime_error("failed to find camera " + cam_id);
 
@@ -92,8 +93,6 @@ namespace Heli
         camera_acquired_ = false;
 
         camera_.reset();
-
-        camera_manager_.reset();
     }
 
     void LibcameraApp::ConfigureCameraStream(Size videoSize,
