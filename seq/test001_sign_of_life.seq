@@ -1,5 +1,5 @@
 ; Initialize the camera config
-R00:00:00 cmdSeq.CS_RUN "/seqs/cam001_config.bin" BLOCK
+R00:00:00 cmdSeq.CS_RUN "/seq/cam001_config.bin" BLOCK
 
 R00:00:00 cam.STOP
 

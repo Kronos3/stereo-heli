@@ -106,7 +106,7 @@ module Heli {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
             PRIORITY = 100,
-            STACK_SIZE = Default::stackSize
+            STACK_SIZE = 64 * 1024
         };
         """
 
@@ -145,7 +145,22 @@ module Heli {
 
     }
 
-    instance fatalAdapter: Svc.AssertFatalAdapter base id 1200
+
+    instance uplink: Svc.Deframer base id 1150 \
+    {
+        phase Fpp.ToCpp.Phases.configObjects """
+        Svc::FprimeDeframing deframing;
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        uplink.setup(ConfigObjects::uplink::deframing);
+        """
+    }
+
+
+    instance staticMemory: Svc.StaticMemory base id 1200
+
+    instance fatalAdapter: Svc.AssertFatalAdapter base id 1250
 
     instance fatalHandler: Svc.FatalHandler base id 1300
 

@@ -8,6 +8,8 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 
+#include <Svc/FramingProtocol/FprimeProtocol.hpp>
+
 namespace Heli
 {
     namespace Allocation {
@@ -20,6 +22,23 @@ namespace Heli
     // State for topology construction
     struct TopologyState
     {
+        TopologyState() :
+                hostName(nullptr),
+                portNumber(0)
+        {
+
+        }
+        TopologyState(
+                const char *hostName,
+                U32 portNumber
+        ) :
+                hostName(hostName),
+                portNumber(portNumber)
+        {
+
+        }
+        const char* hostName;
+        U32 portNumber;
     };
 }
 

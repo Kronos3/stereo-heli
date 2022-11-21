@@ -12,11 +12,15 @@ module Heli {
         instance cmdDisp
         instance chanTlm
         instance prmDb
+        instance comm
+        instance downlink
+        instance uplink
         instance fileManager
         instance cmdSeq
         instance cmdSeq2
         instance cmdSeq3
         instance cmdSeq4
+        instance staticMemory
 
         # Rate groups
         instance blockDrv
@@ -89,6 +93,31 @@ module Heli {
             framePipe.frame[0] -> videoStreamer.frame
             framePipe.frame[1] -> vis.frame
             vis.frameOut -> framePipe.frameIn
+        }
+
+        # --------------------------------
+        # Comm Connections
+        # --------------------------------
+
+        connections Downlink {
+            chanTlm.PktSend -> downlink.comIn
+            # downlink.bufferDeallocate -> fileDownlink.bufferReturn
+            downlink.framedOut -> comm.send
+            eventLogger.PktSend -> downlink.comIn
+            # fileDownlink.bufferSendOut -> downlink.bufferIn
+        }
+
+        connections Uplink {
+            cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
+            comm.$recv -> uplink.framedIn
+            uplink.comOut -> cmdDisp.seqCmdBuff
+        }
+
+        connections StaticMemory {
+            comm.allocate -> staticMemory.bufferAllocate[0]
+            comm.deallocate -> staticMemory.bufferDeallocate[1]
+            downlink.framedAllocate -> staticMemory.bufferAllocate[1]
+            uplink.framedDeallocate -> staticMemory.bufferDeallocate[0]
         }
 
         # --------------------------------
