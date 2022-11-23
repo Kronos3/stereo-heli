@@ -1,3 +1,4 @@
+#include <Logger.hpp>
 
 #include "Cam.hpp"
 #include <core/libcamera_app.h>
@@ -49,6 +50,13 @@ namespace Heli
 
     void Cam::streaming_thread()
     {
+        Os::Task::delay(1000);
+        Fw::LogStringArg leftId(m_left->CameraId().c_str()), rightId(m_right->CameraId().c_str());
+        Fw::Logger::logMsg("left: %s, right: %s\n",
+                           (POINTER_CAST) m_left->CameraId().c_str(),
+                           (POINTER_CAST) m_right->CameraId().c_str());
+        log_ACTIVITY_LO_CameraActivated(leftId, rightId);
+
         while (true)
         {
             // Wait for both camera to respond
@@ -106,9 +114,7 @@ namespace Heli
             frame_out(0, buffer->id);
         }
 
-        log_ACTIVITY_LO_CameraStopping();
-        m_left->StopCamera();
-        m_right->StopCamera();
+        stop();
     }
 
     CamBuffer *Cam::get_buffer()
@@ -146,10 +152,14 @@ namespace Heli
 
     void Cam::stop()
     {
-        log_ACTIVITY_LO_CameraStopping();
+        if (m_streaming) {
+            log_ACTIVITY_LO_CameraStopping();
+            m_streaming = false;
+        }
+
+        // Doesn't hurt to stop again
         m_left->StopCamera();
         m_right->StopCamera();
-        m_streaming = false;
     }
 
     void Cam::get_config(CameraConfig &config)

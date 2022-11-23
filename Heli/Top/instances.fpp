@@ -6,7 +6,7 @@ module Heli {
 
     module Default {
         constant queueSize = 10
-        constant stackSize = 64 * 1024
+        constant stackSize = 128 * 1024
     }
 
     # ----------------------------------------------------------------------
@@ -106,7 +106,7 @@ module Heli {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
             PRIORITY = 100,
-            STACK_SIZE = 64 * 1024
+            STACK_SIZE = 128 * 1024
         };
         """
 
