@@ -96,6 +96,11 @@ module Heli {
             severity activity low \
             format "Saving image to file {}"
 
+        event CameraActivated(camLeft: string size 40,
+                              camRight: string size 40) \
+            severity activity low \
+            format "Stereo camera activated with IDs left={} right={}"
+
         event CameraBusy() \
             severity warning low \
             format "Camera already streaming or capturing"
