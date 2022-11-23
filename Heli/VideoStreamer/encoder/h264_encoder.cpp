@@ -5,6 +5,8 @@
  * h264_encoder.cpp - h264 video encoder.
  */
 
+#ifndef TGT_OS_TYPE_DARWIN
+
 #include <fcntl.h>
 #include <poll.h>
 #include <sys/ioctl.h>
@@ -318,3 +320,4 @@ void H264Encoder::outputThread()
             throw std::runtime_error("failed to re-queue encoded buffer");
     }
 }
+#endif

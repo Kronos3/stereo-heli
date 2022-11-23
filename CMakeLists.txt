@@ -38,6 +38,8 @@ set(FPRIME_LIBRARY_LOCATIONS
 
 set(HELI_LIB_PATH ${CMAKE_CURRENT_LIST_DIR}/lib)
 
+set(CMAKE_SYSTEM_NAME "Linux")
+
 ##
 # FPrime instantiation
 ##

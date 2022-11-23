@@ -18,7 +18,10 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
+#ifndef TGT_OS_TYPE_DARWIN
 #include <linux/videodev2.h>
+#endif
+
 //#include <preview/preview.hpp>
 #include <cstring>
 #include <Assert.hpp>
@@ -31,6 +34,7 @@ namespace Heli
     // Everything else, Pi or not, we let through.
     static void check_camera_stack()
     {
+#ifndef TGT_OS_TYPE_DARWIN
         int fd = open("/dev/video0", O_RDWR, 0);
         if (fd < 0)
             return;
@@ -44,6 +48,7 @@ namespace Heli
 
         fprintf(stderr, "ERROR: the system appears to be configured for the legacy camera stack\n");
         exit(-1);
+#endif
     }
 
     LibcameraApp::LibcameraApp()
