@@ -1,0 +1,87 @@
+;?= {"language":"markdown","kind":1}
+; ## Camera Start
+; Sets all the camera parameters and saves the database
+;?s
+;?= {"language":"markdown","kind":1}
+; ### Test FSW connection
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 cmdDisp.CMD_NO_OP
+;?e {"time":1670031894.178009,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode cmdDisp.CMD_NO_OP dispatched to port 1","args":[{"name":"Opcode","value":"cmdDisp.CMD_NO_OP","valueRaw":"cmdDisp.CMD_NO_OP","type":"U32"},{"name":"port","value":"1","valueRaw":1,"type":"I32"}]}
+;?e {"time":1670031894.178062,"id":307,"name":"NoOpReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP command","args":[]}
+;?e {"time":1670031894.178089,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode cmdDisp.CMD_NO_OP completed","args":[{"name":"Opcode","value":"cmdDisp.CMD_NO_OP","valueRaw":"cmdDisp.CMD_NO_OP","type":"U32"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Camera pipeline setup
+; 
+; Send camera streaming to over VLC via the H264 encoder
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 videoStreamer.DISPLAY UDP LEFT
+R00:00:00 videoStreamer.NETWORK_SEND "192.168.1.220" 5500
+R00:00:00 framePipe.CLEAR
+R00:00:00 framePipe.PUSH STREAMER NO_REPLY
+R00:00:00 framePipe.CHECK
+;?e {"time":1670033328.381866,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY dispatched to port 12","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"},{"name":"port","value":"12","valueRaw":12,"type":"I32"}]}
+;?e {"time":1670033328.381969,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY completed","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"}]}
+;?e {"time":1670033328.420382,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.NETWORK_SEND dispatched to port 12","args":[{"name":"Opcode","value":"videoStreamer.NETWORK_SEND","valueRaw":"videoStreamer.NETWORK_SEND","type":"U32"},{"name":"port","value":"12","valueRaw":12,"type":"I32"}]}
+;?e {"time":1670033328.420598,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.NETWORK_SEND completed","args":[{"name":"Opcode","value":"videoStreamer.NETWORK_SEND","valueRaw":"videoStreamer.NETWORK_SEND","type":"U32"}]}
+;?e {"time":1670033328.499469,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CLEAR dispatched to port 10","args":[{"name":"Opcode","value":"framePipe.CLEAR","valueRaw":"framePipe.CLEAR","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
+;?e {"time":1670033328.499505,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CLEAR completed","args":[{"name":"Opcode","value":"framePipe.CLEAR","valueRaw":"framePipe.CLEAR","type":"U32"}]}
+;?e {"time":1670033328.577603,"id":6106,"name":"StageAdded","component":"framePipe","severity":"ACTIVITY_LO","message":"Added STREAMER to stage pipeline","args":[{"name":"cmp","value":"STREAMER","valueRaw":"STREAMER","type":"Heli::FramePipe_Component"}]}
+;?e {"time":1670033328.577633,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.PUSH dispatched to port 10","args":[{"name":"Opcode","value":"framePipe.PUSH","valueRaw":"framePipe.PUSH","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
+;?e {"time":1670033328.57765,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.PUSH completed","args":[{"name":"Opcode","value":"framePipe.PUSH","valueRaw":"framePipe.PUSH","type":"U32"}]}
+;?e {"time":1670033328.663118,"id":6100,"name":"CheckPassed","component":"framePipe","severity":"ACTIVITY_LO","message":"Frame pipeline checks passed validation","args":[]}
+;?e {"time":1670033328.663146,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CHECK dispatched to port 10","args":[{"name":"Opcode","value":"framePipe.CHECK","valueRaw":"framePipe.CHECK","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
+;?e {"time":1670033328.663163,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CHECK completed","args":[{"name":"Opcode","value":"framePipe.CHECK","valueRaw":"framePipe.CHECK","type":"U32"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; ### Startup
+; Start the camera stream
+; 
+; Connect to the stream with:
+; ```bash
+; $ vlc -vvv udp://@:5500 :demux=h264
+; ```
+; 
+; > Note: The H264 encoder creates some delay on the stream
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 cam.START
+;?e {"time":1670033330.764809,"id":6004,"name":"CameraStarting","component":"cam","severity":"ACTIVITY_LO","message":"Camera is starting","args":[]}
+;?e {"time":1670033330.957973,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode cam.START dispatched to port 0","args":[{"name":"Opcode","value":"cam.START","valueRaw":"cam.START","type":"U32"},{"name":"port","value":"0","valueRaw":0,"type":"I32"}]}
+;?e {"time":1670033330.958026,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode cam.START completed","args":[{"name":"Opcode","value":"cam.START","valueRaw":"cam.START","type":"U32"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; ### Eye swapping
+; Show that the camera stream can be hot swapped from left to right eyes
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 videoStreamer.DISPLAY UDP RIGHT
+;?e {"time":1670032176.391233,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY dispatched to port 12","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"},{"name":"port","value":"12","valueRaw":12,"type":"I32"}]}
+;?e {"time":1670032176.391291,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY completed","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Cleaup
+; Clean up the camera stream. Stop streaming on the UDP side.
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 cam.STOP
+R00:00:00 videoStreamer.DISPLAY NONE LEFT
+R00:00:00 framePipe.CLEAR
+;?e {"time":1670033323.907933,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode cam.STOP dispatched to port 0","args":[{"name":"Opcode","value":"cam.STOP","valueRaw":"cam.STOP","type":"U32"},{"name":"port","value":"0","valueRaw":0,"type":"I32"}]}
+;?e {"time":1670033323.907978,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode cam.STOP completed","args":[{"name":"Opcode","value":"cam.STOP","valueRaw":"cam.STOP","type":"U32"}]}
+;?e {"time":1670033323.957643,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY dispatched to port 12","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"},{"name":"port","value":"12","valueRaw":12,"type":"I32"}]}
+;?e {"time":1670033323.957728,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY completed","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"}]}
+;?e {"time":1670033324.037481,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CLEAR dispatched to port 10","args":[{"name":"Opcode","value":"framePipe.CLEAR","valueRaw":"framePipe.CLEAR","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
+;?e {"time":1670033324.037512,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CLEAR completed","args":[{"name":"Opcode","value":"framePipe.CLEAR","valueRaw":"framePipe.CLEAR","type":"U32"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; Some final checks to show that the frame pipeline is no longer valid
+; (Since it is empty)
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 framePipe.CHECK
+;?e {"time":1670032334.26639,"id":6101,"name":"CheckFailed","component":"framePipe","severity":"WARNING_LO","message":"Frame pipeline checks failed: EMPTY","args":[{"name":"reason","value":"EMPTY","valueRaw":"EMPTY","type":"Heli::FramePipe_CheckFailure"}]}
+;?e {"time":1670032334.266433,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CHECK dispatched to port 10","args":[{"name":"Opcode","value":"framePipe.CHECK","valueRaw":"framePipe.CHECK","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
+;?e {"time":1670032334.266458,"id":303,"name":"OpCodeError","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CHECK completed with error VALIDATION_ERROR","args":[{"name":"Opcode","value":"framePipe.CHECK","valueRaw":"framePipe.CHECK","type":"U32"},{"name":"error","value":"VALIDATION_ERROR","valueRaw":"VALIDATION_ERROR","type":"Fw::CmdResponse"}]}

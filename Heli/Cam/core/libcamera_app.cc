@@ -47,8 +47,8 @@ namespace Heli
     }
 
     LibcameraApp::LibcameraApp()
-    : controls_(controls::controls), last_timestamp_(0),
-      stream(nullptr)
+            : controls_(controls::controls), last_timestamp_(0),
+              stream(nullptr)
     {
         check_camera_stack();
     }
@@ -149,7 +149,7 @@ namespace Heli
         stream = nullptr;
     }
 
-    void LibcameraApp::ConfigureCamera(const CameraConfig& options)
+    void LibcameraApp::ConfigureCamera(const CameraConfig &options)
     {
         controls_.clear();
 
@@ -283,7 +283,10 @@ namespace Heli
 
     libcamera::Stream* LibcameraApp::GetStream(StreamInfo* info) const
     {
-        *info = GetStreamInfo(stream);
+        if (info)
+        {
+            *info = GetStreamInfo(stream);
+        }
         return stream;
     }
 
@@ -349,7 +352,8 @@ namespace Heli
                     buffer_size += plane.length;
                     if (i == buffer->planes().size() - 1 || plane.fd.get() != buffer->planes()[i + 1].fd.get())
                     {
-                        void* memory = mmap(nullptr, buffer_size, PROT_READ | PROT_WRITE, MAP_SHARED, plane.fd.get(), 0);
+                        void* memory = mmap(nullptr, buffer_size, PROT_READ | PROT_WRITE, MAP_SHARED, plane.fd.get(),
+                                            0);
                         std::cout << "mmap(fd=" << plane.fd.get() << ") -> " << (POINTER_CAST) memory << "\n";
                         mapped_buffers_[buffer.get()].push_back(
                                 libcamera::Span<uint8_t>(static_cast<uint8_t*>(memory), buffer_size));

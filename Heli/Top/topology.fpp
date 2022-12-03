@@ -5,6 +5,11 @@ module Heli {
         rg5Hz
     }
 
+    enum Ports_StaticMemory {
+      downlink
+      uplink
+    }
+
     topology Heli {
         # Core components
         instance systemTime
@@ -15,7 +20,10 @@ module Heli {
         instance comm
         instance downlink
         instance uplink
+        instance fileDownlink
         instance fileManager
+        instance fileUplink
+        instance fileUplinkBufferManager
         instance cmdSeq
         instance cmdSeq2
         instance cmdSeq3
@@ -100,24 +108,33 @@ module Heli {
         # --------------------------------
 
         connections Downlink {
-            chanTlm.PktSend -> downlink.comIn
-            # downlink.bufferDeallocate -> fileDownlink.bufferReturn
-            downlink.framedOut -> comm.send
-            eventLogger.PktSend -> downlink.comIn
-            # fileDownlink.bufferSendOut -> downlink.bufferIn
+
+              chanTlm.PktSend -> downlink.comIn
+              eventLogger.PktSend -> downlink.comIn
+              fileDownlink.bufferSendOut -> downlink.bufferIn
+
+              downlink.framedAllocate -> staticMemory.bufferAllocate[Ports_StaticMemory.downlink]
+              downlink.framedOut -> comm.send
+              downlink.bufferDeallocate -> fileDownlink.bufferReturn
+
+              comm.deallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.downlink]
+
         }
 
         connections Uplink {
-            cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
-            comm.$recv -> uplink.framedIn
-            uplink.comOut -> cmdDisp.seqCmdBuff
-        }
 
-        connections StaticMemory {
-            comm.allocate -> staticMemory.bufferAllocate[0]
-            comm.deallocate -> staticMemory.bufferDeallocate[1]
-            downlink.framedAllocate -> staticMemory.bufferAllocate[1]
-            uplink.framedDeallocate -> staticMemory.bufferDeallocate[0]
+              comm.allocate -> staticMemory.bufferAllocate[Ports_StaticMemory.uplink]
+              comm.$recv -> uplink.framedIn
+              uplink.framedDeallocate -> staticMemory.bufferDeallocate[Ports_StaticMemory.uplink]
+
+              uplink.comOut -> cmdDisp.seqCmdBuff
+              cmdDisp.seqCmdStatus -> uplink.cmdResponseIn
+
+              uplink.bufferAllocate -> fileUplinkBufferManager.bufferGetCallee
+              uplink.bufferOut -> fileUplink.bufferSendIn
+              uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
+              fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
+
         }
 
         # --------------------------------

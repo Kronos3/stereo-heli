@@ -89,7 +89,7 @@ namespace Heli
             }
 
             buffer->left_request = msg_l.payload;
-            buffer->right_request = msg_l.payload;
+            buffer->right_request = msg_r.payload;
 
             libcamera::Stream* left_stream = m_left->GetStream();
             libcamera::Stream* right_stream = m_right->GetStream();
