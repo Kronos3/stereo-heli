@@ -166,7 +166,7 @@ namespace Heli
         incdec_out(0, frameId, ReferenceCounter::DECREMENT);
     }
 
-    void VideoStreamer::OPEN_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg& address, U16 portN)
+    void VideoStreamer::NETWORK_SEND_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg& address, U16 portN)
     {
         // Don't delete this until nobody needs it anymore
         Output* old = m_net;
@@ -207,7 +207,7 @@ namespace Heli
                                       VideoStreamer_DisplayLocation where,
                                       CamSelect eye)
     {
-        if (m_eye == CamSelect::BOTH)
+        if (eye == CamSelect::BOTH)
         {
             log_WARNING_LO_EyeNotSupport();
             cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);

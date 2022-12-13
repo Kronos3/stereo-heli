@@ -41,8 +41,8 @@ module Heli {
         # Commands
         # -----------------------------
 
-        @ Stream video over UDP connection
-        async command OPEN(
+        @ Configures where UDP video is sent to
+        async command NETWORK_SEND(
             address: string size 32 @< Address to UDP listener
             portN: U16 @< Port number
             )
