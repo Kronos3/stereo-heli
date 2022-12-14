@@ -384,4 +384,6 @@ module Heli {
         stack size Default.stackSize \
         priority 100
 
+    instance cadre: Cadre base id 10001
+
 }

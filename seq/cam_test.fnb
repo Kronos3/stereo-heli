@@ -69,12 +69,13 @@ R00:00:00 videoStreamer.DISPLAY UDP RIGHT
 R00:00:00 cam.STOP
 R00:00:00 videoStreamer.DISPLAY NONE LEFT
 R00:00:00 framePipe.CLEAR
-;?e {"time":1670033323.907933,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode cam.STOP dispatched to port 0","args":[{"name":"Opcode","value":"cam.STOP","valueRaw":"cam.STOP","type":"U32"},{"name":"port","value":"0","valueRaw":0,"type":"I32"}]}
-;?e {"time":1670033323.907978,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode cam.STOP completed","args":[{"name":"Opcode","value":"cam.STOP","valueRaw":"cam.STOP","type":"U32"}]}
-;?e {"time":1670033323.957643,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY dispatched to port 12","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"},{"name":"port","value":"12","valueRaw":12,"type":"I32"}]}
-;?e {"time":1670033323.957728,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY completed","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"}]}
-;?e {"time":1670033324.037481,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CLEAR dispatched to port 10","args":[{"name":"Opcode","value":"framePipe.CLEAR","valueRaw":"framePipe.CLEAR","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
-;?e {"time":1670033324.037512,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CLEAR completed","args":[{"name":"Opcode","value":"framePipe.CLEAR","valueRaw":"framePipe.CLEAR","type":"U32"}]}
+;?e {"time":1670033609.805875,"id":6005,"name":"CameraStopping","component":"cam","severity":"ACTIVITY_LO","message":"Camera is stopping","args":[]}
+;?e {"time":1670033609.83447,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode cam.STOP dispatched to port 0","args":[{"name":"Opcode","value":"cam.STOP","valueRaw":"cam.STOP","type":"U32"},{"name":"port","value":"0","valueRaw":0,"type":"I32"}]}
+;?e {"time":1670033609.834521,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode cam.STOP completed","args":[{"name":"Opcode","value":"cam.STOP","valueRaw":"cam.STOP","type":"U32"}]}
+;?e {"time":1670033609.902115,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY dispatched to port 12","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"},{"name":"port","value":"12","valueRaw":12,"type":"I32"}]}
+;?e {"time":1670033609.902224,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode videoStreamer.DISPLAY completed","args":[{"name":"Opcode","value":"videoStreamer.DISPLAY","valueRaw":"videoStreamer.DISPLAY","type":"U32"}]}
+;?e {"time":1670033609.979305,"id":301,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CLEAR dispatched to port 10","args":[{"name":"Opcode","value":"framePipe.CLEAR","valueRaw":"framePipe.CLEAR","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
+;?e {"time":1670033609.979339,"id":302,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode framePipe.CLEAR completed","args":[{"name":"Opcode","value":"framePipe.CLEAR","valueRaw":"framePipe.CLEAR","type":"U32"}]}
 ;?s
 ;?= {"language":"markdown","kind":1}
 ; Some final checks to show that the frame pipeline is no longer valid

@@ -43,6 +43,9 @@ module Heli {
         instance videoStreamer
         instance vis
 
+        # UI Development components
+        instance cadre
+
         # ---------------------------------
         # Pattern graph connections
         # ---------------------------------
@@ -108,6 +111,7 @@ module Heli {
         # --------------------------------
 
         connections Downlink {
+              cadre.send -> downlink.comIn
 
               chanTlm.PktSend -> downlink.comIn
               eventLogger.PktSend -> downlink.comIn
