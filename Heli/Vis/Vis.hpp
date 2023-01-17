@@ -17,6 +17,7 @@ namespace Heli
         friend VisStage;
         friend RectifyStage;
         friend StereoStage;
+        friend DepthStage;
     public:
         explicit Vis(const char* componentName);
 
@@ -32,9 +33,11 @@ namespace Heli
         ) override;
 
         void CLEAR_cmdHandler(U32 opCode, U32 cmdSeq) override;
+        void SCALE_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, Heli::Vis_Interpolation interp) override;
         void RECTIFY_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &calibration_file) override;
         void STEREO_cmdHandler(U32 opCode, U32 cmdSeq,
                                Vis_StereoAlgorithm algorithm) override;
+        void DEPTH_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &calibration_file, bool is_rectified) override;
         void COLORMAP_cmdHandler(U32 opCode, U32 cmdSeq, Vis_ColorMap colormap, CamSelect select) override;
 
         std::vector<std::unique_ptr<VisStage>> m_stages;

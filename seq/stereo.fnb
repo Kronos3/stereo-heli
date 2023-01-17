@@ -1,0 +1,72 @@
+;?= {"language":"markdown","kind":1}
+; # Stereo
+; The stereo pipeline occurs in 4 stages:
+; 1. Capture
+; 2. Rectification
+; 3. Disparity matching
+; 4. Depth Projection
+; 
+; From the depth map and the original RGB frame we can create an RGB-D map and create a point cloud with map be registered to the global map. This notebook is not concerned with the SLAM registration and only deals with the disparity and the depth maps simulatenously.
+; 
+; The FSW Vis pipeline stages will perform their processing and place the resultant maps in the right camera frame. The left camera frame will be left untouched so that the RGB map can be generated in the final stage.
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Capture setup
+; First the setup of the frame pipeline to be sourced by `Cam` and be displayed by `VideoStreamer`. Remember, the left frame is the original left image and the right frame is the resultant map.
+; 
+; Send camera streaming to over VLC via the H264 encoder.
+; 
+; Connect to the stream with:
+; ```bash
+; $ vlc -vvv udp://@:5500 :demux=h264
+; ```
+; 
+; > Note: The H264 encoder creates some delay on the stream
+;?s
+;?= {"language":"fprime","kind":2}
+; Camera parameter setup
+R00:00:00 cmdSeq.CS_RUN "/seq/cam001_config.bin" BLOCK
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 videoStreamer.DISPLAY UDP RIGHT  ; Display the resultant map
+R00:00:00 videoStreamer.NETWORK_SEND "192.168.1.220" 5500 ; 
+
+; Build the frame pipeline
+R00:00:00 framePipe.CLEAR
+R00:00:00 framePipe.PUSH VIS DROP_ON_FULL
+R00:00:00 framePipe.PUSH STREAMER NO_REPLY
+R00:00:00 framePipe.CHECK
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Vision Setup
+; The vision pipeline will set up the different processing steps used when passing through the Vis components. As mentioned before we will need to apply the following operations to each frame (left and right) as they come in from the camera:
+; 1. **Rectification**
+;     This step uses a precomputed map on both the left and right frames which is used to account for lens curvature and makes sure that straight lines across both frames will be aligned and straight. This is a requirement of the stereo matching algorithm as it scans along the X axis to look for pixel matches.
+; 2. **Disparity Matching**
+;     This step is the most compute intensive step. The BM and SGBM methods provided by OpenCV involve scanning the right frame for pixel matches from the left frame. Other methods could be implemented using a deep learning U-net though this is not yet supported in FSW.
+; 3. **Depth Projection**
+;     The depth projection step is a linear operation that involves using the calibrated camera extrinsics to map disparity matches to points in 3D space in the camera frame.
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 vis.CLEAR
+R00:00:00 vis.RECTIFY "rectify.dat"
+
+R00:00:00 vis.STEREO_PRE_FILTER_CAP_PRM_SET 29
+R00:00:00 vis.STEREO_BLOCK_SIZE_PRM_SET 5
+R00:00:00 vis.STEREO_MIN_DISPARITY_PRM_SET -25
+R00:00:00 vis.STEREO_NUM_DISPARITIES_PRM_SET 16
+R00:00:00 vis.STEREO_UNIQUENESS_RATIO_PRM_SET 10
+R00:00:00 vis.STEREO_SPECKLE_WINDOW_SIZE_PRM_SET 100
+R00:00:00 vis.STEREO_SPECKLE_RANGE_PRM_SET 15
+
+; Only used for BM algorithm
+R00:00:00 vis.STEREO_BM_TEXTURE_THRESHOLD_PRM_SET 100
+
+R00:00:00 vis.STEREO BLOCK_MATCHING
+R00:00:00 vis.DEPTH "camera_model.dat" TRUE
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Startup
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 cam.START

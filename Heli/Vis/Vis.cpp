@@ -3,16 +3,9 @@
 //
 
 #include <Heli/Vis/Vis.hpp>
-
-#include <opencv2/calib3d.hpp>
 #include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
 
 #include <vector>
-#include <string>
-#include <algorithm>
-#include <iostream>
-#include <iterator>
 
 namespace Heli
 {
@@ -45,6 +38,14 @@ namespace Heli
                       CV_8U,
                       rightFrame.getData(),
                       rightFrame.getInfo().stride);
+
+        for (auto& stage : m_stages)
+        {
+            // Process is performed in-place
+            stage->process(left, right);
+        }
+
+        frameOut_out(0, frameId);
     }
 
     void Vis::CLEAR_cmdHandler(U32 opCode, U32 cmdSeq)
@@ -74,12 +75,11 @@ namespace Heli
         else
         {
             log_WARNING_LO_CalibrationFileFailed(calibration_file);
-            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
     }
 
-    void
-    Vis::STEREO_cmdHandler(U32 opCode, U32 cmdSeq, Heli::Vis_StereoAlgorithm algorithm)
+    void Vis::STEREO_cmdHandler(U32 opCode, U32 cmdSeq, Heli::Vis_StereoAlgorithm algorithm)
     {
         m_stages.emplace_back(new StereoStage(this, algorithm));
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -88,6 +88,36 @@ namespace Heli
     void Vis::COLORMAP_cmdHandler(U32 opCode, U32 cmdSeq, Vis_ColorMap colormap, CamSelect select)
     {
         m_stages.emplace_back(new ColormapStage(colormap, select));
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Vis::DEPTH_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &calibration_file, bool is_rectified)
+    {
+        cv::FileStorage fs;
+        if (fs.open(calibration_file.toChar(), cv::ACCESS_READ))
+        {
+            log_ACTIVITY_LO_CalibrationFileOpened(calibration_file);
+
+            cv::Mat left_k, right_k;
+            fs["leftK"] >> left_k;
+            fs["rightK"] >> right_k;
+
+            m_stages.emplace_back(new DepthStage(
+                    this,
+                    std::move(left_k), std::move(right_k),
+                    is_rectified));
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        }
+        else
+        {
+            log_WARNING_LO_CalibrationFileFailed(calibration_file);
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        }
+    }
+
+    void Vis::SCALE_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, Heli::Vis_Interpolation interp)
+    {
+        m_stages.emplace_back(new ScaleStage(fx, fy, interp));
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }

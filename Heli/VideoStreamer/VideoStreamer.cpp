@@ -15,8 +15,6 @@ namespace Heli
       m_preview(nullptr),
       m_encoder(nullptr),
       m_net(nullptr),
-      m_capture{.requesting=false},
-      tlm_packets_sent(0),
       tlm_total_frames(0),
       m_eye(CamSelect::LEFT)
     {
@@ -122,47 +120,6 @@ namespace Heli
             m_showing = frame;
         }
 
-        // TODO (tumbar)
-#if 0
-        if (m_capture.requesting)
-        {
-            cv::Mat image((I32)frame->info.height,
-                          (I32)frame->info.width,
-                          CV_8U,
-                          frame->span.data(),
-                          frame->info.stride);
-
-            bool result;
-            try
-            {
-                result = cv::imwrite(m_capture.destination.toChar(), image);
-            }
-            catch (const cv::Exception& ex)
-            {
-                Fw::LogStringArg error_str(ex.what());
-                log_WARNING_HI_ImageCaptureEncodeFailed(error_str);
-                result = false;
-            }
-
-            Fw::LogStringArg destination_log(m_capture.destination);
-            if (result)
-            {
-                log_ACTIVITY_HI_ImageCaptured(destination_log);
-            }
-            else
-            {
-                log_WARNING_HI_ImageCaptureSaveFailed(destination_log);
-            }
-
-            // Reply to the command
-            cmdResponse_out(m_capture.opcode, m_capture.cmdSeq,
-                            result ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
-
-            // Clear the capture request
-            m_capture.requesting = false;
-        }
-#endif
-
         incdec_out(0, frameId, ReferenceCounter::DECREMENT);
     }
 
@@ -185,7 +142,7 @@ namespace Heli
         {
             // Even though we need the encoder for video, we can't create it
             // yet because we don't have the stream information, we can wait
-            // for the first from the come in before we set it up
+            // for the first frame the come in before we set it up
         }
 
         // The encoder is no longer referencing the old instance

@@ -51,6 +51,20 @@ module Heli {
         async command CLEAR()
 
         # pipeline stages:
+
+        enum Interpolation {
+            NEAREST, @< nearest neighbor interpolation
+            LINEAR,  @< Bilinear interpolation
+            CUBIC,   @< Bicubic interpolation
+        }
+
+        @ Downsample or upsample image
+        async command SCALE(
+            fx: F32, @< Horizontal axis scaling factor
+            fy: F32, @< Vertical axis scaling factor
+            interp: Interpolation @< Interpolation method
+        )
+
         @ Rectify left and right frames using calibration map
         async command RECTIFY(
             calibration_file: string @< Path to calibration file with XY maps for NAV pair
@@ -62,18 +76,27 @@ module Heli {
             # VULKAN_BLOCK_MATCHING,          @< Vulkan based block matcher (Not implemented yet)
         }
 
-        param STEREO_BM_PRE_FILTER_CAP: I32 default 29
+        param STEREO_PRE_FILTER_CAP: I32 default 29
         param STEREO_BLOCK_SIZE: I32 default 5
         param STEREO_MIN_DISPARITY: I32 default -25
         param STEREO_NUM_DISPARITIES: I32 default 16
-        param STEREO_BM_TEXTURE_THRESHOLD: I32 default 100
-        param STEREO_BM_UNIQUENESS_RATIO: I32 default 10
+        param STEREO_UNIQUENESS_RATIO: I32 default 10
         param STEREO_SPECKLE_WINDOW_SIZE: I32 default 100
         param STEREO_SPECKLE_RANGE: I32 default 15
+
+        param STEREO_BM_TEXTURE_THRESHOLD: I32 default 100
 
         @ Compute disparity between left and right frames, store disparity in LEFT
         async command STEREO(
             algorithm: StereoAlgorithm, @< Stereo matching algorithm
+        )
+
+        param DEPTH_LEFT_MASK_PIX: I32 default 96
+
+        @ Project the disparity map into a depth map using camera extrinsics
+        async command DEPTH(
+            calibration_file: string @< Path to calibration file with camera extrinsic model
+            is_rectified: bool @< Is the model calibrated on rectified images
         )
 
         enum ColorMap {
@@ -106,6 +129,10 @@ module Heli {
             colormap: ColorMap, @< Colormap id
             select: CamSelect   @< Which frame to apply colormap to
         )
+
+        # -----------------------------
+        # Events
+        # -----------------------------
 
         event CalibrationFileOpened(calibrationFile: string) \
             severity activity low \

@@ -5,14 +5,13 @@
 #include <Heli/Top/HeliTopologyAc.hpp>
 #include <getopt.h>
 
-static volatile bool terminate = false;
+static std::atomic<bool> is_alive = true;
 static Heli::TopologyState state;
 
 static void sighandler(int signum)
 {
     (void) signum;
-    Heli::teardown(state);
-    terminate = true;
+    is_alive = false;
 }
 
 static void print_usage(const char* app)
@@ -67,12 +66,21 @@ I32 main(int argc, char* argv[])
 
     Heli::setup(state);
 
-    while (!terminate)
+    if (!Heli::Init::status)
+    {
+        // Initialization failed
+        // Kill FSW
+        is_alive = false;
+    }
+
+    while (!is_alive)
     {
         run_cycle();
     }
 
     Fw::Logger::logMsg("Shutting down...\n");
+    Heli::teardown(state);
+
     Os::Task::delay(1000);
 
     return 0;

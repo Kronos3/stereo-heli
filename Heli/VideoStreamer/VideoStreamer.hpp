@@ -48,15 +48,7 @@ namespace Heli
         Encoder* m_encoder;
         Output* m_net;
 
-        struct {
-            bool requesting;
-            Fw::String destination;
-            U32 opcode;
-            U32 cmdSeq;
-        } m_capture;
-
         Fw::Time m_last_frame;          //!< Last sent frame for calculate frame rate
-        U32 tlm_packets_sent;
         U32 tlm_total_frames;
     };
 }

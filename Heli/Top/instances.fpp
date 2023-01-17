@@ -108,7 +108,7 @@ module Heli {
     {
 
         phase Fpp.ToCpp.Phases.instances """
-        Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "PrmDb.dat");
+        Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "heli_prm.dat");
         """
 
         phase Fpp.ToCpp.Phases.readParameters """
@@ -244,6 +244,36 @@ module Heli {
 
         phase Fpp.ToCpp.Phases.tearDownComponents """
             fileUplinkBufferManager.cleanup();
+        """
+    }
+
+    instance serialBufferManager: Svc.BufferManager base id 0x4500 {
+        phase Fpp.ToCpp.Phases.configConstants """
+        enum {
+            STORE_SIZE = 6000,
+            NUM_BUFFERS = 16,
+            MGR_ID = 400
+        };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+            Svc::BufferManager::BufferBins serialBuffMgrBins;
+            memset(&serialBuffMgrBins, 0, sizeof(serialBuffMgrBins));
+            {
+                using namespace ConfigConstants::serialBufferManager;
+                serialBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
+                serialBuffMgrBins.bins[0].numBuffers = NUM_BUFFERS;
+                serialBufferManager.setup(
+                    MGR_ID,
+                    0,
+                    Allocation::mallocator,
+                    serialBuffMgrBins
+                );
+            }
+        """
+
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+            serialBufferManager.cleanup();
         """
     }
 
@@ -383,6 +413,91 @@ module Heli {
         queue size Default.queueSize \
         stack size Default.stackSize \
         priority 100
+
+    instance fc: Fc base id 6500 \
+        queue size 50 \
+        stack size Default.stackSize \
+        priority 100 \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+            fc.allocate(8);
+        """
+    }
+
+    instance sapp: Sapp base id 6600 \
+        queue size Default.queueSize \
+        stack size Default.stackSize \
+        priority 100
+
+    instance joystick: Joystick base id 6700
+
+    instance serial0: Drv.LinuxSerialDriver base id 8000 \
+      {
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        {
+          // Use serial 2 + 3 (PL011) that don't overlap with BT
+          const bool status = serial0.open("/dev/serial2",
+              Drv::LinuxSerialDriverComponentImpl::BAUD_460K,
+              Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
+              Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+              true
+          );
+          if (!status) {
+            Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
+            Init::status = false;
+          }
+        }
+        """
+
+        phase Fpp.ToCpp.Phases.startTasks """
+        if (Init::status) {
+          serial0.startReadThread();
+        }
+        else {
+          Fw::Logger::logMsg("[ERROR] Initialization failed; not starting UART driver\\n");
+        }
+        """
+
+        phase Fpp.ToCpp.Phases.stopTasks """
+        serial0.quitReadThread();
+        """
+
+      }
+
+    instance serial1: Drv.LinuxSerialDriver base id 8100 \
+      {
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        {
+          // Use serial 2 + 3 (PL011) that don't overlap with BT
+          const bool status = serial1.open("/dev/serial3",
+              Drv::LinuxSerialDriverComponentImpl::BAUD_460K,
+              Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
+              Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+              true
+          );
+          if (!status) {
+            Fw::Logger::logMsg("[ERROR] Could not open UART driver\\n");
+            Init::status = false;
+          }
+        }
+        """
+
+        phase Fpp.ToCpp.Phases.startTasks """
+        if (Init::status) {
+          serial1.startReadThread();
+        }
+        else {
+          Fw::Logger::logMsg("[ERROR] Initialization failed; not starting UART driver\\n");
+        }
+        """
+
+        phase Fpp.ToCpp.Phases.stopTasks """
+        serial1.quitReadThread();
+        """
+
+      }
 
     instance cadre: Cadre base id 10001
 

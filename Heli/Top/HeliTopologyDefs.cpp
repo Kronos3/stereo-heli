@@ -10,4 +10,10 @@ namespace Heli
     {
         Fw::MallocAllocator mallocator;
     }
+
+
+    namespace Init
+    {
+        bool status = true;
+    }
 }

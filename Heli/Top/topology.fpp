@@ -36,12 +36,20 @@ module Heli {
         instance rg1Hz
         instance rg5Hz
 
-        # Rpi components
+        # Heli components
         instance cam
         instance framePipe
         instance display
         instance videoStreamer
         instance vis
+        instance serialBufferManager
+        instance fc
+        instance sapp
+        instance joystick
+
+        # Serial lines
+        instance serial0
+        instance serial1
 
         # UI Development components
         instance cadre
@@ -72,6 +80,9 @@ module Heli {
             rg1Hz.RateGroupMemberOut[2] -> cmdSeq2.schedIn
             rg1Hz.RateGroupMemberOut[3] -> cmdSeq3.schedIn
             rg1Hz.RateGroupMemberOut[4] -> cmdSeq4.schedIn
+
+            # Rate group 5 Hz
+            rg5Hz.RateGroupMemberOut[0] -> fc.schedIn
         }
 
         connections Sequencer {
@@ -104,6 +115,32 @@ module Heli {
             framePipe.frame[0] -> videoStreamer.frame
             framePipe.frame[1] -> vis.frame
             vis.frameOut -> framePipe.frameIn
+        }
+
+        connections Fc {
+            # Get buffers from the manager
+            fc.allocate -> serialBufferManager.bufferGetCallee
+
+            # Give the buffers to the serial driver for recv
+            fc.readBufferSend[0] -> serial0.readBufferSend
+            fc.readBufferSend[1] -> serial1.readBufferSend
+
+            # Give the buffers back to the manager
+            fc.deallocate ->  serialBufferManager.bufferSendIn
+
+            fc.serialSend[0] -> serial0.serialSend
+            fc.serialSend[1] -> serial1.serialSend
+            serial0.serialRecv -> fc.serialRecv[0]
+            serial1.serialRecv -> fc.serialRecv[1]
+        }
+
+        # Navigation and localization related
+        connections Nav {
+            sapp.fcMsg -> fc.msgIn[0]
+            fc.msgReply[0] -> sapp.fcReply
+
+            # No reply needed for joystick commands
+            joystick.fcMsg -> fc.msgIn[1]
         }
 
         # --------------------------------

@@ -27,6 +27,16 @@ constant HealthPingPorts = 25
 @ Used for broadcasting completed file downlinks
 constant FileDownCompletePorts = 1
 
+@ Used for sending and receiving replies from the Fc
+@ 1. Status poll
+@ 2. Remote control
+@ 3. Vision pose estimate
+@ 4. Navigation commanding
+constant FcMessagePorts = 4
+
+@ Increases the MSP bandwidth for the Fc
+constant FcSerialLines = 2
+
 # ----------------------------------------------------------------------
 # Hub connections. Connections on all deployments should mirror these settings.
 # ----------------------------------------------------------------------
