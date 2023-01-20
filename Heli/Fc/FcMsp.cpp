@@ -31,7 +31,7 @@ namespace Heli
             m_buffer[portNum].serialize(serBuffer.getData(), serBuffer.getSize());
 
             // Ping our main thread to let them know new data is ready
-            dataReady_internalInterfaceInvoke(portNum);
+            data_ready(portNum);
         }
 
         // Return the read buffer to the uart driver
@@ -43,7 +43,7 @@ namespace Heli
         return;\
 } while (0)
 
-    void Fc::dataReady_internalInterfaceHandler(I32 serialChannel)
+    void Fc::data_ready(I32 serialChannel)
     {
         while(true)
         {

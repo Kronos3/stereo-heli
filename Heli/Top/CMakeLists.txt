@@ -27,8 +27,8 @@ target_link_libraries(${EXECUTABLE_NAME} PUBLIC
 #        opencv_imgproc
 #        opencv_calib3d
 #        opencv_core
-        ${HELI_LIB_PATH}/libcamera.so.0.0.1
-        ${HELI_LIB_PATH}/libcamera-base.so.0.0.1
+        ${HELI_LIB_PATH}/libcamera.so.0.0.2
+        ${HELI_LIB_PATH}/libcamera-base.so.0.0.2
         ${HELI_LIB_PATH}/libdrm.so
 )
 

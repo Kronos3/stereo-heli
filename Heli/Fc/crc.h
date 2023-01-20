@@ -17,6 +17,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 uint16_t crc16_ccitt(uint16_t crc, unsigned char a);
@@ -31,3 +35,7 @@ uint8_t crc8(uint8_t crc, uint8_t a);
 uint8_t crc8_update(uint8_t crc, const void *data, uint32_t length);
 
 uint8_t crc8_sum_update(uint8_t crc, const void *data, uint32_t length);
+
+#ifdef __cplusplus
+};
+#endif

@@ -38,6 +38,7 @@ namespace Heli {
         MSP_TIMEOUT_MS = 500,
 
         INAV_MSP_RC_CHANNEL = 8,
+        FC_NUM_BUFFERS = 8
     };
 }
 

@@ -73,7 +73,7 @@ I32 main(int argc, char* argv[])
         is_alive = false;
     }
 
-    while (!is_alive)
+    while (is_alive)
     {
         run_cycle();
     }

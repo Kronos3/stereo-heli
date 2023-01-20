@@ -71,7 +71,8 @@ module Heli {
         output port msgReply: [FcMessagePorts] FcReply
 
         @ Service the waiting Msp messages to detect reply timeout
-        async input port schedIn: Svc.Sched
+        @ Drop excess packets since this will flush new data to serial
+        async input port schedIn: Svc.Sched drop
 
         # -----------------------------
         # Serial ports
@@ -88,7 +89,7 @@ module Heli {
         output port serialSend: [FcSerialLines] Drv.SerialWrite
 
         @ receive a buffer from the UART - one of the above
-        sync input port serialRecv: [FcSerialLines] Drv.SerialRead
+        async input port serialRecv: [FcSerialLines] Drv.SerialRead
 
         # -----------------------------
         # Message ports
@@ -97,9 +98,6 @@ module Heli {
         @ Internal interface to queue MSP coming from the Fc
         internal port mspRecv(serialChannel: I32, msp: MspMessage) \
           priority 1
-
-        @ Check the internal ring buffer and process all full frames
-        internal port dataReady(serialChannel: I32) priority 2
 
         internal port mspReply(reply: MspMessage, ctx: I32, status: Fc.ReplyStatus) priority 3
 

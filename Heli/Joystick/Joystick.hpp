@@ -11,7 +11,6 @@
 
 #include <Heli/Joystick/Joystick_AxisEnumAc.hpp>
 #include <Heli/Joystick/Joystick_ButtonEnumAc.hpp>
-#include <Heli/Joystick/Joystick_ControlEnumAc.hpp>
 
 namespace Heli
 {

@@ -1,0 +1,10 @@
+;?= {"language":"markdown","kind":1}
+; # Fc (Flight Controller)
+; 
+; This notebook will attempt to gain access to the flight controller
+; The flight controller is communicating to the Rpi via two serial MSP
+; lines. Both lines are used in tandem to provide improved bandwitch during
+; high load times such as joystick control.
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 fc.RESET

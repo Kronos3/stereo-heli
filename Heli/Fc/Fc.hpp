@@ -38,7 +38,7 @@ namespace Heli
     PRIVATE:
         void serialRecv_handler(NATIVE_INT_TYPE portNum, Fw::Buffer &serBuffer, Drv::SerialReadStatus &status) override;
         void mspRecv_internalInterfaceHandler(I32 serialChannel, const Heli::MspMessage& msg) override;
-        void dataReady_internalInterfaceHandler(I32 serialChannel) override;
+        void data_ready(I32 serialChannel);
 
         void schedIn_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) override;
 

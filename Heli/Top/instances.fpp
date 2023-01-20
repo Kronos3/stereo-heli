@@ -417,12 +417,7 @@ module Heli {
     instance fc: Fc base id 6500 \
         queue size 50 \
         stack size Default.stackSize \
-        priority 100 \
-    {
-        phase Fpp.ToCpp.Phases.configComponents """
-            fc.allocate(8);
-        """
-    }
+        priority 100
 
     instance sapp: Sapp base id 6600 \
         queue size Default.queueSize \
@@ -437,7 +432,7 @@ module Heli {
         phase Fpp.ToCpp.Phases.configComponents """
         {
           // Use serial 2 + 3 (PL011) that don't overlap with BT
-          const bool status = serial0.open("/dev/serial2",
+          const bool status = serial0.open("/dev/ttyAMA1",
               Drv::LinuxSerialDriverComponentImpl::BAUD_460K,
               Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
               Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
@@ -471,7 +466,7 @@ module Heli {
         phase Fpp.ToCpp.Phases.configComponents """
         {
           // Use serial 2 + 3 (PL011) that don't overlap with BT
-          const bool status = serial1.open("/dev/serial3",
+          const bool status = serial1.open("/dev/ttyAMA2",
               Drv::LinuxSerialDriverComponentImpl::BAUD_460K,
               Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
               Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,

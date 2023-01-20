@@ -152,4 +152,24 @@ namespace Heli
 
         m_quality = quality;
     }
+
+    void Sapp::START_cmdHandler(FwOpcodeType opCode, U32 cmdSeq)
+    {
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::INVALID_OPCODE);
+    }
+
+    void Sapp::STOP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq)
+    {
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::INVALID_OPCODE);
+    }
+
+    void Sapp::SET_ATTITUDE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, F32 roll_deg, F32 pitch_deg, F32 yaw_deg)
+    {
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::INVALID_OPCODE);
+    }
+
+    void Sapp::SET_POSITION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, F32 x, F32 y, F32 z)
+    {
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::INVALID_OPCODE);
+    }
 }

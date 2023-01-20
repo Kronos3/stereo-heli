@@ -30,7 +30,7 @@ namespace Heli
                 buff = allocate_out(0, MAX_PACKET_SIZE);
                 FW_ASSERT(buff.getSize() >= MAX_PACKET_SIZE, buff.getSize(), MAX_PACKET_SIZE);
                 FW_ASSERT(buff.getData());
-                readBufferSend_out(0, buff);
+                readBufferSend_out(lineNum, buff);
             }
         }
     }
@@ -55,6 +55,7 @@ namespace Heli
 
     void Fc::preamble()
     {
+        allocate(FcCfg::FC_NUM_BUFFERS);
         reset();
     }
 
