@@ -172,17 +172,15 @@ namespace Heli
             return;
         }
 
+        log_ACTIVITY_LO_FcStateChange(state);
         m_state = state;
+
         if (m_command_awaiting)
         {
-            if (m_state == Fc_State::OK)
-            {
-                cmdResponse_out(m_opcode, m_cmdSeq, Fw::CmdResponse::OK);
-            }
-            else
-            {
-                cmdResponse_out(m_opcode, m_cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-            }
+            cmdResponse_out(m_opcode, m_cmdSeq,
+                            (m_state == Fc_State::OK)
+                                ? Fw::CmdResponse::OK
+                                : Fw::CmdResponse::EXECUTION_ERROR);
         }
 
         m_command_awaiting = false;

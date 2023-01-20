@@ -14,7 +14,7 @@ namespace Heli
     void Fc::ReplyAwaiter::reset()
     {
         inUse = false;
-        opcode = 0;
+        opcode = Fc_MspMessageId::MSP_MSG_NONE;
         ctx = 0;
         action = Fc_ReplyAction::REPLY;
     }
@@ -101,6 +101,7 @@ namespace Heli
             if (!bucket.inUse)
             {
                 bucket = handler;
+                bucket.inUse = true;
 
                 // Mark send time of packet
                 // Used for timeout detection
@@ -192,6 +193,7 @@ namespace Heli
         {
             if (!iter.inUse)
             {
+                m_await_mut.unlock();
                 return true;
             }
         }
@@ -204,15 +206,19 @@ namespace Heli
     {
         // Check if any of the awaiting messages have timed out
         Fw::Time current_time = getTime();
-        Fw::Time timeout = Fw::Time(0, MSP_TIMEOUT_MS * 1000);
 
         for (I32 i = 0; i < NUM_SERIAL_LINES; i++)
         {
             auto& iter = m_awaiting[i];
-            if (iter.inUse && Fw::Time::sub(current_time, iter.timestamp) > timeout)
+            if (iter.inUse)
             {
-                log_WARNING_LO_MspMessageTimeout(i, iter.opcode);
-                reply(iter, MspMessage(iter.opcode), Fc_ReplyStatus::TIMEOUT);
+                Fw::Time diff = Fw::Time::sub(current_time, iter.timestamp);
+                printf("%d.%06d\n", diff.getSeconds(), diff.getUSeconds());
+                if (diff.getSeconds() > 0)
+                {
+                    log_WARNING_LO_MspMessageTimeout(i, iter.opcode);
+                    reply(iter, MspMessage(iter.opcode), Fc_ReplyStatus::TIMEOUT);
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ module Heli {
 
         # Only the relevant messages are implemented
         enum MspMessageId {
+            MSP_MSG_NONE = 0,
             MSP_API_VERSION = 1,
             MSP_FC_VARIANT = 2,
             MSP_FC_VERSION = 3,
@@ -191,6 +192,10 @@ module Heli {
         event StateNotGood(reason: State) \
             severity warning high \
             format "Fc state is not ready to send/receive: {}"
+
+        event FcStateChange(state: State) \
+            severity activity low \
+            format "Fc state has changed to {}"
 
         event Reset() \
             severity activity high \

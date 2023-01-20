@@ -22,10 +22,9 @@ namespace Heli
 #define PACKED(name, contents) struct name {contents} __attribute__((packed))
 
 
-    class MspMessage : public Fw::Buffer
+    class MspMessage : public Fw::Serializable
     {
     public:
-
         enum
         {
             SERIALIZED_SIZE = MAX_PAYLOAD_SIZE + sizeof(U16) + sizeof(U16)  // size of buffer + storage of size word
@@ -34,7 +33,7 @@ namespace Heli
         MspMessage();
         explicit MspMessage(const Heli::Fc_MspMessageId& function);
         MspMessage(const MspMessage &other);
-        ~MspMessage() override;
+        ~MspMessage();
 
         MspMessage &operator=(const MspMessage &other);
 

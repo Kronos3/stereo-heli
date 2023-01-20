@@ -12,20 +12,20 @@
 namespace Heli
 {
     MspMessage::MspMessage(const Heli::Fc_MspMessageId& function)
-    : Fw::Buffer(m_message, sizeof(m_message)), m_message{}
+    : m_message{}
     {
         initialize();
         set_function(function);
     }
 
     MspMessage::MspMessage()
-    : Fw::Buffer(m_message, sizeof(m_message)), m_message{}
+    : m_message{}
     {
         initialize();
     }
 
     MspMessage::MspMessage(const MspMessage &other)
-    : Fw::Buffer(m_message, sizeof(m_message)), m_message{}
+    : m_message{}
     {
         std::copy_n(other.m_message, other.get_payload_size() + 9, m_message);
     }
@@ -57,22 +57,15 @@ namespace Heli
         return m_message;
     }
 
-#define SER(x) do { auto stat = (x); if (stat != Fw::FW_SERIALIZE_OK) return stat; } while (0)
-
     Fw::SerializeStatus MspMessage::serialize(Fw::SerializeBufferBase &buffer) const
     {
-        SER(buffer.serialize(m_message, get_payload_size() + FcCfg::MSP_OVERHEAD, true));
-        return Fw::FW_SERIALIZE_OK;
+        return buffer.serialize(m_message, get_payload_size() + FcCfg::MSP_OVERHEAD, false);
     }
 
     Fw::SerializeStatus MspMessage::deserialize(Fw::SerializeBufferBase &buffer)
     {
-        if (buffer.getBuffAddr()[0] != '$')
-        {
-            return Fw::FW_SERIALIZE_FORMAT_ERROR;
-        }
-
-        return Fw::FW_SERIALIZE_OK;
+        NATIVE_UINT_TYPE length = get_payload_size() + FcCfg::MSP_OVERHEAD;
+        return buffer.deserialize(m_message, length, false);
     }
 
     void MspMessage::initialize()
@@ -143,7 +136,7 @@ namespace Heli
 
     U8 MspMessage::v2_crc() const
     {
-        return crc8_dvb_s2_update(0, &m_message[3], get_payload_size() + 5);
+        return crc8_dvb_s2_update(0, m_message + 3, get_payload_size() + 5);
     }
 
     U8 MspMessage::v1_crc() const
