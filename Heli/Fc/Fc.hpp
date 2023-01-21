@@ -43,6 +43,9 @@ namespace Heli
         void schedIn_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) override;
 
         void RESET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) override;
+        void DISABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 uart) override;
+        void ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 uart) override;
+        void GET_LINES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) override;
 
         void msgIn_handler(NATIVE_INT_TYPE portNum, Heli::MspMessage &msg, I32 ctx, const Heli::Fc_ReplyAction &reply) override;
         void mspReply_internalInterfaceHandler(const Heli::MspMessage &reply, I32 ctx, const Heli::Fc_ReplyStatus &status) override;
@@ -114,6 +117,7 @@ namespace Heli
         // Able to await messages from multiple serial lines at once
         Os::Mutex m_await_mut;
         ReplyAwaiter m_awaiting[NUM_SERIAL_LINES];
+        bool lineEnabled[NUM_SERIAL_LINES];
 
         Fc_State m_state;
 

@@ -98,7 +98,7 @@ namespace Heli
         for (I32 i = 0; i < FW_NUM_ARRAY_ELEMENTS(m_awaiting); i++)
         {
             auto &bucket = m_awaiting[i];
-            if (!bucket.inUse)
+            if (lineEnabled[i] && !bucket.inUse)
             {
                 bucket = handler;
                 bucket.inUse = true;
@@ -189,9 +189,10 @@ namespace Heli
     bool Fc::has_open_lines()
     {
         m_await_mut.lock();
-        for (const auto &iter: m_awaiting)
+        for (I32 i = 0; i < NUM_SERIAL_LINES; i++)
         {
-            if (!iter.inUse)
+            const auto &iter = m_awaiting[i];
+            if (lineEnabled[i] && !iter.inUse)
             {
                 m_await_mut.unlock();
                 return true;

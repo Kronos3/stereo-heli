@@ -140,9 +140,34 @@ module Heli {
         @ Reset the Fc state and attempt to re-establish MSP connection to Fc
         async command RESET()
 
+        @ Enable a single uart line for MSP transmission
+        async command ENABLE(
+            uart: U8 @< Uart line to enable
+        )
+
+        @ Disable a single uart line for MSP transmission
+        async command DISABLE(
+            uart: U8 @< Uart line to disable
+        )
+
+        @ Dump the uart line status to EVRs
+        async command GET_LINES()
+
         # -----------------------------
         # Events
         # -----------------------------
+
+        event DisableUart(line: U8) \
+            severity activity high \
+            format "UART line {} is disabled"
+
+        event EnableUart(line: U8) \
+            severity activity high \
+            format "UART line {} is enabled"
+
+        event InvalidUartLine(line: U8, numLines: U8) \
+            severity warning low \
+            format "Uart line {} is not valid, only {} available"
 
         event ErrorResponse(function: MspMessageId) \
             severity warning low \

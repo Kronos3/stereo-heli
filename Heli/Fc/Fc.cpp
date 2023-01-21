@@ -10,8 +10,10 @@ namespace Heli
             : FcComponentBase(componentName),
               m_buffer{},
               m_cmdSeq(0), m_opcode(0), m_command_awaiting(false),
-              m_state(Fc_State::NOT_CONNECTED)
+              m_state(Fc_State::NOT_CONNECTED),
+              lineEnabled{}
     {
+        memset(&lineEnabled, true, sizeof(lineEnabled));
     }
 
     void Fc::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
@@ -165,5 +167,58 @@ namespace Heli
         m_command_awaiting = false;
         m_opcode = 0;
         m_cmdSeq = 0;
+    }
+
+    void Fc::DISABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 uart)
+    {
+        if (uart >= NUM_SERIAL_LINES)
+        {
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+            return;
+        }
+
+        log_ACTIVITY_HI_DisableUart(uart);
+
+        m_send_mut.lock();
+        lineEnabled[uart] = false;
+        m_send_mut.unlock();
+
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Fc::ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 uart)
+    {
+        if (uart >= NUM_SERIAL_LINES)
+        {
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+            return;
+        }
+
+        log_ACTIVITY_HI_EnableUart(uart);
+
+        m_send_mut.lock();
+        lineEnabled[uart] = true;
+        m_send_mut.unlock();
+
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Fc::GET_LINES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq)
+    {
+        m_send_mut.lock();
+        for (I32 i = 0; i < NUM_SERIAL_LINES; i++)
+        {
+            if (lineEnabled[i])
+            {
+                log_ACTIVITY_HI_EnableUart(i);
+            }
+            else
+            {
+                log_ACTIVITY_HI_DisableUart(i);
+            }
+        }
+        m_send_mut.unlock();
+
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }

@@ -69,7 +69,7 @@ module Heli {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        rg5Hz.configure(
+        rg10Hz.configure(
             ConfigObjects::rg10Hz::context,
             FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg10Hz::context)
         );
@@ -97,7 +97,7 @@ module Heli {
         enum {
             TIMEOUT = 1000,
             COOLDOWN = 1000,
-            CYCLE_TIME = 1000,
+            CYCLE_TIME = 100,
             FILE_QUEUE_DEPTH = 10
         };
         """
@@ -454,7 +454,7 @@ module Heli {
         {
           // Use serial 2 + 3 (PL011) that don't overlap with BT
           const bool status = serial0.open("/dev/ttyAMA1",
-              Drv::LinuxSerialDriverComponentImpl::BAUD_460K,
+              Drv::LinuxSerialDriverComponentImpl::BAUD_115K,
               Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
               Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
               true
@@ -488,7 +488,7 @@ module Heli {
         {
           // Use serial 2 + 3 (PL011) that don't overlap with BT
           const bool status = serial1.open("/dev/ttyAMA2",
-              Drv::LinuxSerialDriverComponentImpl::BAUD_460K,
+              Drv::LinuxSerialDriverComponentImpl::BAUD_115K,
               Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
               Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
               true
