@@ -13,10 +13,12 @@ module Heli {
     # Active component instances
     # ----------------------------------------------------------------------
 
-    instance blockDrv: Drv.BlockDriver base id 100 \
-        queue size Default.queueSize \
-        stack size Default.stackSize \
-        priority 140
+    instance linuxTimer: Svc.LinuxTimer base id 100 \
+    {
+        phase Fpp.ToCpp.Phases.stopTasks """
+        linuxTimer.quit();
+        """
+    }
 
     instance rg1Hz: Svc.ActiveRateGroup base id 200 \
         queue size Default.queueSize \
@@ -56,7 +58,26 @@ module Heli {
 
     }
 
-    instance cmdDisp: Svc.CommandDispatcher base id 300 \
+    instance rg10Hz: Svc.ActiveRateGroup base id 300 \
+        queue size Default.queueSize \
+        stack size Default.stackSize \
+        priority 120 \
+    {
+
+        phase Fpp.ToCpp.Phases.configObjects """
+        NATIVE_INT_TYPE context[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        rg5Hz.configure(
+            ConfigObjects::rg10Hz::context,
+            FW_NUM_ARRAY_ELEMENTS(ConfigObjects::rg10Hz::context)
+        );
+    """
+
+    }
+
+    instance cmdDisp: Svc.CommandDispatcher base id 400 \
         queue size 20 \
         stack size Default.stackSize \
         priority 101
@@ -197,7 +218,7 @@ module Heli {
     {
 
         phase Fpp.ToCpp.Phases.configObjects """
-        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 5, 1 };
+        NATIVE_INT_TYPE rgDivs[Svc::RateGroupDriver::DIVIDER_SIZE] = { 10, 2, 1 };
         """
 
         phase Fpp.ToCpp.Phases.configComponents """

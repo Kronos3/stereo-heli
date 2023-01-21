@@ -3,6 +3,7 @@ module Heli {
     enum Port_RateGroups {
         rg1Hz
         rg5Hz
+        rg10Hz
     }
 
     enum Ports_StaticMemory {
@@ -31,10 +32,11 @@ module Heli {
         instance staticMemory
 
         # Rate groups
-        instance blockDrv
+        instance linuxTimer
         instance rgDriver
         instance rg1Hz
         instance rg5Hz
+        instance rg10Hz
 
         # Heli components
         instance cam
@@ -70,11 +72,10 @@ module Heli {
         # ---------------------------------
 
         connections RateGroups {
-            blockDrv.CycleOut -> rgDriver.CycleIn
+            linuxTimer.CycleOut -> rgDriver.CycleIn
 
             # Rate group 1Hz
             rgDriver.CycleOut[Port_RateGroups.rg1Hz] -> rg1Hz.CycleIn
-            rgDriver.CycleOut[Port_RateGroups.rg5Hz] -> rg5Hz.CycleIn
             rg1Hz.RateGroupMemberOut[0] -> chanTlm.Run
             rg1Hz.RateGroupMemberOut[1] -> cmdSeq.schedIn
             rg1Hz.RateGroupMemberOut[2] -> cmdSeq2.schedIn
@@ -82,7 +83,12 @@ module Heli {
             rg1Hz.RateGroupMemberOut[4] -> cmdSeq4.schedIn
 
             # Rate group 5 Hz
+            rgDriver.CycleOut[Port_RateGroups.rg5Hz] -> rg5Hz.CycleIn
             rg5Hz.RateGroupMemberOut[0] -> fc.schedIn
+
+            # Rate group 10 Hz
+            rgDriver.CycleOut[Port_RateGroups.rg10Hz] -> rg10Hz.CycleIn
+            rg10Hz.RateGroupMemberOut[0] -> fileDownlink.Run
         }
 
         connections Sequencer {

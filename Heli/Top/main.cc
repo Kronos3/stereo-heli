@@ -11,7 +11,7 @@ static Heli::TopologyState state;
 static void sighandler(int signum)
 {
     (void) signum;
-    is_alive = false;
+    Heli::linuxTimer.quit();
 }
 
 static void print_usage(const char* app)
@@ -19,13 +19,6 @@ static void print_usage(const char* app)
     printf("Usage: ./%s [options]\n"
            "  -p\tport_number\n"
            "  -a\thostname/IP address\n", app);
-}
-
-static void run_cycle()
-{
-    // call interrupt to emulate a clock
-    Heli::blockDrv.callIsr();
-    Os::Task::delay(200); // 5Hz
 }
 
 I32 main(int argc, char* argv[])
@@ -66,22 +59,16 @@ I32 main(int argc, char* argv[])
 
     Heli::setup(state);
 
-    if (!Heli::Init::status)
+    // Only run the FSW if initialization was successful
+    // Otherwise shutdown immediately
+    if (Heli::Init::status)
     {
-        // Initialization failed
-        // Kill FSW
-        is_alive = false;
-    }
-
-    while (is_alive)
-    {
-        run_cycle();
+        Heli::linuxTimer.startTimer(100);
     }
 
     Fw::Logger::logMsg("Shutting down...\n");
     Heli::teardown(state);
 
     Os::Task::delay(1000);
-
     return 0;
 }

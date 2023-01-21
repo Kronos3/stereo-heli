@@ -35,23 +35,6 @@ namespace Heli
         }
     }
 
-    void Fc::mspReply_internalInterfaceHandler(const MspMessage &reply, I32 ctx, const Fc_ReplyStatus &status)
-    {
-        switch (m_state.e)
-        {
-            case Fc_State::NOT_CONNECTED:
-                sm_not_connected(reply, ctx, status);
-                break;
-            case Fc_State::OK:
-                sm_ok(reply, ctx, status);
-                break;
-            case Fc_State::BAD_SERIAL:
-            case Fc_State::BAD_API_VERSION:
-            case Fc_State::BAD_FIRMWARE_IDENT:
-                // Ignore all message replies
-                break;
-        }
-    }
 
     void Fc::preamble()
     {
@@ -80,7 +63,7 @@ namespace Heli
     // Just make sure you are compiling to a LE target
 #endif
 
-    void Fc::sm_not_connected(const MspMessage &reply, I32 ctx, const Fc_ReplyStatus &status)
+    void Fc::mspReply_internalInterfaceHandler(const MspMessage &reply, I32 ctx, const Fc_ReplyStatus &status)
     {
         if (status != Fc_ReplyStatus::OK)
         {
@@ -151,11 +134,6 @@ namespace Heli
         }
     }
 
-    void Fc::sm_ok(const MspMessage &reply, I32 ctx, const Fc_ReplyStatus &status)
-    {
-
-    }
-
     void Fc::RESET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq)
     {
         m_opcode = opCode;
@@ -169,6 +147,7 @@ namespace Heli
         if (state == Fc_State::NOT_CONNECTED)
         {
             // This is not a command finisher state
+            m_state = Fc_State::NOT_CONNECTED;
             return;
         }
 

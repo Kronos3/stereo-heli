@@ -102,10 +102,6 @@ namespace Heli
         void preamble() override;
         void reset();
 
-        // State machine reply handlers
-        void sm_not_connected(const MspMessage &reply, I32 ctx, const Fc_ReplyStatus &status);
-        void sm_ok(const MspMessage &reply, I32 ctx, const Fc_ReplyStatus &status);
-
         bool m_command_awaiting;
         FwOpcodeType m_opcode;
         U32 m_cmdSeq;

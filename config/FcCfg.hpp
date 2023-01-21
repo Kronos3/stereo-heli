@@ -35,7 +35,7 @@ namespace Heli {
         // We can hold up to 20 messages in the Fc msg queue
         QUEUE_MSG_LENGTH = 20,
 
-        MSP_TIMEOUT_MS = 500,
+        MSP_TIMEOUT_S = 1,
 
         INAV_MSP_RC_CHANNEL = 8,
         FC_NUM_BUFFERS = 8

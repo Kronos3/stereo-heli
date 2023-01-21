@@ -210,15 +210,10 @@ namespace Heli
         for (I32 i = 0; i < NUM_SERIAL_LINES; i++)
         {
             auto& iter = m_awaiting[i];
-            if (iter.inUse)
+            if (iter.inUse && Fw::Time::sub(current_time, iter.timestamp).getSeconds() >= MSP_TIMEOUT_S)
             {
-                Fw::Time diff = Fw::Time::sub(current_time, iter.timestamp);
-                printf("%d.%06d\n", diff.getSeconds(), diff.getUSeconds());
-                if (diff.getSeconds() > 0)
-                {
-                    log_WARNING_LO_MspMessageTimeout(i, iter.opcode);
-                    reply(iter, MspMessage(iter.opcode), Fc_ReplyStatus::TIMEOUT);
-                }
+                log_WARNING_LO_MspMessageTimeout(i, iter.opcode);
+                reply(iter, MspMessage(iter.opcode), Fc_ReplyStatus::TIMEOUT);
             }
         }
     }
