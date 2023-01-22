@@ -37,10 +37,7 @@ namespace Heli
 
         MspMessage &operator=(const MspMessage &other);
 
-        NATIVE_UINT_TYPE getBuffCapacity() const; // !< returns capacity, not current size, of buffer
-        U8* getBuffAddr();
-
-        const U8* getBuffAddr() const;
+        Fw::Buffer& get_buffer() const;
 
         Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;
         Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;
@@ -102,6 +99,7 @@ namespace Heli
         void write(U32 offset, I32 element);
 
     PRIVATE:
+        mutable Fw::Buffer m_buf;
 
         void initialize();
 

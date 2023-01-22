@@ -82,6 +82,7 @@ namespace Heli
 
         void reply(ReplyAwaiter& awaiter, const MspMessage& reply, const Fc_ReplyStatus& status);
         bool has_open_lines();
+        void ping_queue();
 
     PRIVATE:
 

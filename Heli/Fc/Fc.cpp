@@ -200,6 +200,9 @@ namespace Heli
         lineEnabled[uart] = true;
         m_send_mut.unlock();
 
+        // A new line possibly opened up, tell the queue about it
+        ping_queue();
+
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
@@ -220,5 +223,20 @@ namespace Heli
         m_send_mut.unlock();
 
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Fc::ping_queue()
+    {
+        m_send_mut.lock();
+
+        // Send the next available message
+        // If we are out of messages, don't do anything
+        if (!m_queue.empty() && has_open_lines())
+        {
+            auto pkt = m_queue.pop();
+            send_message(pkt.msg, pkt.port, pkt.ctx, pkt.reply);
+        }
+
+        m_send_mut.unlock();
     }
 }

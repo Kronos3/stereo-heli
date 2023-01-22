@@ -95,7 +95,7 @@ namespace Heli
         m_await_mut.lock();
 
         bool message_sent = false;
-        for (I32 i = 0; i < FW_NUM_ARRAY_ELEMENTS(m_awaiting); i++)
+        for (I32 i = 0; i < NUM_SERIAL_LINES; i++)
         {
             auto &bucket = m_awaiting[i];
             if (lineEnabled[i] && !bucket.inUse)
@@ -108,7 +108,7 @@ namespace Heli
                 bucket.timestamp = getTime();
 
                 // Send the message out on the correct serial line
-                serialSend_out(i, (Fw::Buffer &) msg);
+                serialSend_out(i, msg.get_buffer());
 
                 message_sent = true;
                 break;
@@ -173,17 +173,7 @@ namespace Heli
         awaiter.reset();
         m_await_mut.unlock();
 
-        m_send_mut.lock();
-
-        // Send the next available message
-        // If we are out of messages, don't do anything
-        if (!m_queue.empty())
-        {
-            auto pkt = m_queue.pop();
-            send_message(pkt.msg, pkt.port, pkt.ctx, pkt.reply);
-        }
-
-        m_send_mut.unlock();
+        ping_queue();
     }
 
     bool Fc::has_open_lines()

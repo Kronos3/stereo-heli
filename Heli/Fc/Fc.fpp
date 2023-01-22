@@ -186,9 +186,9 @@ module Heli {
             ERROR = 33
         }
 
-        event PacketError(reason: PacketError) \
+        event PacketError(reason: PacketError, c: U8) \
             severity warning low \
-            format "Fc sent an invalid packet: {}"
+            format "Fc sent an invalid packet: {} {c}"
 
         event PacketUnhandled(function: MspMessageId, payload_size: U16) \
             severity warning low \

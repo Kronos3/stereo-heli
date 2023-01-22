@@ -95,7 +95,7 @@ namespace Heli
                 is_v2 = true;
                 break;
             default:
-                log_WARNING_LO_PacketError(Fc_PacketError::MAGIC);
+                log_WARNING_LO_PacketError(Fc_PacketError::MAGIC, b);
                 m_buffer[serialChannel].rotate(2);
                 return;
         }
@@ -109,7 +109,7 @@ namespace Heli
             case Fc_MspPacketType::ERROR:
                 break;
             default:
-                log_WARNING_LO_PacketError(Fc_PacketError::DIRECTION);
+                log_WARNING_LO_PacketError(Fc_PacketError::DIRECTION, b);
                 m_buffer[serialChannel].rotate(3);
                 return;
         }
@@ -130,7 +130,7 @@ namespace Heli
             if (payload_size > MAX_PAYLOAD_SIZE)
             {
                 log_WARNING_LO_PayloadTooLarge(payload_size, MAX_PACKET_SIZE);
-                log_WARNING_LO_PacketError(Fc_PacketError::PAYLOAD_SIZE);
+                log_WARNING_LO_PacketError(Fc_PacketError::PAYLOAD_SIZE, '!');
                 return;
             }
 
@@ -140,7 +140,7 @@ namespace Heli
 
             if (crc != msg.v2_crc())
             {
-                log_WARNING_LO_PacketError(Fc_PacketError::CHECKSUM);
+                log_WARNING_LO_PacketError(Fc_PacketError::CHECKSUM, crc);
                 return;
             }
         }
@@ -159,7 +159,7 @@ namespace Heli
 
             if (crc != msg.v1_crc())
             {
-                log_WARNING_LO_PacketError(Fc_PacketError::CHECKSUM);
+                log_WARNING_LO_PacketError(Fc_PacketError::CHECKSUM, crc);
                 return;
             }
         }

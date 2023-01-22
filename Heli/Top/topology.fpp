@@ -15,6 +15,7 @@ module Heli {
         # Core components
         instance systemTime
         instance eventLogger
+        instance textLogger
         instance cmdDisp
         instance chanTlm
         instance prmDb
@@ -62,6 +63,7 @@ module Heli {
 
         command connections instance cmdDisp
         event connections instance eventLogger
+        text event connections instance textLogger
         time connections instance systemTime
 
         param connections instance prmDb

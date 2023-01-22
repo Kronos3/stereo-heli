@@ -117,6 +117,8 @@ module Heli {
         stack size Default.stackSize \
         priority 98
 
+    instance textLogger: Svc.PassiveTextLogger base id 750
+
     instance chanTlm: Svc.TlmChan base id 800 \
         queue size Default.queueSize \
         stack size Default.stackSize \

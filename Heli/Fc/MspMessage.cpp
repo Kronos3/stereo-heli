@@ -12,22 +12,22 @@
 namespace Heli
 {
     MspMessage::MspMessage(const Heli::Fc_MspMessageId& function)
-    : m_message{}
+    : m_message{}, m_buf(m_message, MSP_OVERHEAD)
     {
         initialize();
         set_function(function);
     }
 
     MspMessage::MspMessage()
-    : m_message{}
+    : m_message{}, m_buf(m_message, MSP_OVERHEAD)
     {
         initialize();
     }
 
     MspMessage::MspMessage(const MspMessage &other)
-    : m_message{}
+    : m_message{}, m_buf(m_message, other.get_payload_size(), MSP_OVERHEAD)
     {
-        std::copy_n(other.m_message, other.get_payload_size() + 9, m_message);
+        std::copy_n(other.m_message, other.get_payload_size() + MSP_OVERHEAD, m_message);
     }
 
     MspMessage::~MspMessage() = default;
@@ -40,21 +40,6 @@ namespace Heli
         }
 
         return *this;
-    }
-
-    NATIVE_UINT_TYPE MspMessage::getBuffCapacity() const
-    {
-        return MAX_PAYLOAD_SIZE - get_payload_size();
-    }
-
-    U8* MspMessage::getBuffAddr()
-    {
-        return m_message;
-    }
-
-    const U8* MspMessage::getBuffAddr() const
-    {
-        return m_message;
     }
 
     Fw::SerializeStatus MspMessage::serialize(Fw::SerializeBufferBase &buffer) const
@@ -154,6 +139,7 @@ namespace Heli
 #endif
 
         m_message[get_payload_size() + 8] = crc;
+        m_buf.setSize(get_payload_size() + MSP_OVERHEAD);
     }
 
     void MspMessage::read(U32 offset, U8 &value) const
@@ -234,5 +220,10 @@ namespace Heli
         m_message[offset + 1] = (element >> 8) & 0xFF;
         m_message[offset + 2] = (element >> 16) & 0xFF;
         m_message[offset + 3] = (element >> 24) & 0xFF;
+    }
+
+    Fw::Buffer &MspMessage::get_buffer() const
+    {
+        return m_buf;
     }
 }
