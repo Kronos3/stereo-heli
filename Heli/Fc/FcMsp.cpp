@@ -25,7 +25,7 @@ namespace Heli
             // Data is bad, exit early
             // Don't queue it to the ring buffer
         }
-        else
+        else if (serBuffer.getSize() > 0)
         {
             // Data is good, queue it to the ring buffer
             m_buffer[portNum].serialize(serBuffer.getData(), serBuffer.getSize());
@@ -63,6 +63,11 @@ namespace Heli
             }
 
             // Rotate out the data before a packet is found
+            if (off)
+            {
+                log_WARNING_LO_DumpedExtraneousBytes(off, serialChannel);
+            }
+
             m_buffer[serialChannel].rotate(off);
             if (stat != Fw::SerializeStatus::FW_SERIALIZE_OK)
             {
@@ -102,19 +107,20 @@ namespace Heli
 
         U8 direction;
         READ(direction, 2);
-        switch(b)
+        switch(direction)
         {
             case Fc_MspPacketType::RESPONSE:
             case Fc_MspPacketType::REQUEST:
             case Fc_MspPacketType::ERROR:
                 break;
             default:
-                log_WARNING_LO_PacketError(Fc_PacketError::DIRECTION, b);
+                log_WARNING_LO_PacketError(Fc_PacketError::DIRECTION, direction);
                 m_buffer[serialChannel].rotate(3);
                 return;
         }
 
         MspMessage msg;
+        msg.set_direction(static_cast<Fc_MspPacketType::t>(direction));
 
         if (is_v2)
         {
@@ -136,7 +142,7 @@ namespace Heli
 
             msg.set_function(static_cast<Fc_MspMessageId::t>(function));
             msg.payload_from(m_buffer[serialChannel], payload_size);
-            m_buffer[serialChannel].rotate(payload_size);
+            m_buffer[serialChannel].rotate(payload_size + 1);
 
             if (crc != msg.v2_crc())
             {
@@ -155,7 +161,7 @@ namespace Heli
 
             msg.set_function(static_cast<Fc_MspMessageId::t>(function));
             msg.payload_from(m_buffer[serialChannel], payload_size);
-            m_buffer[serialChannel].rotate(payload_size);
+            m_buffer[serialChannel].rotate(payload_size + 1);
 
             if (crc != msg.v1_crc())
             {

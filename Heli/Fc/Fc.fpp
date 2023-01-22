@@ -90,7 +90,7 @@ module Heli {
         output port serialSend: [FcSerialLines] Drv.SerialWrite
 
         @ receive a buffer from the UART - one of the above
-        async input port serialRecv: [FcSerialLines] Drv.SerialRead
+        sync input port serialRecv: [FcSerialLines] Drv.SerialRead
 
         # -----------------------------
         # Message ports
@@ -156,6 +156,10 @@ module Heli {
         # -----------------------------
         # Events
         # -----------------------------
+
+        event DumpedExtraneousBytes(num_bytes: U16, channel: U8) \
+            severity warning low \
+            format "Dumped {} extraneous bytes from serial channel {}"
 
         event DisableUart(line: U8) \
             severity activity high \

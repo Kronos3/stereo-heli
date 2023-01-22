@@ -49,7 +49,7 @@ namespace Heli
 
     Fw::SerializeStatus MspMessage::deserialize(Fw::SerializeBufferBase &buffer)
     {
-        NATIVE_UINT_TYPE length = get_payload_size() + FcCfg::MSP_OVERHEAD;
+        NATIVE_UINT_TYPE length = MAX_PACKET_SIZE;
         return buffer.deserialize(m_message, length, false);
     }
 

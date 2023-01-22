@@ -53,7 +53,7 @@ namespace Heli
         }
 
         // Make sure this is a message response or error
-        if (msg.get_direction() != Fc_MspPacketType::REQUEST)
+        if (msg.get_direction() == Fc_MspPacketType::REQUEST)
         {
             log_WARNING_LO_MspRequest(serialChannel, msg.get_function());
             return;
@@ -82,7 +82,7 @@ namespace Heli
         }
 
         // Reply with success
-        FW_ASSERT(msg.get_direction() == Fc_MspPacketType::RESPONSE);
+        FW_ASSERT(msg.get_direction() == Fc_MspPacketType::RESPONSE, msg.get_direction().e);
         reply(m_awaiting[serialChannel], msg, Fc_ReplyStatus::OK);
     }
 

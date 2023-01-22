@@ -78,11 +78,11 @@ namespace Heli
         {
             case Fc_MspMessageId::MSP_API_VERSION:
             {
-                auto response = reply.payload<Metadata::ApiVersion>();
+                auto response = reply.payload<Metadata::ApiVersion>(3);
 
                 // Our modified iNAV API is version 2.5+
                 if (response->version_major != 2 ||
-                    response->version_minor < 5)
+                    response->version_minor < 4)
                 {
                     log_WARNING_HI_UnsupportedApiVersion(
                             response->version_major,
@@ -98,10 +98,12 @@ namespace Heli
                             MspMessage(Fc_MspMessageId::MSP_FC_VARIANT),
                             -1, ctx, Fc_ReplyAction::REPLY);
                 }
+
+                break;
             }
             case Fc_MspMessageId::MSP_FC_VARIANT:
             {
-                auto response = reply.payload<char[4]>();
+                auto response = reply.payload<char[4]>(4);
 
                 // Our modified iNAV API is version 2.5+
                 if (strncmp(*response, "INAV", 4) != 0)
@@ -118,10 +120,12 @@ namespace Heli
                             MspMessage(Fc_MspMessageId::MSP_BOARD_INFO),
                             -1, ctx, Fc_ReplyAction::REPLY);
                 }
+
+                break;
             }
             case Fc_MspMessageId::MSP_BOARD_INFO:
             {
-                auto response = reply.payload<Metadata::FcBoardInfo>(false);
+                auto response = reply.payload<Metadata::FcBoardInfo>();
                 m_metadata.board_info = *response;
 
                 log_ACTIVITY_HI_ConnectionEstablished(m_metadata.api_version.version_major,

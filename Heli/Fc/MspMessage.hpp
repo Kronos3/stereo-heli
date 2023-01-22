@@ -58,15 +58,11 @@ namespace Heli
 
         // Extract message data from the payload
         template <typename T>
-        const T* payload(bool type_is_full_payload = true) const
+        const T* payload(I16 size_expect = -1) const
         {
-            if (type_is_full_payload)
+            if (size_expect >= 0)
             {
-                FW_ASSERT(sizeof(T) == get_payload_size(), sizeof(T), get_payload_size());
-            }
-            else
-            {
-                FW_ASSERT(sizeof(T) <= get_payload_size(), sizeof(T), get_payload_size());
+                FW_ASSERT(size_expect == get_payload_size(), size_expect, get_payload_size());
             }
 
             return reinterpret_cast<const T*>(&m_message[MSP_HEADER_SIZE]);
