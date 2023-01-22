@@ -8,3 +8,62 @@
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 fc.RESET
+;?e {"time":1674321131.241149,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET dispatched to port 9","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674321131.241178,"id":6508,"name":"Reset","component":"fc","severity":"ACTIVITY_HI","message":"Fc state has been reset","args":[]}
+;?e {"time":1674321132.428249,"id":6517,"name":"MspMessageTimeout","component":"fc","severity":"WARNING_LO","message":"MSP Packet on serial channel 0 timed out, function MSP_API_VERSION","args":[{"name":"channel","value":"0","valueRaw":0,"type":"I32"},{"name":"function","value":"MSP_API_VERSION","valueRaw":"MSP_API_VERSION","type":"Heli::Fc_MspMessageId"}]}
+;?e {"time":1674321132.42831,"id":6503,"name":"ErrorDuringIdentification","component":"fc","severity":"WARNING_LO","message":"Replied with error during identification: function: MSP_API_VERSION","args":[{"name":"function","value":"MSP_API_VERSION","valueRaw":"MSP_API_VERSION","type":"Heli::Fc_MspMessageId"}]}
+;?e {"time":1674321132.428321,"id":6507,"name":"FcStateChange","component":"fc","severity":"ACTIVITY_LO","message":"Fc state has changed to BAD_FIRMWARE_IDENT","args":[{"name":"state","value":"BAD_FIRMWARE_IDENT","valueRaw":"BAD_FIRMWARE_IDENT","type":"Heli::Fc_State"}]}
+;?e {"time":1674321132.428397,"id":403,"name":"OpCodeError","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET completed with error EXECUTION_ERROR","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"error","value":"EXECUTION_ERROR","valueRaw":"EXECUTION_ERROR","type":"Fw::CmdResponse"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Select single UART lines
+; Enable each uart line one at a time to test their connections
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 fc.DISABLE 0
+R00:00:00 fc.DISABLE 1
+R00:00:00 fc.GET_LINES
+;?e {"time":1674324439.317598,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674324439.317627,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is disabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674324439.3177,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
+;?e {"time":1674324439.442295,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674324439.442323,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674324439.442384,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
+;?e {"time":1674324439.70252,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.GET_LINES dispatched to port 9","args":[{"name":"Opcode","value":"fc.GET_LINES","valueRaw":"fc.GET_LINES","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674324439.702549,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is disabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674324439.70256,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674324439.702608,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.GET_LINES completed","args":[{"name":"Opcode","value":"fc.GET_LINES","valueRaw":"fc.GET_LINES","type":"U32"}]}
+;?s
+;?= {"language":"fprime","kind":2}
+; I only have the first UART line hooked up ATM
+R00:00:00 fc.ENABLE 0
+R00:00:00 fc.DISABLE 1
+R00:00:00 fc.RESET
+;?e {"time":1674429965.294408,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674429965.294421,"id":6502,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is enabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674429965.294523,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE completed","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"}]}
+;?e {"time":1674429965.387371,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674429965.387384,"id":6501,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674429965.387457,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
+;?e {"time":1674429965.435818,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET dispatched to port 9","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674429965.435831,"id":6512,"name":"Reset","component":"fc","severity":"ACTIVITY_HI","message":"Fc state has been reset","args":[]}
+;?e {"time":1674429966.626315,"id":6521,"name":"MspMessageTimeout","component":"fc","severity":"WARNING_LO","message":"MSP Packet on serial channel 0 timed out, function MSP_API_VERSION","args":[{"name":"channel","value":"0","valueRaw":0,"type":"I32"},{"name":"function","value":"MSP_API_VERSION","valueRaw":"MSP_API_VERSION","type":"Heli::Fc_MspMessageId"}]}
+;?e {"time":1674429966.626386,"id":6507,"name":"ErrorDuringIdentification","component":"fc","severity":"WARNING_LO","message":"Replied with error during identification: function: MSP_API_VERSION","args":[{"name":"function","value":"MSP_API_VERSION","valueRaw":"MSP_API_VERSION","type":"Heli::Fc_MspMessageId"}]}
+;?e {"time":1674429966.626412,"id":6511,"name":"FcStateChange","component":"fc","severity":"ACTIVITY_LO","message":"Fc state has changed to BAD_FIRMWARE_IDENT","args":[{"name":"state","value":"BAD_FIRMWARE_IDENT","valueRaw":"BAD_FIRMWARE_IDENT","type":"Heli::Fc_State"}]}
+;?e {"time":1674429966.626463,"id":403,"name":"OpCodeError","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET completed with error EXECUTION_ERROR","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"error","value":"EXECUTION_ERROR","valueRaw":"EXECUTION_ERROR","type":"Fw::CmdResponse"}]}
+;?s
+;?= {"language":"fprime","kind":2}
+
+;?e {"time":1674419640.173283,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674419640.17332,"id":6501,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is enabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674419640.173533,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE completed","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"}]}
+;?e {"time":1674419640.292089,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674419640.292161,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674419640.292285,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 fileDownlink.SendFile "/fsw/heli" "/Users/tumbar/git/stereo-heli/heli"
+;?e {"time":1674324856.647519,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fileDownlink.SendFile dispatched to port 10","args":[{"name":"Opcode","value":"fileDownlink.SendFile","valueRaw":"fileDownlink.SendFile","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
+;?e {"time":1674324856.733536,"id":608,"name":"SendStarted","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Downlink of 8009880 bytes started from /fsw/heli to /Users/tumbar/git/stereo-heli/heli","args":[{"name":"fileSize","value":"8009880","valueRaw":8009880,"type":"U32"},{"name":"sourceFileName","value":"/fsw/heli","valueRaw":"/fsw/heli","type":"string(100)"},{"name":"destFileName","value":"/Users/tumbar/git/stereo-heli/heli","valueRaw":"/Users/tumbar/git/stereo-heli/heli","type":"string(100)"}]}
+;?e {"time":1674324859.705522,"id":602,"name":"FileSent","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Sent file /fsw/heli to file /Users/tumbar/git/stereo-heli/heli","args":[{"name":"sourceFileName","value":"/fsw/heli","valueRaw":"/fsw/heli","type":"string(100)"},{"name":"destFileName","value":"/Users/tumbar/git/stereo-heli/heli","valueRaw":"/Users/tumbar/git/stereo-heli/heli","type":"string(100)"}]}
+;?e {"time":1674324859.705596,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fileDownlink.SendFile completed","args":[{"name":"Opcode","value":"fileDownlink.SendFile","valueRaw":"fileDownlink.SendFile","type":"U32"}]}
