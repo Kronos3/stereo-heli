@@ -23,20 +23,24 @@ namespace Heli
 
     void Fc::allocate(NATIVE_UINT_TYPE number)
     {
-        Fw::Buffer buff;
         // request a buffer and pass it on to the UART for each requested
         for (NATIVE_UINT_TYPE buffNum = 0; buffNum < number; buffNum++)
         {
-            for (NATIVE_UINT_TYPE lineNum = 0; lineNum < NUM_SERIAL_LINES; lineNum++)
+            for (NATIVE_INT_TYPE lineNum = 0; lineNum < NUM_SERIAL_LINES; lineNum++)
             {
-                buff = allocate_out(0, MAX_PACKET_SIZE);
-                FW_ASSERT(buff.getSize() >= MAX_PACKET_SIZE, buff.getSize(), MAX_PACKET_SIZE);
-                FW_ASSERT(buff.getData());
-                readBufferSend_out(lineNum, buff);
+                allocate_for(lineNum);
             }
         }
     }
 
+    void Fc::allocate_for(I32 serial_line)
+    {
+        Fw::Buffer buff;
+        buff = allocate_out(0, MAX_PACKET_SIZE);
+        FW_ASSERT(buff.getSize() >= MAX_PACKET_SIZE, buff.getSize(), MAX_PACKET_SIZE);
+        FW_ASSERT(buff.getData());
+        readBufferSend_out(serial_line, buff);
+    }
 
     void Fc::preamble()
     {

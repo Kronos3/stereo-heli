@@ -107,6 +107,9 @@ namespace Heli
                 // Used for timeout detection
                 bucket.timestamp = getTime();
 
+                m_tlm_Packets++;
+                m_tlm_BytesSent += msg.get_buffer().getSize();
+
                 // Send the message out on the correct serial line
                 serialSend_out(i, msg.get_buffer());
 
@@ -207,5 +210,11 @@ namespace Heli
                 reply(iter, MspMessage(iter.opcode), Fc_ReplyStatus::TIMEOUT);
             }
         }
+
+        tlmWrite_Packets(m_tlm_Packets);
+        tlmWrite_Errors(m_tlm_Errors);
+        tlmWrite_BytesSent(m_tlm_BytesSent);
+        tlmWrite_BytesRecv(m_tlm_BytesRecv);
+        tlmWrite_MspQueueBytes(m_tlm_MspQueueBytes);
     }
 }

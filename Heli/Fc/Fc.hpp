@@ -111,6 +111,7 @@ namespace Heli
         U32 m_cmdSeq;
 
         void set_state(const Fc_State& state);
+        void allocate_for(I32 serial_line);
 
     PRIVATE:
 
@@ -125,6 +126,12 @@ namespace Heli
         Os::Mutex m_send_mut;
         Msp::CircularBuffer m_buffer[NUM_SERIAL_LINES];
         Types::TQueue<QueueItem, FcCfg::QUEUE_MSG_LENGTH> m_queue;
+
+        U32 m_tlm_Packets;
+        U32 m_tlm_Errors;
+        U32 m_tlm_BytesSent;
+        U32 m_tlm_BytesRecv;
+        U32 m_tlm_MspQueueBytes;
     };
 }
 

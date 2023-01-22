@@ -90,7 +90,7 @@ module Heli {
         output port serialSend: [FcSerialLines] Drv.SerialWrite
 
         @ receive a buffer from the UART - one of the above
-        sync input port serialRecv: [FcSerialLines] Drv.SerialRead
+        async input port serialRecv: [FcSerialLines] Drv.SerialRead
 
         # -----------------------------
         # Message ports
@@ -265,6 +265,25 @@ module Heli {
         event MspMessageTimeout(channel: I32, function: MspMessageId) \
             severity warning low \
             format "MSP Packet on serial channel {} timed out, function {}"
+
+        # ----------------------
+        # Telemetry
+        # ----------------------
+
+        @ Number of packets send to Fc
+        telemetry Packets: U32
+
+        @ Number of packets errors from Fc
+        telemetry Errors: U32
+
+        @ Number of bytes sent to Fc
+        telemetry BytesSent: U32
+
+        @ Number of bytes received from Fc
+        telemetry BytesRecv: U32
+
+        @ Number of bytes in MSP queue
+        telemetry MspQueueBytes: U32
     }
 
 }

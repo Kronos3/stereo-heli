@@ -11,6 +11,8 @@ namespace Heli
                                 Fw::Buffer &serBuffer,
                                 Drv::SerialReadStatus &status)
     {
+        allocate_for(portNum);
+
         if (status != Drv::SerialReadStatus::SER_OK)
         {
             if (m_state == Fc_State::OK
@@ -27,6 +29,8 @@ namespace Heli
         }
         else if (serBuffer.getSize() > 0)
         {
+            m_tlm_BytesRecv += serBuffer.getSize();
+
             // Data is good, queue it to the ring buffer
             m_buffer[portNum].serialize(serBuffer.getData(), serBuffer.getSize());
 
@@ -35,7 +39,7 @@ namespace Heli
         }
 
         // Return the read buffer to the uart driver
-        readBufferSend_out(portNum, serBuffer);
+        deallocate_out(0, serBuffer);
     }
 
 #define READ(v, o) do { \

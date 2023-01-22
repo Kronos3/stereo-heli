@@ -274,7 +274,7 @@ module Heli {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
             STORE_SIZE = 6000,
-            NUM_BUFFERS = 16,
+            NUM_BUFFERS = 20,
             MGR_ID = 400
         };
         """
