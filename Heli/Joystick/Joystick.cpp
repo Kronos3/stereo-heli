@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cerrno>
 #include <unistd.h>
+#include <poll.h>
 #include "Joystick.hpp"
 #include "File.hpp"
 
@@ -15,8 +16,12 @@ namespace Heli
             : JoystickComponentBase(compName),
               m_joystick(0), is_running(false), cmd_waiting(false),
               m_opcode(0), m_cmdSeq(0), m_fd(-1), channels{},
-              inav_msg(Fc_MspMessageId::MSP_SET_RAW_RC)
+              inav_msg(Fc_MspMessageId::MSP_SET_RAW_RC),
+              m_failsafe_arr(0),
+              m_inav_msg_last_checksum(0),
+              m_inav_msg_last_checksum_valid(false)
     {
+        inav_msg.set_flags(/* Tell iNAV not to reply */ 1);
     }
 
     void Joystick::init(NATIVE_INT_TYPE instance)
@@ -24,7 +29,7 @@ namespace Heli
         JoystickComponentBase::init(instance);
     }
 
-    void Joystick::STOP_cmdHandler(U32 opCode, U32 cmdSeq)
+    void Joystick::STOP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq)
     {
         setup_reply(opCode, cmdSeq);
 
@@ -32,8 +37,8 @@ namespace Heli
         if (!is_running)
         {
             log_WARNING_LO_JoystickNotRunning();
-            reply(Fw::CmdResponse::EXECUTION_ERROR);
             m_mutex.unlock();
+            reply(Fw::CmdResponse::EXECUTION_ERROR);
             return;
         }
 
@@ -41,7 +46,10 @@ namespace Heli
         m_mutex.unlock();
     }
 
-    void Joystick::START_cmdHandler(U32 opCode, U32 cmdSeq, U8 js)
+    void Joystick::START_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 js,
+                                    U8 trigger_ms,
+                                    U32 delay_s,
+                                    U32 failsafe_ms)
     {
         setup_reply(opCode, cmdSeq);
 
@@ -49,13 +57,26 @@ namespace Heli
         if (is_running)
         {
             log_WARNING_LO_JoystickAlreadyRunning();
-            reply(Fw::CmdResponse::BUSY);
             m_mutex.unlock();
+            reply(Fw::CmdResponse::BUSY);
             return;
         }
 
         m_joystick = js;
+        m_tim_interval = Fw::Time(0, trigger_ms * 1000);
+        m_tim_value = Fw::Time(delay_s, 0);
         m_task = Os::Task();
+
+        // Number of timer trigger ticks before we NEED to send a packet
+        // This is basically a keep alive packet controlled by a watchdog
+        // Normally if there is no RX during this time, the failsafe would be
+        // triggered.
+        // TODO(tumbar) Does this actually apply for MSP, do we even care?
+        m_failsafe_arr = (failsafe_ms - 2 * trigger_ms) / trigger_ms;
+        m_failsafe_ticks = m_failsafe_arr;
+
+        m_inav_msg_last_checksum_valid = false;
+        m_inav_msg_last_checksum = 0;
 
         m_mutex.unlock();
 
@@ -65,8 +86,6 @@ namespace Heli
 
     void Joystick::main_loop()
     {
-        log_ACTIVITY_LO_JoystickStarting(m_joystick);
-
         Fw::String path;
         path.format("/dev/input/js%d", m_joystick);
 
@@ -75,28 +94,40 @@ namespace Heli
         m_fd = ::open(path.toChar(), O_RDONLY);
         m_mutex.unlock();
 
+        if (m_fd < 0)
+        {
+            log_WARNING_HI_ControllerOpenFailed(path, errno);
+            reply(Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        log_ACTIVITY_LO_JoystickStarting(m_joystick);
+
         // Reply to the start
         reply(Fw::CmdResponse::OK);
 
-        fd_set rfds;
-        timeval tv{};
+        pollfd fd_poll = {
+                .fd = m_fd,
+                .events = POLLIN,
+                .revents = 0
+        };
 
-        // Watch the joystick fd to wait for input
-        FD_ZERO(&rfds);
-        FD_SET(m_fd, &rfds);
-
-        // Waits up to 3 seconds before unblocking
-        // This allows us to safely break out of this loop
-        tv.tv_sec = 3;
-        tv.tv_usec = 0;
+        startTimer_out(
+                0,
+                m_tim_interval,
+                m_tim_value
+        );
 
         JoystickEvent event{};
         bool error = false;
         is_running = true;
         while (is_running)
         {
-            I32 rc = select(1, &rfds, nullptr, nullptr, &tv);
-            if (rc == -1)
+            fd_poll.revents = 0;
+            I32 rc = poll(&fd_poll, 1, 500);
+
+            // Poll ran into an error OR poll() was file and the FD ran into error
+            if (rc < 0 || (rc == 1 && !(fd_poll.revents & POLLIN)))
             {
                 log_WARNING_LO_ErrorDuringPoll(errno);
                 error = true;
@@ -124,6 +155,8 @@ namespace Heli
         }
 
         is_running = false;
+        stopTimer_out(0);
+
         log_ACTIVITY_LO_JoystickShutdown();
 
         ::close(m_fd);
@@ -189,7 +222,9 @@ namespace Heli
                 return;
             }
 
-            mapping.set_fc(event.value, channels[mapping.channel]);
+            m_mutex_control.lock();
+            mapping.set_fc(event.value, channels[mapping.channel.e]);
+            m_mutex_control.unlock();
         }
         else if (event.type & AXIS)
         {
@@ -199,33 +234,28 @@ namespace Heli
                 return;
             }
 
-            const AxisMapping &mapping = axis_mappings[event.number];
+            // Not const in case of axis differential mode
+            AxisMapping &mapping = axis_mappings[event.number];
             if (!mapping.is_mapped())
             {
                 // Ignore unmapped events
                 return;
             }
 
-            channels[mapping.channel] = mapping.get_fc(event.value);
+            m_mutex_control.lock();
+            mapping.set_fc(event.value, channels[mapping.channel.e]);
+            m_mutex_control.unlock();
         }
-
-        // FIXME(tumbar) Do we want to rate limit the transmission?
-        send_control();
-    }
-
-    void Joystick::send_control()
-    {
-        inav_msg.set_payload(reinterpret_cast<const U8*>(&channels), sizeof(channels));
-        fcMsg_out(0, inav_msg, 0, Fc_ReplyAction::IGNORE);
     }
 
     void Joystick::MAP_AXIS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
                                        Heli::Joystick_Axis axis,
-                                       I8 channel, U16 dead_zone,
+                                       Joystick_AETRChannel channel,
+                                       U16 dead_zone,
                                        U16 min_value, U16 max_value)
     {
         AxisMapping &mapping = axis_mappings[axis.e];
-        if (channel < 0)
+        if (channel == Joystick_AETRChannel::UNMAPPED)
         {
             if (axis_mappings[axis.e].is_mapped())
             {
@@ -235,17 +265,45 @@ namespace Heli
         }
         else
         {
-            if (channel >= INAV_MSP_RC_CHANNEL)
-            {
-                log_WARNING_LO_InvalidChannel(channel, INAV_MSP_RC_CHANNEL);
-                cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
-                return;
-            }
-
+            mapping.type = Joystick_AxisMapType::DIRECT;
             mapping.channel = channel;
             mapping.deadzone = dead_zone;
             mapping.min_value = min_value;
             mapping.max_value = max_value;
+            mapping.delta_scale = 0.0;
+            mapping.delta_offset = 0.0;
+
+            log_ACTIVITY_LO_AxisMapped(axis, channel);
+        }
+
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Joystick::MAP_AXIS_DERIVATIVE_cmdHandler(
+            FwOpcodeType opCode, U32 cmdSeq,
+            Heli::Joystick_Axis axis,
+            Heli::Joystick_AETRChannel channel,
+            U16 dead_zone, U16 min_value, U16 max_value,
+            F32 delta_scale, F32 delta_offset)
+    {
+        AxisMapping &mapping = axis_mappings[axis.e];
+        if (channel == Joystick_AETRChannel::UNMAPPED)
+        {
+            if (axis_mappings[axis.e].is_mapped())
+            {
+                mapping.unmap();
+                log_ACTIVITY_LO_AxisUnmapped(axis);
+            }
+        }
+        else
+        {
+            mapping.type = Joystick_AxisMapType::DERIVATIVE;
+            mapping.channel = channel;
+            mapping.deadzone = dead_zone;
+            mapping.min_value = min_value;
+            mapping.max_value = max_value;
+            mapping.delta_scale = delta_scale;
+            mapping.delta_offset = delta_offset;
             log_ACTIVITY_LO_AxisMapped(axis, channel);
         }
 
@@ -255,11 +313,11 @@ namespace Heli
     void
     Joystick::MAP_BUTTON_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
                                     Heli::Joystick_Button button,
-                                    I8 channel, I16 off_value, I16 on_value)
+                                    Joystick_AETRChannel channel,
+                                    Joystick_ButtonMapType type, I16 off_value, I16 on_value)
     {
-
         ButtonMapping &mapping = button_mappings[button.e];
-        if (channel < 0)
+        if (channel == Joystick_AETRChannel::UNMAPPED)
         {
             if (button_mappings[button.e].is_mapped())
             {
@@ -269,13 +327,7 @@ namespace Heli
         }
         else
         {
-            if (channel >= INAV_MSP_RC_CHANNEL)
-            {
-                log_WARNING_LO_InvalidChannel(channel, INAV_MSP_RC_CHANNEL);
-                cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
-                return;
-            }
-
+            mapping.type = type;
             mapping.channel = channel;
             mapping.off_value = off_value;
             mapping.on_value = on_value;
@@ -331,7 +383,7 @@ namespace Heli
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void Joystick::LOAD_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &filename)
+    void Joystick::LOAD_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg &filename)
     {
         Os::File file;
         Os::File::Status status;
@@ -377,50 +429,119 @@ namespace Heli
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
+    void Joystick::sendControl_handler(NATIVE_INT_TYPE portNum, Svc::TimerVal &cycleStart)
+    {
+        for (const auto& iter : axis_mappings)
+        {
+            iter.service(channels);
+        }
+
+        m_mutex_control.lock();
+        inav_msg.set_payload(reinterpret_cast<const U8*>(&channels), sizeof(channels));
+        m_mutex_control.unlock();
+
+        U8 current_checksum = inav_msg.get_checksum();
+
+        // Don't send if nothing change on the controller
+        if (m_inav_msg_last_checksum_valid &&
+            current_checksum == m_inav_msg_last_checksum &&
+            m_failsafe_ticks)
+        {
+            m_failsafe_ticks--;
+            return;
+        }
+
+        // Stroke the dog
+        m_failsafe_ticks = m_failsafe_arr;
+
+        m_inav_msg_last_checksum = current_checksum;
+        m_inav_msg_last_checksum_valid = true;
+
+        fcMsg_out(0, inav_msg, 0, Fc_ReplyAction::NO_REPLY);
+    }
+
     bool Joystick::Mapping::is_mapped() const
     {
-        return channel >= 0 && channel < INAV_MSP_RC_CHANNEL;
+        return channel != Joystick_AETRChannel::UNMAPPED;
     }
 
     Joystick::Mapping::Mapping()
-            : channel(-1)
+            : channel(Joystick_AETRChannel::UNMAPPED)
     {
     }
 
-    U16 Joystick::AxisMapping::get_fc(I16 js_value) const
+    void Joystick::AxisMapping::set_fc(I16 js_value, U16 &fc)
     {
         if (std::abs(js_value) <= deadzone)
         {
-            return min_value;
+            js_value = 0;
         }
 
-        // Interpolate between the min/max values
-        F64 normalized = ((F64) js_value) / (1 << 15);
-        return (U16) (normalized * (max_value - min_value) + min_value);
+        F64 normalized = (js_value / (32767.0 * 2)) + 0.5;
+        normalized = FW_MAX(FW_MIN(normalized, 1.0), 0);
+
+        switch (type.e)
+        {
+            case Joystick_AxisMapType::DIRECT:
+                fc = static_cast<U16>(normalized * (max_value - min_value) + min_value);
+                break;
+            case Joystick_AxisMapType::DERIVATIVE:
+                // Don't set using event based control
+                // Use periodic control
+                last_control = static_cast<F32>((normalized + delta_offset) * delta_scale);
+                break;
+        }
     }
 
     Joystick::AxisMapping::AxisMapping()
-            : deadzone(0), min_value(0), max_value(0)
+            : deadzone(0), min_value(0), max_value(0), delta_scale(0.0), delta_offset(0.0), last_control(0)
     {
     }
 
     void Joystick::AxisMapping::unmap()
     {
-        channel = -1;
+        channel = Joystick_AETRChannel::UNMAPPED;
         deadzone = 0;
         min_value = 0;
         max_value = 0;
+        delta_scale = 0.0;
+        delta_offset = 0.0;
+        last_control = 0;
     }
 
-    void Joystick::ButtonMapping::set_fc(I16 js_value, U16& fc) const
+    void Joystick::AxisMapping::service(U16* channels_) const
     {
-        if (js_value && on_value >= 0)
+        if (!is_mapped()) return;
+        if (type != Joystick_AxisMapType::DERIVATIVE) return;
+
+        channels_[channel.e] = FW_MAX(FW_MIN(channels_[channel.e] + last_control, max_value), min_value);
+    }
+
+    void Joystick::ButtonMapping::set_fc(I16 js_value, U16 &fc) const
+    {
+        if (type == Joystick_ButtonMapType::HOLD)
         {
-            fc = on_value;
+            if (js_value && on_value >= 0)
+            {
+                fc = on_value;
+            }
+            else if (off_value >= 0)
+            {
+                fc = off_value;
+            }
         }
-        else if (off_value >= 0)
+        else // Toggle
         {
-            fc = off_value;
+            if (js_value && fc == on_value)
+            {
+                // Turn off
+                fc = off_value;
+            }
+            else if (js_value)
+            {
+                // Turn on
+                fc = on_value;
+            }
         }
     }
 
@@ -431,6 +552,8 @@ namespace Heli
 
     void Joystick::ButtonMapping::unmap()
     {
+        channel = Joystick_AETRChannel::UNMAPPED;
+        type = Joystick_ButtonMapType::HOLD;
         channel = 0;
         off_value = 0;
         on_value = 0;

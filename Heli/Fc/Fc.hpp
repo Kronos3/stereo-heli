@@ -52,7 +52,7 @@ namespace Heli
 
         Fc_ReplyStatus queue_message(const MspMessage& msg, I32 port, I32 ctx, const Heli::Fc_ReplyAction &reply);
         void send_message(const MspMessage& msg, I32 port, I32 ctx, const Heli::Fc_ReplyAction &reply);
-        void process_message(I32 serialChannel);
+        bool process_message(I32 serialChannel);
 
     PRIVATE:
         struct ReplyAwaiter {

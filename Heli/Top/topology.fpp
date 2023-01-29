@@ -49,6 +49,7 @@ module Heli {
         instance fc
         instance sapp
         instance joystick
+        instance joystickTimer
 
         # Serial lines
         instance serial0
@@ -143,12 +144,15 @@ module Heli {
         }
 
         # Navigation and localization related
-        connections Nav {
+        connections Flight {
             sapp.fcMsg -> fc.msgIn[0]
             fc.msgReply[0] -> sapp.fcReply
 
             # No reply needed for joystick commands
             joystick.fcMsg -> fc.msgIn[1]
+            joystick.startTimer -> joystickTimer.start
+            joystick.stopTimer -> joystickTimer.stop
+            joystickTimer.CycleOut -> joystick.sendControl
         }
 
         # --------------------------------

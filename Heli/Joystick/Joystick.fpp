@@ -8,6 +8,11 @@ module Heli {
 
         output port fcMsg: FcMessage
 
+        output port startTimer: StartTimer
+        output port stopTimer: StopTimer
+
+        sync input port sendControl: Svc.Cycle
+
         # -----------------------------
         # Special ports
         # -----------------------------
@@ -66,13 +71,38 @@ module Heli {
             R3 = 12,
         }
 
+        enum AETRChannel {
+            UNMAPPED = -1
+            ROLL = 0,
+            PITCH = 1,
+            THROTTLE = 2,
+            YAW = 3,
+            CH5 = 4,
+            CH6 = 5,
+            CH7 = 6
+            CH8 = 7
+        }
+
+        enum ButtonMapType {
+            HOLD,
+            TOGGLE
+        }
+
+        enum AxisMapType {
+            DIRECT,         @< Direct mapping of axis value to channel
+            DERIVATIVE,     @< ON value is applied every controller update, OFF value is applied if axis is 0
+        }
+
         # -----------------------------
         # Commands
         # -----------------------------
 
         @ Start joystick control of the aircraft
         sync command START(
-            js: U8 @< Joystick number, /dev/input/js[n]
+            js: U8              @< Joystick number, /dev/input/js[n]
+            trigger_ms: U8,     @< Millisecond period when sending joystick controls
+            delay_s: U32,       @< Delay on sending the first control packet
+            failsafe_ms: U32    @< Watchdog timeout on Fc for failsafe trigger, see Failsafe tab in configurator
         )
 
         @ Stop the joystick control of the aircraft
@@ -81,16 +111,28 @@ module Heli {
         @ Remap a controller axis to an Fc channel
         sync command MAP_AXIS(
             axis: Axis,     @< Axis to remap
-            channel: I8     @< Channel to map to, -1 for unmapped
+            channel: AETRChannel, @< Channel to map to, -1 for unmapped
             dead_zone: U16  @< Absolute value of dead_zone start
             min_value: U16  @< Fc mapped channel value @ low value
             max_value: U16  @< Fc mapped channel value @ high value
         )
 
+        @ Map an axis to the derivative of an Fc channel (tick rate used at joystick start)
+        sync command MAP_AXIS_DERIVATIVE(
+            axis: Axis,     @< Axis to remap
+            channel: AETRChannel, @< Channel to map to, -1 for unmapped
+            dead_zone: U16  @< Absolute value of dead_zone start
+            min_value: U16  @< Fc mapped channel value @ low value
+            max_value: U16  @< Fc mapped channel value @ high value
+            delta_scale: F32  @< Scalar factor to convert stick position to delta
+            delta_offset: F32 @< Scalar offset to convert stick position to delta
+        )
+
         @ Remap a controller button to an Fc channel
         sync command MAP_BUTTON(
             button: Button,     @< Button to remap
-            channel: I8,        @< Channel to map to, -1 for unmapped
+            channel: AETRChannel, @< Channel to map to, -1 for unmapped
+            $type: ButtonMapType, @< Map button using hold or toggle
             off_value: I16,     @< Value to use while button not pressed, negative to ignore release
             on_value: I16,      @< Value to use while button is pressed, negative to ignore press
         )
@@ -110,6 +152,10 @@ module Heli {
             AXIS,
             BUTTON
         }
+
+        event ControllerOpenFailed(filename: string size 80, err: I32) \
+            severity warning high \
+            format "Failed to open joystick {}: {}"
 
         event ControllerMapLoadFailed(
             filename: string size 80,
@@ -137,11 +183,7 @@ module Heli {
         ) severity activity low \
           format "Loaded joystick controller map from {}"
 
-        event InvalidChannel(channel: I8, max_channel: I8) \
-            severity warning low \
-            format "Channel ({}) must be between 0 and {} or -1 for unmapped"
-
-        event AxisMapped(axis: Axis, channel: I8) \
+        event AxisMapped(axis: Axis, channel: AETRChannel) \
             severity activity low \
             format "Axis {} mapped to channel {}"
 
@@ -149,7 +191,7 @@ module Heli {
             severity activity low \
             format "Unmapped axis {}"
 
-        event ButtonMapped(button: Button, channel: I8) \
+        event ButtonMapped(button: Button, channel: AETRChannel) \
             severity activity low \
             format "Button {} mapped to channel {}"
 

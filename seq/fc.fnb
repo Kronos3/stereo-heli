@@ -6,64 +6,221 @@
 ; lines. Both lines are used in tandem to provide improved bandwitch during
 ; high load times such as joystick control.
 ;?s
+;?= {"language":"markdown","kind":1}
+; 
+;?s
 ;?= {"language":"fprime","kind":2}
+R00:00:00 fc.DISABLE 1
+R00:00:00 fc.DISABLE 1
+R00:00:00 fc.ENABLE 0
 R00:00:00 fc.RESET
-;?e {"time":1674321131.241149,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET dispatched to port 9","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674321131.241178,"id":6508,"name":"Reset","component":"fc","severity":"ACTIVITY_HI","message":"Fc state has been reset","args":[]}
-;?e {"time":1674321132.428249,"id":6517,"name":"MspMessageTimeout","component":"fc","severity":"WARNING_LO","message":"MSP Packet on serial channel 0 timed out, function MSP_API_VERSION","args":[{"name":"channel","value":"0","valueRaw":0,"type":"I32"},{"name":"function","value":"MSP_API_VERSION","valueRaw":"MSP_API_VERSION","type":"Heli::Fc_MspMessageId"}]}
-;?e {"time":1674321132.42831,"id":6503,"name":"ErrorDuringIdentification","component":"fc","severity":"WARNING_LO","message":"Replied with error during identification: function: MSP_API_VERSION","args":[{"name":"function","value":"MSP_API_VERSION","valueRaw":"MSP_API_VERSION","type":"Heli::Fc_MspMessageId"}]}
-;?e {"time":1674321132.428321,"id":6507,"name":"FcStateChange","component":"fc","severity":"ACTIVITY_LO","message":"Fc state has changed to BAD_FIRMWARE_IDENT","args":[{"name":"state","value":"BAD_FIRMWARE_IDENT","valueRaw":"BAD_FIRMWARE_IDENT","type":"Heli::Fc_State"}]}
-;?e {"time":1674321132.428397,"id":403,"name":"OpCodeError","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET completed with error EXECUTION_ERROR","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"error","value":"EXECUTION_ERROR","valueRaw":"EXECUTION_ERROR","type":"Fw::CmdResponse"}]}
+;?e {"time":1674929804.092278,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674929804.092338,"id":6501,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674929804.092472,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
+;?e {"time":1674929804.313006,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674929804.313037,"id":6501,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674929804.313209,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
+;?e {"time":1674929804.453766,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674929804.453798,"id":6502,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is enabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674929804.453966,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE completed","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"}]}
+;?e {"time":1674929804.562402,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET dispatched to port 9","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674929804.562434,"id":6512,"name":"Reset","component":"fc","severity":"ACTIVITY_HI","message":"Fc state has been reset","args":[]}
+;?e {"time":1674929804.594618,"id":6513,"name":"ConnectionEstablished","component":"fc","severity":"ACTIVITY_HI","message":"Fc connection has been established: API version: 2.4, Fc firmware: INAVSB43, Fc board: SB43","args":[{"name":"major","value":"2","valueRaw":2,"type":"U8"},{"name":"minor","value":"4","valueRaw":4,"type":"U8"},{"name":"ident","value":"INAVSB43","valueRaw":"INAVSB43","type":"string(8)"},{"name":"board_info","value":"SB43","valueRaw":"SB43","type":"string(8)"}]}
+;?e {"time":1674929804.594694,"id":6511,"name":"FcStateChange","component":"fc","severity":"ACTIVITY_LO","message":"Fc state has changed to OK","args":[{"name":"state","value":"OK","valueRaw":"OK","type":"Heli::Fc_State"}]}
+;?e {"time":1674929804.594784,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET completed","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"}]}
 ;?s
 ;?= {"language":"markdown","kind":1}
 ; ## Select single UART lines
 ; Enable each uart line one at a time to test their connections
 ;?s
 ;?= {"language":"fprime","kind":2}
-R00:00:00 fc.DISABLE 0
-R00:00:00 fc.DISABLE 1
+R00:00:00 fc.ENABLE 0
+R00:00:00 fc.ENABLE 1
 R00:00:00 fc.GET_LINES
-;?e {"time":1674324439.317598,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674324439.317627,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is disabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
-;?e {"time":1674324439.3177,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
-;?e {"time":1674324439.442295,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674324439.442323,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
-;?e {"time":1674324439.442384,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
-;?e {"time":1674324439.70252,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.GET_LINES dispatched to port 9","args":[{"name":"Opcode","value":"fc.GET_LINES","valueRaw":"fc.GET_LINES","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674324439.702549,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is disabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
-;?e {"time":1674324439.70256,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
-;?e {"time":1674324439.702608,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.GET_LINES completed","args":[{"name":"Opcode","value":"fc.GET_LINES","valueRaw":"fc.GET_LINES","type":"U32"}]}
+;?e {"time":1674913643.462206,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674913643.462244,"id":6502,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is enabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674913643.462459,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE completed","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"}]}
+;?e {"time":1674913643.509499,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674913643.509535,"id":6502,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is enabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674913643.50971,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE completed","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"}]}
+;?e {"time":1674913643.595132,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.GET_LINES dispatched to port 9","args":[{"name":"Opcode","value":"fc.GET_LINES","valueRaw":"fc.GET_LINES","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674913643.595163,"id":6502,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is enabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674913643.595314,"id":6502,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is enabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674913643.59542,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.GET_LINES completed","args":[{"name":"Opcode","value":"fc.GET_LINES","valueRaw":"fc.GET_LINES","type":"U32"}]}
 ;?s
 ;?= {"language":"fprime","kind":2}
 ; I only have the first UART line hooked up ATM
 R00:00:00 fc.ENABLE 0
 R00:00:00 fc.DISABLE 1
 R00:00:00 fc.RESET
-;?e {"time":1674429965.294408,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674429965.294421,"id":6502,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is enabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
-;?e {"time":1674429965.294523,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE completed","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"}]}
-;?e {"time":1674429965.387371,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674429965.387384,"id":6501,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
-;?e {"time":1674429965.387457,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
-;?e {"time":1674429965.435818,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET dispatched to port 9","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674429965.435831,"id":6512,"name":"Reset","component":"fc","severity":"ACTIVITY_HI","message":"Fc state has been reset","args":[]}
-;?e {"time":1674429966.626315,"id":6521,"name":"MspMessageTimeout","component":"fc","severity":"WARNING_LO","message":"MSP Packet on serial channel 0 timed out, function MSP_API_VERSION","args":[{"name":"channel","value":"0","valueRaw":0,"type":"I32"},{"name":"function","value":"MSP_API_VERSION","valueRaw":"MSP_API_VERSION","type":"Heli::Fc_MspMessageId"}]}
-;?e {"time":1674429966.626386,"id":6507,"name":"ErrorDuringIdentification","component":"fc","severity":"WARNING_LO","message":"Replied with error during identification: function: MSP_API_VERSION","args":[{"name":"function","value":"MSP_API_VERSION","valueRaw":"MSP_API_VERSION","type":"Heli::Fc_MspMessageId"}]}
-;?e {"time":1674429966.626412,"id":6511,"name":"FcStateChange","component":"fc","severity":"ACTIVITY_LO","message":"Fc state has changed to BAD_FIRMWARE_IDENT","args":[{"name":"state","value":"BAD_FIRMWARE_IDENT","valueRaw":"BAD_FIRMWARE_IDENT","type":"Heli::Fc_State"}]}
-;?e {"time":1674429966.626463,"id":403,"name":"OpCodeError","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET completed with error EXECUTION_ERROR","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"error","value":"EXECUTION_ERROR","valueRaw":"EXECUTION_ERROR","type":"Fw::CmdResponse"}]}
+;?e {"time":1674932205.394895,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674932205.394911,"id":6502,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is enabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674932205.395003,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE completed","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"}]}
+;?e {"time":1674932205.614643,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674932205.614661,"id":6501,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
+;?e {"time":1674932205.614759,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
+;?e {"time":1674932205.724945,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET dispatched to port 9","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
+;?e {"time":1674932205.724961,"id":6512,"name":"Reset","component":"fc","severity":"ACTIVITY_HI","message":"Fc state has been reset","args":[]}
+;?e {"time":1674932205.749891,"id":6513,"name":"ConnectionEstablished","component":"fc","severity":"ACTIVITY_HI","message":"Fc connection has been established: API version: 2.4, Fc firmware: INAVSB43, Fc board: SB43","args":[{"name":"major","value":"2","valueRaw":2,"type":"U8"},{"name":"minor","value":"4","valueRaw":4,"type":"U8"},{"name":"ident","value":"INAVSB43","valueRaw":"INAVSB43","type":"string(8)"},{"name":"board_info","value":"SB43","valueRaw":"SB43","type":"string(8)"}]}
+;?e {"time":1674932205.749929,"id":6511,"name":"FcStateChange","component":"fc","severity":"ACTIVITY_LO","message":"Fc state has changed to OK","args":[{"name":"state","value":"OK","valueRaw":"OK","type":"Heli::Fc_State"}]}
+;?e {"time":1674932205.749975,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.RESET completed","args":[{"name":"Opcode","value":"fc.RESET","valueRaw":"fc.RESET","type":"U32"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; # Controller
+; 
+; We are using a PS5 controller but the mapping will be the same for PS4 (and possible PS3) since
+; the same axis are available.
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Mapping
+; First build the controller mappings that maps joystick axis to channels for iNAV
+; These channel numbers are the default used in iNAV/Betaflight
 ;?s
 ;?= {"language":"fprime","kind":2}
+;;;;;;;;;;;;;;;;;;;;;;;
+; Name: Controller
+; Description: Default control scheme mapping for PS5 controller
+;
+; iNAV default channels:
+; 0NAV default channels:
+; 0. ROLL
+; 1. PITCH
+; 2. YAW
+; 3. THROTTLE
+; AUX channels
 
-;?e {"time":1674419640.173283,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674419640.17332,"id":6501,"name":"EnableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 0 is enabled","args":[{"name":"line","value":"0","valueRaw":0,"type":"U8"}]}
-;?e {"time":1674419640.173533,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.ENABLE completed","args":[{"name":"Opcode","value":"fc.ENABLE","valueRaw":"fc.ENABLE","type":"U32"}]}
-;?e {"time":1674419640.292089,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE dispatched to port 9","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"},{"name":"port","value":"9","valueRaw":9,"type":"I32"}]}
-;?e {"time":1674419640.292161,"id":6500,"name":"DisableUart","component":"fc","severity":"ACTIVITY_HI","message":"UART line 1 is disabled","args":[{"name":"line","value":"1","valueRaw":1,"type":"U8"}]}
-;?e {"time":1674419640.292285,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fc.DISABLE completed","args":[{"name":"Opcode","value":"fc.DISABLE","valueRaw":"fc.DISABLE","type":"U32"}]}
+; By default iNAV uses a channel range from 1000 - 2000
+
+R00:00:00 joystick.MAP_AXIS LX ROLL 1200 1000 2000 ; ROLL
+R00:00:00 joystick.MAP_AXIS LY PITCH 1500 1000 2000 ; PITCH
+R00:00:00 joystick.MAP_AXIS RX YAW 1000 1000 2000 ; YAW
+
+; Additional yaw inputs
+R00:00:00 joystick.MAP_BUTTON L1 YAW HOLD 1500 1200 ; Hold for YAW left
+R00:00:00 joystick.MAP_BUTTON R1 YAW HOLD 1500 1800 ; Hold for YAW right
+
+; L2/R2 are both axis and buttons
+; Throttle button press / release
+;; FIXME(tumbar) For safety only one axis will be mapped for low
+R00:00:00 joystick.MAP_AXIS_DERIVATIVE R2 THROTTLE 0 1000 2000 5.0 0.0 ; + throttle
+R00:00:00 joystick.MAP_AXIS_DERIVATIVE L2 THROTTLE 0 1000 2000 -5.0 0.0 ; - throttle
+R00:00:00 joystick.MAP_BUTTON START THROTTLE HOLD 1000 1000
+
+; ARM
+R00:00:00 joystick.MAP_BUTTON TRIANGLE CH5 TOGGLE 1000 1500
+
+; Kill switch
+R00:00:00 joystick.MAP_BUTTON SQUARE CH6 TOGGLE 1000 1500
+
+;R00:00:00 joystick.SAVE "/fsw/default.map"
+;R00:00:00 joystick.LOAD "/fsw/default.map"
+;?e {"time":1674958453.876704,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LX mapped to channel ROLL","args":[{"name":"axis","value":"LX","valueRaw":"LX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"ROLL","valueRaw":"ROLL","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958453.876775,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958453.876806,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674958453.983702,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LY mapped to channel PITCH","args":[{"name":"axis","value":"LY","valueRaw":"LY","type":"Heli::Joystick_Axis"},{"name":"channel","value":"PITCH","valueRaw":"PITCH","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958453.983745,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958453.983786,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674958454.147451,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis RX mapped to channel YAW","args":[{"name":"axis","value":"RX","valueRaw":"RX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958454.147496,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958454.147523,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674958454.304949,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button L1 mapped to channel YAW","args":[{"name":"button","value":"L1","valueRaw":"L1","type":"Heli::Joystick_Button"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958454.304992,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958454.305017,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674958454.466575,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button R1 mapped to channel YAW","args":[{"name":"button","value":"R1","valueRaw":"R1","type":"Heli::Joystick_Button"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958454.466628,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958454.466655,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674958454.608715,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis R2 mapped to channel THROTTLE","args":[{"name":"axis","value":"R2","valueRaw":"R2","type":"Heli::Joystick_Axis"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958454.608758,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958454.608783,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"}]}
+;?e {"time":1674958454.775004,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis L2 mapped to channel THROTTLE","args":[{"name":"axis","value":"L2","valueRaw":"L2","type":"Heli::Joystick_Axis"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958454.775043,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958454.775069,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"}]}
+;?e {"time":1674958454.881195,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button START mapped to channel THROTTLE","args":[{"name":"button","value":"START","valueRaw":"START","type":"Heli::Joystick_Button"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958454.881236,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958454.88126,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674958455.009971,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button TRIANGLE mapped to channel CH5","args":[{"name":"button","value":"TRIANGLE","valueRaw":"TRIANGLE","type":"Heli::Joystick_Button"},{"name":"channel","value":"CH5","valueRaw":"CH5","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958455.010016,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958455.010041,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674958455.117462,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button SQUARE mapped to channel CH6","args":[{"name":"button","value":"SQUARE","valueRaw":"SQUARE","type":"Heli::Joystick_Button"},{"name":"channel","value":"CH6","valueRaw":"CH6","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674958455.1175,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958455.117525,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Connection
+; 
+; A bluetooth connection must be established with the PS5 controller.
+; https://salamwaddah.com/blog/connecting-ps4-controller-to-raspberry-pi-via-bluetooth
+;?s
+;?= {"language":"markdown","kind":1}
+; Place the device in pair mode
+; Then run this code cell. The light on the controller should stop blinking
 ;?s
 ;?= {"language":"fprime","kind":2}
-R00:00:00 fileDownlink.SendFile "/fsw/heli" "/Users/tumbar/git/stereo-heli/heli"
-;?e {"time":1674324856.647519,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fileDownlink.SendFile dispatched to port 10","args":[{"name":"Opcode","value":"fileDownlink.SendFile","valueRaw":"fileDownlink.SendFile","type":"U32"},{"name":"port","value":"10","valueRaw":10,"type":"I32"}]}
-;?e {"time":1674324856.733536,"id":608,"name":"SendStarted","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Downlink of 8009880 bytes started from /fsw/heli to /Users/tumbar/git/stereo-heli/heli","args":[{"name":"fileSize","value":"8009880","valueRaw":8009880,"type":"U32"},{"name":"sourceFileName","value":"/fsw/heli","valueRaw":"/fsw/heli","type":"string(100)"},{"name":"destFileName","value":"/Users/tumbar/git/stereo-heli/heli","valueRaw":"/Users/tumbar/git/stereo-heli/heli","type":"string(100)"}]}
-;?e {"time":1674324859.705522,"id":602,"name":"FileSent","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Sent file /fsw/heli to file /Users/tumbar/git/stereo-heli/heli","args":[{"name":"sourceFileName","value":"/fsw/heli","valueRaw":"/fsw/heli","type":"string(100)"},{"name":"destFileName","value":"/Users/tumbar/git/stereo-heli/heli","valueRaw":"/Users/tumbar/git/stereo-heli/heli","type":"string(100)"}]}
-;?e {"time":1674324859.705596,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fileDownlink.SendFile completed","args":[{"name":"Opcode","value":"fileDownlink.SendFile","valueRaw":"fileDownlink.SendFile","type":"U32"}]}
+R00:00:00 fileManager.ShellCommand "bluetoothctl connect 48:18:8D:38:43:F0" "/dev/null"
+;?e {"time":1674954345.26806,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode fileManager.ShellCommand dispatched to port 11","args":[{"name":"Opcode","value":"fileManager.ShellCommand","valueRaw":"fileManager.ShellCommand","type":"U32"},{"name":"port","value":"11","valueRaw":11,"type":"I32"}]}
+;?e {"time":1674954345.268123,"id":513,"name":"ShellCommandStarted","component":"fileManager","severity":"ACTIVITY_HI","message":"Running shell command bluetoothctl connect 48:18:8D:38:43:F0...","args":[{"name":"command","value":"bluetoothctl connect 48:18:8D:38:43:F0","valueRaw":"bluetoothctl connect 48:18:8D:38:43:F0","type":"string(256)"}]}
+;?e {"time":1674954345.850398,"id":507,"name":"ShellCommandSucceeded","component":"fileManager","severity":"ACTIVITY_HI","message":"Shell command bluetoothctl connect 48:18:8D:38:43:F0 succeeded","args":[{"name":"command","value":"bluetoothctl connect 48:18:8D:38:43:F0","valueRaw":"bluetoothctl connect 48:18:8D:38:43:F0","type":"string(256)"}]}
+;?e {"time":1674954345.850639,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode fileManager.ShellCommand completed","args":[{"name":"Opcode","value":"fileManager.ShellCommand","valueRaw":"fileManager.ShellCommand","type":"U32"}]}
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 joystick.START 0 7 2 500
+;?e {"time":1674958468.123053,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.START dispatched to port 13","args":[{"name":"Opcode","value":"joystick.START","valueRaw":"joystick.START","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674958468.123161,"id":6715,"name":"JoystickStarting","component":"joystick","severity":"ACTIVITY_LO","message":"Joystick thread started reading from /dev/input/js0","args":[{"name":"js","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674958468.123259,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.START completed","args":[{"name":"Opcode","value":"joystick.START","valueRaw":"joystick.START","type":"U32"}]}
+;?e {"time":1674958468.123494,"id":6802,"name":"Started","component":"joystickTimer","severity":"ACTIVITY_LO","message":"Interval timer started","args":[]}
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 joystick.STOP
+;?e {"time":1674954655.208017,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.STOP dispatched to port 13","args":[{"name":"Opcode","value":"joystick.STOP","valueRaw":"joystick.STOP","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674954655.262267,"id":6803,"name":"Stopped","component":"joystickTimer","severity":"ACTIVITY_LO","message":"Interval timer stopped","args":[]}
+;?e {"time":1674954655.262498,"id":6716,"name":"JoystickShutdown","component":"joystick","severity":"ACTIVITY_LO","message":"Joystick thread is shutting down","args":[]}
+;?e {"time":1674954655.291859,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.STOP completed","args":[{"name":"Opcode","value":"joystick.STOP","valueRaw":"joystick.STOP","type":"U32"}]}
+;?s
+;?= {"language":"fprime","kind":2}
+;;;;;;;;;;;;;;;;;;;;;;;
+; Name: Controller
+; Description: Default control scheme mapping for PS5 controller
+;
+; iNAV default channels:
+; 0. ROLL
+; 1. PITCH
+; 2. YAW
+; 3. THROTTLE
+; AUX channels
+
+; By default iNAV uses a channel range from 1000 - 2000
+
+R00:00:00 joystick.MAP_AXIS LX 0 1500 1000 2000 ; ROLL
+R00:00:00 joystick.MAP_AXIS LY 1 1500 1000 2000 ; PITCH
+R00:00:00 joystick.MAP_AXIS RX 2 1500 1000 2000 ; YAW
+
+; Additional yaw inputs
+R00:00:00 joystick.MAP_BUTTON L1 3 1500 1200 ; Hold for YAW left
+R00:00:00 joystick.MAP_BUTTON R1 3 1500 1800 ; Hold for YAW right
+
+; L2/R2 are both axis and buttons
+; Throttle button press / release
+;; FIXME(tumbar) For safety only one axis will be mapped for low
+R00:00:00 joystick.MAP_AXIS R2 3 0 1000 2000
+
+; R00:00:00 joystick.SAVE "/fsw/default.map"
+; R00:00:00 joystick.LOAD "/fsw/default.map"
+
+;?e {"time":1674910427.992534,"id":6706,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LX mapped to channel 0","args":[{"name":"axis","value":"LX","valueRaw":"LX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"0","valueRaw":0,"type":"I8"}]}
+;?e {"time":1674910427.992647,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674910427.992726,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674910428.095185,"id":6706,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LY mapped to channel 1","args":[{"name":"axis","value":"LY","valueRaw":"LY","type":"Heli::Joystick_Axis"},{"name":"channel","value":"1","valueRaw":1,"type":"I8"}]}
+;?e {"time":1674910428.095279,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674910428.095353,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674910428.207309,"id":6706,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis RX mapped to channel 2","args":[{"name":"axis","value":"RX","valueRaw":"RX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"2","valueRaw":2,"type":"I8"}]}
+;?e {"time":1674910428.207389,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674910428.207451,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674910428.366948,"id":6708,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button L1 mapped to channel 3","args":[{"name":"button","value":"L1","valueRaw":"L1","type":"Heli::Joystick_Button"},{"name":"channel","value":"3","valueRaw":3,"type":"I8"}]}
+;?e {"time":1674910428.36705,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674910428.367156,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674910428.47763,"id":6708,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button R1 mapped to channel 3","args":[{"name":"button","value":"R1","valueRaw":"R1","type":"Heli::Joystick_Button"},{"name":"channel","value":"3","valueRaw":3,"type":"I8"}]}
+;?e {"time":1674910428.477712,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674910428.477774,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674910428.587609,"id":6706,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis R2 mapped to channel 3","args":[{"name":"axis","value":"R2","valueRaw":"R2","type":"Heli::Joystick_Axis"},{"name":"channel","value":"3","valueRaw":3,"type":"I8"}]}
+;?e {"time":1674910428.587701,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674910428.587763,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}

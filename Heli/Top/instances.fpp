@@ -448,6 +448,7 @@ module Heli {
         priority 100
 
     instance joystick: Joystick base id 6700
+    instance joystickTimer: IntervalTimer base id 6800
 
     instance serial0: Drv.LinuxSerialDriver base id 8000 \
       {

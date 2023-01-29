@@ -44,7 +44,7 @@ namespace Heli
 
 #define READ(v, o) do { \
     if (m_buffer[serialChannel].peek((v), (o)) != Fw::SerializeStatus::FW_SERIALIZE_OK) \
-        return;\
+        return false;\
 } while (0)
 
     void Fc::data_ready(I32 serialChannel)
@@ -79,11 +79,18 @@ namespace Heli
                 return;
             }
 
-            process_message(serialChannel);
+            if (!process_message(serialChannel))
+            {
+                // Message could not be processed because either it was invalid
+                // (invalid bytes are rotated out of the queue)
+                // or there were not enough bytes to process the packet, wait for
+                // another recv() to do this
+                break;
+            }
         }
     }
 
-    void Fc::process_message(I32 serialChannel)
+    bool Fc::process_message(I32 serialChannel)
     {
         U8 b;
 
@@ -106,7 +113,14 @@ namespace Heli
             default:
                 log_WARNING_LO_PacketError(Fc_PacketError::MAGIC, b);
                 m_buffer[serialChannel].rotate(2);
-                return;
+                return false;
+        }
+
+        // Is there enough data for a single packet?
+        if (m_buffer[serialChannel].get_allocated_size() <
+                (is_v2 ? MSP_OVERHEAD : MSP_V1_OVERHEAD))
+        {
+            return false;
         }
 
         U8 direction;
@@ -120,7 +134,7 @@ namespace Heli
             default:
                 log_WARNING_LO_PacketError(Fc_PacketError::DIRECTION, direction);
                 m_buffer[serialChannel].rotate(3);
-                return;
+                return false;
         }
 
         MspMessage msg;
@@ -141,7 +155,7 @@ namespace Heli
             {
                 log_WARNING_LO_PayloadTooLarge(payload_size, MAX_PACKET_SIZE);
                 log_WARNING_LO_PacketError(Fc_PacketError::PAYLOAD_SIZE, '!');
-                return;
+                return false;
             }
 
             msg.set_function(static_cast<Fc_MspMessageId::t>(function));
@@ -151,7 +165,7 @@ namespace Heli
             if (crc != msg.v2_crc())
             {
                 log_WARNING_LO_PacketError(Fc_PacketError::CHECKSUM, crc);
-                return;
+                return false;
             }
         }
         else
@@ -170,10 +184,11 @@ namespace Heli
             if (crc != msg.v1_crc())
             {
                 log_WARNING_LO_PacketError(Fc_PacketError::CHECKSUM, crc);
-                return;
+                return false;
             }
         }
 
         mspRecv_internalInterfaceInvoke(serialChannel, msg);
+        return true;
     }
 }

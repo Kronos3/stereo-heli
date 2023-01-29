@@ -226,4 +226,20 @@ namespace Heli
     {
         return m_buf;
     }
+
+    void MspMessage::set_flags(U8 flags)
+    {
+        m_message[3] = flags;
+    }
+
+    U8 MspMessage::get_flags() const
+    {
+        return m_message[3];
+    }
+
+    U8 MspMessage::get_checksum()
+    {
+        recompute();
+        return m_message[get_payload_size() + 8];
+    }
 }

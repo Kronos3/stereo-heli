@@ -42,16 +42,20 @@ namespace Heli
         Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;
         Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;
 
+        void set_function(const Heli::Fc_MspMessageId& function);
         Heli::Fc_MspMessageId get_function() const;
-        U16 get_payload_size() const;
-        const U8* get_payload() const;
+
+        void set_flags(U8 flags);
+        U8 get_flags() const;
 
         Fc_MspPacketType get_direction() const;
         void set_direction(const Fc_MspPacketType& direction);
 
-        void set_function(const Heli::Fc_MspMessageId& function);
         void set_payload(const U8* payload, U16 payload_size);
         void payload_from(Types::CircularBuffer& buff, U16 payload_size);
+        U16 get_payload_size() const;
+        const U8* get_payload() const;
+        U8 get_checksum();
 
         U8 v1_crc() const;
         U8 v2_crc() const;

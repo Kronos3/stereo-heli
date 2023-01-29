@@ -56,6 +56,7 @@ module Heli {
         enum ReplyAction {
             REPLY,      @< Send response to message sender
             IGNORE,     @< Don't send reply to sender (setter function)
+            NO_REPLY,   @< Tell iNAV not to send a reply, doesn't bog down serial line
         }
 
         enum ReplyStatus {
@@ -90,7 +91,7 @@ module Heli {
         output port serialSend: [FcSerialLines] Drv.SerialWrite
 
         @ receive a buffer from the UART - one of the above
-        async input port serialRecv: [FcSerialLines] Drv.SerialRead
+        sync input port serialRecv: [FcSerialLines] Drv.SerialRead
 
         # -----------------------------
         # Message ports
@@ -271,19 +272,19 @@ module Heli {
         # ----------------------
 
         @ Number of packets send to Fc
-        telemetry Packets: U32
+        telemetry Packets: U32 update on change
 
         @ Number of packets errors from Fc
-        telemetry Errors: U32
+        telemetry Errors: U32 update on change
 
         @ Number of bytes sent to Fc
-        telemetry BytesSent: U32
+        telemetry BytesSent: U32 update on change
 
         @ Number of bytes received from Fc
-        telemetry BytesRecv: U32
+        telemetry BytesRecv: U32 update on change
 
         @ Number of bytes in MSP queue
-        telemetry MspQueueBytes: U32
+        telemetry MspQueueBytes: U32 update on change
     }
 
 }

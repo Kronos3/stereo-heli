@@ -100,25 +100,43 @@ namespace Heli
             auto &bucket = m_awaiting[i];
             if (lineEnabled[i] && !bucket.inUse)
             {
-                bucket = handler;
-                bucket.inUse = true;
+                m_tlm_Packets++;
+                m_tlm_BytesSent += msg.get_buffer().getSize();
+
+                if (reply != Fc_ReplyAction::NO_REPLY)
+                {
+                    bucket = handler;
+                }
+                else
+                {
+                    FW_ASSERT(msg.get_flags() == 1 && "Please set flags to '1' if using Fc_ReplyAction::NO_REPLY",
+                              msg.get_flags());
+                }
 
                 // Mark send time of packet
                 // Used for timeout detection
                 bucket.timestamp = getTime();
-
-                m_tlm_Packets++;
-                m_tlm_BytesSent += msg.get_buffer().getSize();
+                bucket.inUse = true;
+                m_await_mut.unlock();
 
                 // Send the message out on the correct serial line
                 serialSend_out(i, msg.get_buffer());
+
+                // Not waiting for a reply, this bucket is good to go
+                if (reply == Fc_ReplyAction::NO_REPLY)
+                {
+                    bucket.inUse = false;
+                }
 
                 message_sent = true;
                 break;
             }
         }
 
-        m_await_mut.unlock();
+        if (!message_sent)
+        {
+            m_await_mut.unlock();
+        }
 
         // Make sure there was a free serial line
         FW_ASSERT(message_sent, FcComponentBase::NUM_SERIALSEND_OUTPUT_PORTS);

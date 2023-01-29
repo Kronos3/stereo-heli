@@ -11,6 +11,7 @@
 
 #include <Heli/Joystick/Joystick_AxisEnumAc.hpp>
 #include <Heli/Joystick/Joystick_ButtonEnumAc.hpp>
+#include "Heli/Joystick/Joystick_AxisMapTypeEnumAc.hpp"
 
 namespace Heli
 {
@@ -22,16 +23,30 @@ namespace Heli
         void init(NATIVE_INT_TYPE instance);
 
     PRIVATE:
+        void sendControl_handler(NATIVE_INT_TYPE portNum,
+                                 Svc::TimerVal &cycleStart) override;
+
         void STOP_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) override;
-        void START_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 js) override;
+        void START_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 js,
+                              U8 trigger_ms,
+                              U32 delay_s,
+                              U32 failsafe_ms) override;
 
         void LOAD_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg &filename) override;
         void SAVE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg &filename) override;
         void MAP_AXIS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
-                                 Heli::Joystick_Axis axis, I8 channel,
+                                 Heli::Joystick_Axis axis,
+                                 Joystick_AETRChannel channel,
                                  U16 dead_zone, U16 min_value, U16 max_value) override;
+        void MAP_AXIS_DERIVATIVE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
+                                            Heli::Joystick_Axis axis,
+                                            Heli::Joystick_AETRChannel channel,
+                                            U16 dead_zone, U16 min_value, U16 max_value,
+                                            F32 delta_scale, F32 delta_offset) override;
         void MAP_BUTTON_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
-                                   Heli::Joystick_Button button, I8 channel,
+                                   Heli::Joystick_Button button,
+                                   Joystick_AETRChannel channel,
+                                   Joystick_ButtonMapType type,
                                    I16 off_value, I16 on_value) override;
 
         enum JoystickEventType
@@ -78,13 +93,14 @@ namespace Heli
         void setup_reply(FwOpcodeType opcode, U32 cmdSeq);
         void reply(const Fw::CmdResponse& response);
 
-        void send_control();
-
     PRIVATE:
         Os::Mutex m_mutex;
+        Os::Mutex m_mutex_control;
         Os::Task m_task;
 
         U8 m_joystick;
+        Fw::Time m_tim_interval;
+        Fw::Time m_tim_value;
         volatile bool is_running;
 
         bool cmd_waiting;
@@ -96,24 +112,31 @@ namespace Heli
     PRIVATE:
         struct Mapping
         {
-            I8 channel;
+            Joystick_AETRChannel channel;
             Mapping();
             bool is_mapped() const;
         };
 
         struct AxisMapping : public Mapping
         {
+            Joystick_AxisMapType type;
             U16 deadzone;
             U16 min_value;
             U16 max_value;
 
+            F32 delta_scale;
+            F32 delta_offset;
+            F32 last_control;
+
             AxisMapping();
-            U16 get_fc(I16 js_value) const;
+            void set_fc(I16 js_value, U16& fc);
+            void service(U16 channels[INAV_MSP_RC_CHANNEL]) const;
             void unmap();
         };
 
         struct ButtonMapping : public Mapping
         {
+            Joystick_ButtonMapType type;
             I16 off_value;
             I16 on_value;
 
@@ -122,6 +145,10 @@ namespace Heli
             void unmap();
         };
 
+        U32 m_failsafe_arr;
+        U32 m_failsafe_ticks;
+        U8 m_inav_msg_last_checksum;
+        bool m_inav_msg_last_checksum_valid;
         MspMessage inav_msg;
         AxisMapping axis_mappings[Joystick_Axis::NUM_CONSTANTS];
         ButtonMapping button_mappings[Joystick_Button::NUM_CONSTANTS];
