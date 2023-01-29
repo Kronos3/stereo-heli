@@ -18,6 +18,7 @@ namespace Heli
               m_opcode(0), m_cmdSeq(0), m_fd(-1), channels{},
               inav_msg(Fc_MspMessageId::MSP_SET_RAW_RC),
               m_failsafe_arr(0),
+              m_failsafe_ticks(0),
               m_inav_msg_last_checksum(0),
               m_inav_msg_last_checksum_valid(false)
     {
