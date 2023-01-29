@@ -81,19 +81,13 @@ R00:00:00 fc.RESET
 ; Name: Controller
 ; Description: Default control scheme mapping for PS5 controller
 ;
-; iNAV default channels:
-; 0NAV default channels:
-; 0. ROLL
-; 1. PITCH
-; 2. YAW
-; 3. THROTTLE
-; AUX channels
+;;;;;;;;;;;;;;;;;;;;;;;
 
 ; By default iNAV uses a channel range from 1000 - 2000
 
 R00:00:00 joystick.MAP_AXIS LX ROLL 1200 1000 2000 ; ROLL
 R00:00:00 joystick.MAP_AXIS LY PITCH 1500 1000 2000 ; PITCH
-R00:00:00 joystick.MAP_AXIS RX YAW 1000 1000 2000 ; YAW
+R00:00:00 joystick.MAP_AXIS RX YAW 1100 1000 2000 ; YAW
 
 ; Additional yaw inputs
 R00:00:00 joystick.MAP_BUTTON L1 YAW HOLD 1500 1200 ; Hold for YAW left
@@ -104,7 +98,7 @@ R00:00:00 joystick.MAP_BUTTON R1 YAW HOLD 1500 1800 ; Hold for YAW right
 ;; FIXME(tumbar) For safety only one axis will be mapped for low
 R00:00:00 joystick.MAP_AXIS_DERIVATIVE R2 THROTTLE 0 1000 2000 5.0 0.0 ; + throttle
 R00:00:00 joystick.MAP_AXIS_DERIVATIVE L2 THROTTLE 0 1000 2000 -5.0 0.0 ; - throttle
-R00:00:00 joystick.MAP_BUTTON START THROTTLE HOLD 1000 1000
+R00:00:00 joystick.MAP_BUTTON START THROTTLE HOLD 1000 1000 ; safe throttle cut-off
 
 ; ARM
 R00:00:00 joystick.MAP_BUTTON TRIANGLE CH5 TOGGLE 1000 1500
@@ -114,36 +108,36 @@ R00:00:00 joystick.MAP_BUTTON SQUARE CH6 TOGGLE 1000 1500
 
 ;R00:00:00 joystick.SAVE "/fsw/default.map"
 ;R00:00:00 joystick.LOAD "/fsw/default.map"
-;?e {"time":1674958453.876704,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LX mapped to channel ROLL","args":[{"name":"axis","value":"LX","valueRaw":"LX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"ROLL","valueRaw":"ROLL","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958453.876775,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958453.876806,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
-;?e {"time":1674958453.983702,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LY mapped to channel PITCH","args":[{"name":"axis","value":"LY","valueRaw":"LY","type":"Heli::Joystick_Axis"},{"name":"channel","value":"PITCH","valueRaw":"PITCH","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958453.983745,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958453.983786,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
-;?e {"time":1674958454.147451,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis RX mapped to channel YAW","args":[{"name":"axis","value":"RX","valueRaw":"RX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958454.147496,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958454.147523,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
-;?e {"time":1674958454.304949,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button L1 mapped to channel YAW","args":[{"name":"button","value":"L1","valueRaw":"L1","type":"Heli::Joystick_Button"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958454.304992,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958454.305017,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
-;?e {"time":1674958454.466575,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button R1 mapped to channel YAW","args":[{"name":"button","value":"R1","valueRaw":"R1","type":"Heli::Joystick_Button"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958454.466628,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958454.466655,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
-;?e {"time":1674958454.608715,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis R2 mapped to channel THROTTLE","args":[{"name":"axis","value":"R2","valueRaw":"R2","type":"Heli::Joystick_Axis"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958454.608758,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958454.608783,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"}]}
-;?e {"time":1674958454.775004,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis L2 mapped to channel THROTTLE","args":[{"name":"axis","value":"L2","valueRaw":"L2","type":"Heli::Joystick_Axis"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958454.775043,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958454.775069,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"}]}
-;?e {"time":1674958454.881195,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button START mapped to channel THROTTLE","args":[{"name":"button","value":"START","valueRaw":"START","type":"Heli::Joystick_Button"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958454.881236,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958454.88126,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
-;?e {"time":1674958455.009971,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button TRIANGLE mapped to channel CH5","args":[{"name":"button","value":"TRIANGLE","valueRaw":"TRIANGLE","type":"Heli::Joystick_Button"},{"name":"channel","value":"CH5","valueRaw":"CH5","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958455.010016,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958455.010041,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
-;?e {"time":1674958455.117462,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button SQUARE mapped to channel CH6","args":[{"name":"button","value":"SQUARE","valueRaw":"SQUARE","type":"Heli::Joystick_Button"},{"name":"channel","value":"CH6","valueRaw":"CH6","type":"Heli::Joystick_AETRChannel"}]}
-;?e {"time":1674958455.1175,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958455.117525,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674960414.556106,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LX mapped to channel ROLL","args":[{"name":"axis","value":"LX","valueRaw":"LX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"ROLL","valueRaw":"ROLL","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960414.556223,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960414.556282,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674960414.659847,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LY mapped to channel PITCH","args":[{"name":"axis","value":"LY","valueRaw":"LY","type":"Heli::Joystick_Axis"},{"name":"channel","value":"PITCH","valueRaw":"PITCH","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960414.65994,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960414.659996,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674960414.814873,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis RX mapped to channel YAW","args":[{"name":"axis","value":"RX","valueRaw":"RX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960414.814959,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960414.815014,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674960414.91741,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button L1 mapped to channel YAW","args":[{"name":"button","value":"L1","valueRaw":"L1","type":"Heli::Joystick_Button"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960414.917496,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960414.917568,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674960415.026012,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button R1 mapped to channel YAW","args":[{"name":"button","value":"R1","valueRaw":"R1","type":"Heli::Joystick_Button"},{"name":"channel","value":"YAW","valueRaw":"YAW","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960415.026099,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960415.026153,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674960415.154164,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis R2 mapped to channel THROTTLE","args":[{"name":"axis","value":"R2","valueRaw":"R2","type":"Heli::Joystick_Axis"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960415.15425,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960415.154304,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"}]}
+;?e {"time":1674960415.305094,"id":6705,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis L2 mapped to channel THROTTLE","args":[{"name":"axis","value":"L2","valueRaw":"L2","type":"Heli::Joystick_Axis"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960415.305187,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960415.305244,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS_DERIVATIVE completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS_DERIVATIVE","valueRaw":"joystick.MAP_AXIS_DERIVATIVE","type":"U32"}]}
+;?e {"time":1674960415.413529,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button START mapped to channel THROTTLE","args":[{"name":"button","value":"START","valueRaw":"START","type":"Heli::Joystick_Button"},{"name":"channel","value":"THROTTLE","valueRaw":"THROTTLE","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960415.413633,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960415.413704,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674960415.521047,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button TRIANGLE mapped to channel CH5","args":[{"name":"button","value":"TRIANGLE","valueRaw":"TRIANGLE","type":"Heli::Joystick_Button"},{"name":"channel","value":"CH5","valueRaw":"CH5","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960415.521134,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960415.521206,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
+;?e {"time":1674960415.639795,"id":6707,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button SQUARE mapped to channel CH6","args":[{"name":"button","value":"SQUARE","valueRaw":"SQUARE","type":"Heli::Joystick_Button"},{"name":"channel","value":"CH6","valueRaw":"CH6","type":"Heli::Joystick_AETRChannel"}]}
+;?e {"time":1674960415.639883,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960415.639937,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
 ;?s
 ;?= {"language":"markdown","kind":1}
 ; ## Connection
@@ -164,63 +158,14 @@ R00:00:00 fileManager.ShellCommand "bluetoothctl connect 48:18:8D:38:43:F0" "/de
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 joystick.START 0 7 2 500
-;?e {"time":1674958468.123053,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.START dispatched to port 13","args":[{"name":"Opcode","value":"joystick.START","valueRaw":"joystick.START","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674958468.123161,"id":6715,"name":"JoystickStarting","component":"joystick","severity":"ACTIVITY_LO","message":"Joystick thread started reading from /dev/input/js0","args":[{"name":"js","value":"0","valueRaw":0,"type":"U8"}]}
-;?e {"time":1674958468.123259,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.START completed","args":[{"name":"Opcode","value":"joystick.START","valueRaw":"joystick.START","type":"U32"}]}
-;?e {"time":1674958468.123494,"id":6802,"name":"Started","component":"joystickTimer","severity":"ACTIVITY_LO","message":"Interval timer started","args":[]}
+;?e {"time":1674960195.823586,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.START dispatched to port 13","args":[{"name":"Opcode","value":"joystick.START","valueRaw":"joystick.START","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674960195.823692,"id":6715,"name":"JoystickStarting","component":"joystick","severity":"ACTIVITY_LO","message":"Joystick thread started reading from /dev/input/js0","args":[{"name":"js","value":"0","valueRaw":0,"type":"U8"}]}
+;?e {"time":1674960195.82383,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.START completed","args":[{"name":"Opcode","value":"joystick.START","valueRaw":"joystick.START","type":"U32"}]}
+;?e {"time":1674960195.824099,"id":6802,"name":"Started","component":"joystickTimer","severity":"ACTIVITY_LO","message":"Interval timer started","args":[]}
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 joystick.STOP
-;?e {"time":1674954655.208017,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.STOP dispatched to port 13","args":[{"name":"Opcode","value":"joystick.STOP","valueRaw":"joystick.STOP","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674954655.262267,"id":6803,"name":"Stopped","component":"joystickTimer","severity":"ACTIVITY_LO","message":"Interval timer stopped","args":[]}
-;?e {"time":1674954655.262498,"id":6716,"name":"JoystickShutdown","component":"joystick","severity":"ACTIVITY_LO","message":"Joystick thread is shutting down","args":[]}
-;?e {"time":1674954655.291859,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.STOP completed","args":[{"name":"Opcode","value":"joystick.STOP","valueRaw":"joystick.STOP","type":"U32"}]}
-;?s
-;?= {"language":"fprime","kind":2}
-;;;;;;;;;;;;;;;;;;;;;;;
-; Name: Controller
-; Description: Default control scheme mapping for PS5 controller
-;
-; iNAV default channels:
-; 0. ROLL
-; 1. PITCH
-; 2. YAW
-; 3. THROTTLE
-; AUX channels
-
-; By default iNAV uses a channel range from 1000 - 2000
-
-R00:00:00 joystick.MAP_AXIS LX 0 1500 1000 2000 ; ROLL
-R00:00:00 joystick.MAP_AXIS LY 1 1500 1000 2000 ; PITCH
-R00:00:00 joystick.MAP_AXIS RX 2 1500 1000 2000 ; YAW
-
-; Additional yaw inputs
-R00:00:00 joystick.MAP_BUTTON L1 3 1500 1200 ; Hold for YAW left
-R00:00:00 joystick.MAP_BUTTON R1 3 1500 1800 ; Hold for YAW right
-
-; L2/R2 are both axis and buttons
-; Throttle button press / release
-;; FIXME(tumbar) For safety only one axis will be mapped for low
-R00:00:00 joystick.MAP_AXIS R2 3 0 1000 2000
-
-; R00:00:00 joystick.SAVE "/fsw/default.map"
-; R00:00:00 joystick.LOAD "/fsw/default.map"
-
-;?e {"time":1674910427.992534,"id":6706,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LX mapped to channel 0","args":[{"name":"axis","value":"LX","valueRaw":"LX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"0","valueRaw":0,"type":"I8"}]}
-;?e {"time":1674910427.992647,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674910427.992726,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
-;?e {"time":1674910428.095185,"id":6706,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis LY mapped to channel 1","args":[{"name":"axis","value":"LY","valueRaw":"LY","type":"Heli::Joystick_Axis"},{"name":"channel","value":"1","valueRaw":1,"type":"I8"}]}
-;?e {"time":1674910428.095279,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674910428.095353,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
-;?e {"time":1674910428.207309,"id":6706,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis RX mapped to channel 2","args":[{"name":"axis","value":"RX","valueRaw":"RX","type":"Heli::Joystick_Axis"},{"name":"channel","value":"2","valueRaw":2,"type":"I8"}]}
-;?e {"time":1674910428.207389,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674910428.207451,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
-;?e {"time":1674910428.366948,"id":6708,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button L1 mapped to channel 3","args":[{"name":"button","value":"L1","valueRaw":"L1","type":"Heli::Joystick_Button"},{"name":"channel","value":"3","valueRaw":3,"type":"I8"}]}
-;?e {"time":1674910428.36705,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674910428.367156,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
-;?e {"time":1674910428.47763,"id":6708,"name":"ButtonMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Button R1 mapped to channel 3","args":[{"name":"button","value":"R1","valueRaw":"R1","type":"Heli::Joystick_Button"},{"name":"channel","value":"3","valueRaw":3,"type":"I8"}]}
-;?e {"time":1674910428.477712,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674910428.477774,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_BUTTON completed","args":[{"name":"Opcode","value":"joystick.MAP_BUTTON","valueRaw":"joystick.MAP_BUTTON","type":"U32"}]}
-;?e {"time":1674910428.587609,"id":6706,"name":"AxisMapped","component":"joystick","severity":"ACTIVITY_LO","message":"Axis R2 mapped to channel 3","args":[{"name":"axis","value":"R2","valueRaw":"R2","type":"Heli::Joystick_Axis"},{"name":"channel","value":"3","valueRaw":3,"type":"I8"}]}
-;?e {"time":1674910428.587701,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS dispatched to port 13","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
-;?e {"time":1674910428.587763,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.MAP_AXIS completed","args":[{"name":"Opcode","value":"joystick.MAP_AXIS","valueRaw":"joystick.MAP_AXIS","type":"U32"}]}
+;?e {"time":1674959805.750031,"id":401,"name":"OpCodeDispatched","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.STOP dispatched to port 13","args":[{"name":"Opcode","value":"joystick.STOP","valueRaw":"joystick.STOP","type":"U32"},{"name":"port","value":"13","valueRaw":13,"type":"I32"}]}
+;?e {"time":1674959806.017566,"id":6803,"name":"Stopped","component":"joystickTimer","severity":"ACTIVITY_LO","message":"Interval timer stopped","args":[]}
+;?e {"time":1674959806.017786,"id":6716,"name":"JoystickShutdown","component":"joystick","severity":"ACTIVITY_LO","message":"Joystick thread is shutting down","args":[]}
+;?e {"time":1674959806.047857,"id":402,"name":"OpCodeCompleted","component":"cmdDisp","severity":"COMMAND","message":"Opcode joystick.STOP completed","args":[{"name":"Opcode","value":"joystick.STOP","valueRaw":"joystick.STOP","type":"U32"}]}
