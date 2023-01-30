@@ -114,7 +114,8 @@ module Heli {
             channel: AETRChannel, @< Channel to map to, -1 for unmapped
             dead_zone: U16  @< Absolute value of dead_zone start
             min_value: U16  @< Fc mapped channel value @ low value
-            max_value: U16  @< Fc mapped channel value @ high value
+            max_value: U16, @< Fc mapped channel value @ high value
+            invert: bool    @< Invert the mapping on this axis
         )
 
         @ Map an axis to the derivative of an Fc channel (tick rate used at joystick start)

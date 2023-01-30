@@ -95,6 +95,17 @@ module Heli {
         @ Rate to poll Fc for attitude and position states
         param FC_POLL_RATE_HZ: U32 default 50
 
+        telemetry PositionX: F32 format "{} m"
+        telemetry PositionY: F32 format "{} m"
+        telemetry PositionZ: F32 format "{} m"
+
+        telemetry QuaternionX: F32
+        telemetry QuaternionY: F32
+        telemetry QuaternionZ: F32
+        telemetry QuaternionW: F32
+
+        telemetry Quality: SappQuality
+
         event FcPollStarted(rate: U32) \
             severity activity low \
             format "Start polling Fc for attitude and position @ {} Hz"

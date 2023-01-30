@@ -253,7 +253,8 @@ namespace Heli
                                        Heli::Joystick_Axis axis,
                                        Joystick_AETRChannel channel,
                                        U16 dead_zone,
-                                       U16 min_value, U16 max_value)
+                                       U16 min_value, U16 max_value,
+                                       bool inverted)
     {
         AxisMapping &mapping = axis_mappings[axis.e];
         if (channel == Joystick_AETRChannel::UNMAPPED)
@@ -267,6 +268,7 @@ namespace Heli
         else
         {
             mapping.type = Joystick_AxisMapType::DIRECT;
+            mapping.inverted = inverted;
             mapping.channel = channel;
             mapping.deadzone = dead_zone;
             mapping.min_value = min_value;
@@ -299,6 +301,7 @@ namespace Heli
         else
         {
             mapping.type = Joystick_AxisMapType::DERIVATIVE;
+            mapping.inverted = false;
             mapping.channel = channel;
             mapping.deadzone = dead_zone;
             mapping.min_value = min_value;
@@ -479,6 +482,12 @@ namespace Heli
         }
 
         F64 normalized = (js_value / (32767.0 * 2)) + 0.5;
+
+        if (inverted)
+        {
+            normalized = 1.0 - normalized;
+        }
+
         normalized = FW_MAX(FW_MIN(normalized, 1.0), 0);
 
         switch (type.e)
@@ -495,13 +504,17 @@ namespace Heli
     }
 
     Joystick::AxisMapping::AxisMapping()
-            : deadzone(0), min_value(0), max_value(0), delta_scale(0.0), delta_offset(0.0), last_control(0)
+            : deadzone(0), inverted(false),
+            min_value(0), max_value(0),
+            delta_scale(0.0), delta_offset(0.0),
+            last_control(0)
     {
     }
 
     void Joystick::AxisMapping::unmap()
     {
         channel = Joystick_AETRChannel::UNMAPPED;
+        inverted = false;
         deadzone = 0;
         min_value = 0;
         max_value = 0;

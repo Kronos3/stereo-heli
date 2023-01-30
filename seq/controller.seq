@@ -2,27 +2,30 @@
 ; Name: Controller
 ; Description: Default control scheme mapping for PS5 controller
 ;
-; iNAV default channels:
-; 0. ROLL
-; 1. PITCH
-; 2. YAW
-; 3. THROTTLE
-; AUX channels
+;;;;;;;;;;;;;;;;;;;;;;;
 
 ; By default iNAV uses a channel range from 1000 - 2000
 
-R00:00:00 joystick.MAP_AXIS LX 0 1500 1000 2000 ; ROLL
-R00:00:00 joystick.MAP_AXIS LY 1 1500 1000 2000 ; PITCH
-R00:00:00 joystick.MAP_AXIS RX 2 1500 1000 2000 ; YAW
+R00:00:00 joystick.MAP_AXIS LX ROLL 1200 1000 2000 ; ROLL
+R00:00:00 joystick.MAP_AXIS LY PITCH 1500 1000 2000 ; PITCH
+R00:00:00 joystick.MAP_AXIS RX YAW 1100 1000 2000 ; YAW
 
 ; Additional yaw inputs
-R00:00:00 joystick.MAP_BUTTON L1 3 1500 1200 ; Hold for YAW left
-R00:00:00 joystick.MAP_BUTTON R1 3 1500 1800 ; Hold for YAW right
+R00:00:00 joystick.MAP_BUTTON L1 YAW HOLD 1500 1200 ; Hold for YAW left
+R00:00:00 joystick.MAP_BUTTON R1 YAW HOLD 1500 1800 ; Hold for YAW right
 
 ; L2/R2 are both axis and buttons
 ; Throttle button press / release
 ;; FIXME(tumbar) For safety only one axis will be mapped for low
-R00:00:00 joystick.MAP_AXIS R2 3 0 1000 2000
+R00:00:00 joystick.MAP_AXIS_DERIVATIVE R2 THROTTLE 0 1000 2000 5.0 0.0 ; + throttle
+R00:00:00 joystick.MAP_AXIS_DERIVATIVE L2 THROTTLE 0 1000 2000 -5.0 0.0 ; - throttle
+R00:00:00 joystick.MAP_BUTTON START THROTTLE HOLD 1000 1000 ; safe throttle cut-off
 
-R00:00:00 joystick.SAVE "/fsw/default.map"
-R00:00:00 joystick.LOAD "/fsw/default.map"
+; ARM
+R00:00:00 joystick.MAP_BUTTON TRIANGLE CH5 TOGGLE 1000 1500
+
+; Kill switch
+R00:00:00 joystick.MAP_BUTTON SQUARE CH6 TOGGLE 1000 1500
+
+;R00:00:00 joystick.SAVE "/fsw/default.map"
+;R00:00:00 joystick.LOAD "/fsw/default.map"

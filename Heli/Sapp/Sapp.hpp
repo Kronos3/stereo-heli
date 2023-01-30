@@ -42,6 +42,7 @@ namespace Heli
         void set_quality(const SappQuality& quality);
 
     PRIVATE:
+        bool m_last_pose_update_valid;
         Fw::Time m_last_pose_update;
         SappQuality m_quality;
         Quaternion m_attitude;

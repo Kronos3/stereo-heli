@@ -88,6 +88,7 @@ module Heli {
             # Rate group 5 Hz
             rgDriver.CycleOut[Port_RateGroups.rg5Hz] -> rg5Hz.CycleIn
             rg5Hz.RateGroupMemberOut[0] -> fc.schedIn
+            rg5Hz.RateGroupMemberOut[1] -> sapp.schedIn
 
             # Rate group 10 Hz
             rgDriver.CycleOut[Port_RateGroups.rg10Hz] -> rg10Hz.CycleIn

@@ -37,7 +37,8 @@ namespace Heli
         void MAP_AXIS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
                                  Heli::Joystick_Axis axis,
                                  Joystick_AETRChannel channel,
-                                 U16 dead_zone, U16 min_value, U16 max_value) override;
+                                 U16 dead_zone, U16 min_value, U16 max_value,
+                                 bool inverted) override;
         void MAP_AXIS_DERIVATIVE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
                                             Heli::Joystick_Axis axis,
                                             Heli::Joystick_AETRChannel channel,
@@ -120,6 +121,7 @@ namespace Heli
         struct AxisMapping : public Mapping
         {
             Joystick_AxisMapType type;
+            bool inverted;
             U16 deadzone;
             U16 min_value;
             U16 max_value;
