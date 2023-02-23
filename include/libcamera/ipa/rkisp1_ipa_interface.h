@@ -44,6 +44,25 @@ enum class _RkISP1EventCmd {
 };
 
 
+struct IPAConfigInfo
+{
+public:
+#ifndef __DOXYGEN__
+	IPAConfigInfo()
+	{
+	}
+
+	IPAConfigInfo(const IPACameraSensorInfo &_sensorInfo, const ControlInfoMap &_sensorControls)
+		: sensorInfo(_sensorInfo), sensorControls(_sensorControls)
+	{
+	}
+#endif
+
+
+	IPACameraSensorInfo sensorInfo;
+	ControlInfoMap sensorControls;
+};
+
 class IPARkISP1Interface : public IPAInterface
 {
 public:
@@ -51,6 +70,8 @@ public:
 	virtual int32_t init(
 		const IPASettings &settings,
 		const uint32_t hwRevision,
+		const IPACameraSensorInfo &sensorInfo,
+		const ControlInfoMap &sensorControls,
 		ControlInfoMap *ipaControls) = 0;
 
 	virtual int32_t start() = 0;
@@ -58,9 +79,9 @@ public:
 	virtual void stop() = 0;
 
 	virtual int32_t configure(
-		const IPACameraSensorInfo &sensorInfo,
+		const IPAConfigInfo &configInfo,
 		const std::map<uint32_t, libcamera::IPAStream> &streamConfig,
-		const std::map<uint32_t, libcamera::ControlInfoMap> &entityControls) = 0;
+		ControlInfoMap *ipaControls) = 0;
 
 	virtual void mapBuffers(
 		const std::vector<libcamera::IPABuffer> &buffers) = 0;

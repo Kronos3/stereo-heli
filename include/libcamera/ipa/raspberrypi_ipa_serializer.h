@@ -305,6 +305,16 @@ public:
 			appendPOD<uint32_t>(retData, 0);
 		}
 
+		std::vector<uint8_t> ipaContext;
+		std::tie(ipaContext, std::ignore) =
+			IPADataSerializer<uint32_t>::serialize(data.ipaContext);
+		retData.insert(retData.end(), ipaContext.begin(), ipaContext.end());
+
+		std::vector<uint8_t> delayContext;
+		std::tie(delayContext, std::ignore) =
+			IPADataSerializer<uint32_t>::serialize(data.delayContext);
+		retData.insert(retData.end(), delayContext.begin(), delayContext.end());
+
 		return {retData, {}};
 	}
 
@@ -382,6 +392,30 @@ public:
 		if (controlsSize > 0)
 			ret.controls =
 				IPADataSerializer<ControlList>::deserialize(m, m + controlsSize, cs);
+		m += controlsSize;
+		dataSize -= controlsSize;
+
+
+		if (dataSize < 4) {
+			LOG(IPADataSerializer, Error)
+				<< "Failed to deserialize " << "ipaContext"
+				<< ": not enough data, expected "
+				<< (4) << ", got " << (dataSize);
+			return ret;
+		}
+		ret.ipaContext = IPADataSerializer<uint32_t>::deserialize(m, m + 4);
+		m += 4;
+		dataSize -= 4;
+
+
+		if (dataSize < 4) {
+			LOG(IPADataSerializer, Error)
+				<< "Failed to deserialize " << "delayContext"
+				<< ": not enough data, expected "
+				<< (4) << ", got " << (dataSize);
+			return ret;
+		}
+		ret.delayContext = IPADataSerializer<uint32_t>::deserialize(m, m + 4);
 
 		return ret;
 	}

@@ -25,6 +25,7 @@ namespace Heli
         if (!m_valid)
         {
             log_WARNING_LO_NotValidated();
+            incdec_out(0, frameId, ReferenceCounter::DECREMENT);
             return;
         }
 
@@ -123,6 +124,8 @@ namespace Heli
         m_valid = false;
         m_mutex.unlock();
 
+        log_WARNING_LO_NotValidated_ThrottleClear();
+
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
@@ -161,6 +164,8 @@ namespace Heli
 
         m_mutex.lock();
         m_valid = false;
+
+        log_WARNING_LO_NotValidated_ThrottleClear();
 
         if (m_pipeline_n == 0)
         {

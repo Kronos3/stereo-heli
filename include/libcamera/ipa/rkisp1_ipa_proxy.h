@@ -37,6 +37,8 @@ public:
         int32_t init(
         	const IPASettings &settings,
         	const uint32_t hwRevision,
+        	const IPACameraSensorInfo &sensorInfo,
+        	const ControlInfoMap &sensorControls,
         	ControlInfoMap *ipaControls) override;
 
         int32_t start() override;
@@ -44,9 +46,9 @@ public:
         void stop() override;
 
         int32_t configure(
-        	const IPACameraSensorInfo &sensorInfo,
+        	const IPAConfigInfo &configInfo,
         	const std::map<uint32_t, libcamera::IPAStream> &streamConfig,
-        	const std::map<uint32_t, libcamera::ControlInfoMap> &entityControls) override;
+        	ControlInfoMap *ipaControls) override;
 
         void mapBuffers(
         	const std::vector<libcamera::IPABuffer> &buffers) override;
@@ -81,10 +83,14 @@ private:
         int32_t initThread(
         	const IPASettings &settings,
         	const uint32_t hwRevision,
+        	const IPACameraSensorInfo &sensorInfo,
+        	const ControlInfoMap &sensorControls,
         	ControlInfoMap *ipaControls);
         int32_t initIPC(
         	const IPASettings &settings,
         	const uint32_t hwRevision,
+        	const IPACameraSensorInfo &sensorInfo,
+        	const ControlInfoMap &sensorControls,
         	ControlInfoMap *ipaControls);
 
         int32_t startThread();
@@ -94,13 +100,13 @@ private:
         void stopIPC();
 
         int32_t configureThread(
-        	const IPACameraSensorInfo &sensorInfo,
+        	const IPAConfigInfo &configInfo,
         	const std::map<uint32_t, libcamera::IPAStream> &streamConfig,
-        	const std::map<uint32_t, libcamera::ControlInfoMap> &entityControls);
+        	ControlInfoMap *ipaControls);
         int32_t configureIPC(
-        	const IPACameraSensorInfo &sensorInfo,
+        	const IPAConfigInfo &configInfo,
         	const std::map<uint32_t, libcamera::IPAStream> &streamConfig,
-        	const std::map<uint32_t, libcamera::ControlInfoMap> &entityControls);
+        	ControlInfoMap *ipaControls);
 
         void mapBuffersThread(
         	const std::vector<libcamera::IPABuffer> &buffers);

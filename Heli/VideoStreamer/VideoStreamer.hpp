@@ -30,12 +30,29 @@ namespace Heli
         void preamble() override;
 
         void frame_handler(NATIVE_INT_TYPE portNum, U32 frameId) override;
-        void NETWORK_SEND_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg& address, U16 portN) override;
-        void DISPLAY_cmdHandler(U32 opCode, U32 cmdSeq, VideoStreamer_DisplayLocation where, CamSelect eye) override;
-//        void CAPTURE_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &destination) override;
+        void NETWORK_SEND_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& address, U16 portN) override;
+        void DISPLAY_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, VideoStreamer_DisplayLocation where, CamSelect eye) override;
+        void CAPTURE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
+                                const Fw::CmdStringArg &location,
+                                Heli::CamSelect eye,
+                                Heli::VideoStreamer_ImageEncoding encoding) override;
+
+        void sched_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) override;
 
     PRIVATE:
         void clean();
+
+        bool is_capturing;
+        struct {
+            Fw::Time request_time;
+
+            Fw::String location;
+            Heli::CamSelect eye;
+            Heli::VideoStreamer_ImageEncoding encoding;
+
+            FwOpcodeType opCode;
+            U32 cmdSeq;
+        } m_capture;
 
         bool is_showing;
         CamFrame m_showing;

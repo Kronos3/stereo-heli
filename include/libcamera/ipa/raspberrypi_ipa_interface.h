@@ -48,14 +48,6 @@ enum class _RPiEventCmd {
 };
 
 
-enum BufferMask {
-	MaskID = 65535,
-	MaskStats = 65536,
-	MaskEmbeddedData = 131072,
-	MaskBayerData = 262144,
-	MaskExternalBuffer = 1048576,
-};
-
 struct SensorConfig
 {
 public:
@@ -103,12 +95,12 @@ struct ISPConfig
 public:
 #ifndef __DOXYGEN__
 	ISPConfig()
-		: embeddedBufferId(0), bayerBufferId(0), embeddedBufferPresent(0)
+		: embeddedBufferId(0), bayerBufferId(0), embeddedBufferPresent(0), ipaContext(0), delayContext(0)
 	{
 	}
 
-	ISPConfig(uint32_t _embeddedBufferId, uint32_t _bayerBufferId, bool _embeddedBufferPresent, const ControlList &_controls)
-		: embeddedBufferId(_embeddedBufferId), bayerBufferId(_bayerBufferId), embeddedBufferPresent(_embeddedBufferPresent), controls(_controls)
+	ISPConfig(uint32_t _embeddedBufferId, uint32_t _bayerBufferId, bool _embeddedBufferPresent, const ControlList &_controls, uint32_t _ipaContext, uint32_t _delayContext)
+		: embeddedBufferId(_embeddedBufferId), bayerBufferId(_bayerBufferId), embeddedBufferPresent(_embeddedBufferPresent), controls(_controls), ipaContext(_ipaContext), delayContext(_delayContext)
 	{
 	}
 #endif
@@ -118,6 +110,8 @@ public:
 	uint32_t bayerBufferId;
 	bool embeddedBufferPresent;
 	ControlList controls;
+	uint32_t ipaContext;
+	uint32_t delayContext;
 };
 
 struct IPAConfig
@@ -210,7 +204,8 @@ public:
 		const std::vector<uint32_t> &ids) = 0;
 
 	virtual void signalStatReady(
-		const uint32_t bufferId) = 0;
+		const uint32_t bufferId,
+		const uint32_t ipaContext) = 0;
 
 	virtual void signalQueueRequest(
 		const ControlList &controls) = 0;
@@ -226,7 +221,7 @@ public:
 
 	Signal<const ControlList &> setIspControls;
 
-	Signal<const ControlList &> setDelayedControls;
+	Signal<const ControlList &, uint32_t> setDelayedControls;
 };
 
 } /* namespace RPi */

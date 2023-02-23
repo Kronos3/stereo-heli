@@ -12,6 +12,8 @@ module Heli {
         @ Output frames
         async input port frame: Frame
 
+        async input port sched: Svc.Sched
+
         # -----------------------------
         # Special ports
         # -----------------------------
@@ -60,6 +62,19 @@ module Heli {
             eye: CamSelect @< Which camera to stream
             )
 
+        enum ImageEncoding {
+            JPEG,   @< JPEG Image (Loss Compression)
+            PNG,    @< Lossy compression with alpha channel
+            TIFF    @< Lossless compression which can store multiple images in a single file
+        }
+
+        @ Save the next camera frame that VideoStreamer receives to disk
+        async command CAPTURE(
+            location: string size 120 @< Where to save the image, should not include the extension
+            eye: CamSelect @< Which camera to save image from. If BOTH, two files are saved, unless TIFF
+            encoding: ImageEncoding @< Image compression format - selects file extension
+        )
+
         # -----------------------------
         # Events
         # -----------------------------
@@ -75,6 +90,17 @@ module Heli {
         event EyeNotSupport() \
             severity warning low \
             format "Cannot display both eyes"
+
+        event CaptureTimeout(
+            destination: string size 120
+        ) severity warning low \
+          format "Timeout occurred during capture of {}"
+
+        event CaptureCompleted(
+            camera: CamSelect,
+            destination: string size 120
+        ) severity activity low \
+          format "Saved capture on {} camera to {}"
 
         @ Frame output rate
         telemetry FramesPerSecond: U32 format "{} fps"

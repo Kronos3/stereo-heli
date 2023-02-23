@@ -92,7 +92,8 @@ module Heli {
 
         event NotValidated() \
             severity warning low \
-            format "Frame pipeline has not been validated by 'CHECK'"
+            format "Frame pipeline has not been validated by 'CHECK'" \
+            throttle 1
 
         event NoMoreSlots() \
             severity warning low \

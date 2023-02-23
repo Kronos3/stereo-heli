@@ -84,6 +84,7 @@ module Heli {
             rg1Hz.RateGroupMemberOut[2] -> cmdSeq2.schedIn
             rg1Hz.RateGroupMemberOut[3] -> cmdSeq3.schedIn
             rg1Hz.RateGroupMemberOut[4] -> cmdSeq4.schedIn
+            rg1Hz.RateGroupMemberOut[5] -> videoStreamer.sched
 
             # Rate group 5 Hz
             rgDriver.CycleOut[Port_RateGroups.rg5Hz] -> rg5Hz.CycleIn

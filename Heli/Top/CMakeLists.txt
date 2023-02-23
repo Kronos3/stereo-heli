@@ -23,12 +23,11 @@ register_fprime_executable()
 
 target_link_libraries(${EXECUTABLE_NAME} PUBLIC
         # Work through dependencies
-#        opencv_imgcodecs
-#        opencv_imgproc
-#        opencv_calib3d
-#        opencv_core
-        ${HELI_LIB_PATH}/libcamera.so.0.0.2
-        ${HELI_LIB_PATH}/libcamera-base.so.0.0.2
+        ${HELI_LIB_PATH}/libopencv_imgcodecs.so.4.6.0
+        ${HELI_LIB_PATH}/libopencv_imgproc.so.4.6.0
+        ${HELI_LIB_PATH}/libopencv_core.so.4.6.0
+        ${HELI_LIB_PATH}/libcamera.so.0.0.3
+        ${HELI_LIB_PATH}/libcamera-base.so.0.0.3
         ${HELI_LIB_PATH}/libdrm.so
 )
 

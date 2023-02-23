@@ -59,7 +59,8 @@ public:
         	const std::vector<uint32_t> &ids) override;
 
         void signalStatReady(
-        	const uint32_t bufferId) override;
+        	const uint32_t bufferId,
+        	const uint32_t ipaContext) override;
 
         void signalQueueRequest(
         	const ControlList &controls) override;
@@ -75,7 +76,7 @@ public:
 
 	Signal<const ControlList &> setIspControls;
 
-	Signal<const ControlList &> setDelayedControls;
+	Signal<const ControlList &, uint32_t> setDelayedControls;
 
 
 private:
@@ -125,9 +126,11 @@ private:
         	const std::vector<uint32_t> &ids);
 
         void signalStatReadyThread(
-        	const uint32_t bufferId);
+        	const uint32_t bufferId,
+        	const uint32_t ipaContext);
         void signalStatReadyIPC(
-        	const uint32_t bufferId);
+        	const uint32_t bufferId,
+        	const uint32_t ipaContext);
 
         void signalQueueRequestThread(
         	const ControlList &controls);
@@ -170,7 +173,8 @@ private:
 		const std::vector<SharedFD> &fds);
 
         void setDelayedControlsThread(
-        	const ControlList &controls);
+        	const ControlList &controls,
+        	const uint32_t delayContext);
 	void setDelayedControlsIPC(
 		std::vector<uint8_t>::const_iterator data,
 		size_t dataSize,
@@ -203,9 +207,10 @@ private:
 			ipa_->start(controls, startConfig);
 		}
 		void signalStatReady(
-                	const uint32_t bufferId)
+                	const uint32_t bufferId,
+                	const uint32_t ipaContext)
 		{
-			ipa_->signalStatReady(bufferId);
+			ipa_->signalStatReady(bufferId, ipaContext);
 		}
 		void signalQueueRequest(
                 	const ControlList &controls)
