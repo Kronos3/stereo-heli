@@ -1,5 +1,0 @@
-R00:00:00 cam.START
-R00:00:00 videoStreamer.CAPTURE "/home/tumbar/cap1" BOTH JPEG
-R00:00:00 fileDownlink.SendFile "/home/tumbar/cap1-left.jpg" "/home/tumbar/git/stereo-heli/cap1-l.jpg"
-R00:00:00 fileDownlink.SendFile "/home/tumbar/cap1-right.jpg" "/home/tumbar/git/stereo-heli/cap1-r.jpg"
-R00:00:02 cam.STOP
