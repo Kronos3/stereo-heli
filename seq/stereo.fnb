@@ -48,25 +48,12 @@ R00:00:00 framePipe.CHECK
 ;     The depth projection step is a linear operation that involves using the calibrated camera extrinsics to map disparity matches to points in 3D space in the camera frame.
 ;?s
 ;?= {"language":"fprime","kind":2}
-R00:00:00 vis.CLEAR
-R00:00:00 vis.RECTIFY "rectify.dat"
+; Load the camera model
+R00:00:00 cmdSeq.CS_RUN "/seq/vis000_model.bin" BLOCK
 
-R00:00:00 vis.STEREO_PRE_FILTER_CAP_PRM_SET 29
-R00:00:00 vis.STEREO_BLOCK_SIZE_PRM_SET 5
-R00:00:00 vis.STEREO_MIN_DISPARITY_PRM_SET -25
-R00:00:00 vis.STEREO_NUM_DISPARITIES_PRM_SET 16
-R00:00:00 vis.STEREO_UNIQUENESS_RATIO_PRM_SET 10
-R00:00:00 vis.STEREO_SPECKLE_WINDOW_SIZE_PRM_SET 100
-R00:00:00 vis.STEREO_SPECKLE_RANGE_PRM_SET 15
-
-; Only used for BM algorithm
-R00:00:00 vis.STEREO_BM_TEXTURE_THRESHOLD_PRM_SET 100
-
-R00:00:00 vis.STEREO BLOCK_MATCHING
-R00:00:00 vis.DEPTH "camera_model.dat" TRUE
-;?s
-;?= {"language":"markdown","kind":1}
-; ## Startup
-;?s
-;?= {"language":"fprime","kind":2}
-R00:00:00 cam.START
+; Re-initalize the stereo pipeline
+R00:00:00 cmdSeq.CS_RUN "/seq/vis001_stereo.bin" BLOCK
+;?e {"time":1677340332.389079,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Loading camera model '640x240 - 1'","args":[{"name":"message","value":"Loading camera model '640x240 - 1'","valueRaw":"Loading camera model '640x240 - 1'","type":"string(40)"}]}
+;?e {"time":1677340332.392366,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Finished loading '640x240 - 1'","args":[{"name":"message","value":"Finished loading '640x240 - 1'","valueRaw":"Finished loading '640x240 - 1'","type":"string(40)"}]}
+;?e {"time":1677340332.392735,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/vis000_model.bin complete","args":[{"name":"fileName","value":"/seq/vis000_model.bin","valueRaw":"/seq/vis000_model.bin","type":"string(60)"}]}
+;?e {"time":1677340332.451024,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/vis001_stereo.bin complete","args":[{"name":"fileName","value":"/seq/vis001_stereo.bin","valueRaw":"/seq/vis001_stereo.bin","type":"string(60)"}]}

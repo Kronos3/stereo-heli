@@ -65,10 +65,50 @@ module Heli {
             interp: Interpolation @< Interpolation method
         )
 
-        @ Rectify left and right frames using calibration map
-        async command RECTIFY(
-            calibration_file: string @< Path to calibration file with XY maps for NAV pair
+        @ Set the camera model image shape
+        async command MODEL_SIZE(
+            width: U32,     @< Image width in pixels
+            height: U32     @< Image height in pixels
         )
+
+        @ Set the left camera intrinsic calibration parameters
+        async command MODEL_L_K(
+            fx: F32,    @< X focal length in pixels
+            fy: F32,    @< Y focal length center in pixels
+            cx: F32,    @< Optical center X coordinate in pixels
+            cy: F32     @< Optical center Y coordinate in pixels
+        )
+
+        @ Set the right camera intrinsic calibration parameters
+        async command MODEL_R_K(
+            fx: F32,    @< X focal length in pixels
+            fy: F32,    @< Y focal length center in pixels
+            cx: F32,    @< Optical center X coordinate in pixels
+            cy: F32     @< Optical center Y coordinate in pixels
+        )
+
+        @ Set the left camera distortion parameters
+        async command MODEL_L_D(a: F32, b: F32, c: F32, d: F32, e: F32)
+
+        @ Set the right camera distortion parameters
+        async command MODEL_R_D(a: F32, b: F32, c: F32, d: F32, e: F32)
+
+        @ Rotation transform from left camera frame to right camera frame
+        async command MODEL_R(
+            rx: F32,    @< Rotation about the x-axis
+            ry: F32,    @< Rotation about the y-axis
+            rz: F32     @< Rotation about the z-axis
+        )
+
+        @ Translation from the left camera frame to right camera frame
+        async command MODEL_T(
+            tx: F32,    @< Translation on x-axis in cm
+            ty: F32,    @< Translation on y-axis in cm
+            tz: F32     @< Translation on z-axis in cm
+        )
+
+        @ Rectify left and right frames using calibration map
+        async command RECTIFY()
 
         enum StereoAlgorithm {
             BLOCK_MATCHING,                 @< Standard stereo block matching for performance
@@ -94,10 +134,7 @@ module Heli {
         param DEPTH_LEFT_MASK_PIX: I32 default 96
 
         @ Project the disparity map into a depth map using camera extrinsics
-        async command DEPTH(
-            calibration_file: string @< Path to calibration file with camera extrinsic model
-            is_rectified: bool @< Is the model calibrated on rectified images
-        )
+        async command DEPTH()
 
         enum ColorMap {
             AUTUMN = 0,
@@ -133,14 +170,6 @@ module Heli {
         # -----------------------------
         # Events
         # -----------------------------
-
-        event CalibrationFileOpened(calibrationFile: string) \
-            severity activity low \
-            format "Opened calibration file {}"
-
-        event CalibrationFileFailed(calibrationFile: string) \
-            severity warning low \
-            format "Failed to open calibration file {}"
     }
 
 }

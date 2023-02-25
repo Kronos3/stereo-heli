@@ -1,0 +1,46 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Sequence: Camera Model
+; Author: Andrei Tumbar
+; Description: Load a camera model
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+R00:00:00 cmdDisp.CMD_NO_OP_STRING "Loading camera model '{{model}}'"
+
+; Intrinsic camera model (LEFT)
+; {{k_left[0, 0]|round(2)}}   {{k_left[0, 1]|round(2)}}   {{k_left[0, 2]|round(2)}}
+; {{k_left[1, 0]|round(2)}}   {{k_left[1, 1]|round(2)}}   {{k_left[1, 2]|round(2)}}
+; {{k_left[2, 0]|round(2)}}   {{k_left[2, 1]|round(2)}}   {{k_left[2, 2]|round(2)}}
+R00:00:00 vis.MODEL_L_K {{k_left[0, 0]}} {{k_left[1, 1]}} {{k_left[0, 2]}} {{k_left[1, 2]}}
+
+; Intrinsic camera model (RIGHT)
+; {{k_right[0, 0]|round(2)}}   {{k_right[0, 1]|round(2)}}   {{k_right[0, 2]|round(2)}}
+; {{k_right[1, 0]|round(2)}}   {{k_right[1, 1]|round(2)}}   {{k_right[1, 2]|round(2)}}
+; {{k_right[2, 0]|round(2)}}   {{k_right[2, 1]|round(2)}}   {{k_right[2, 2]|round(2)}}
+R00:00:00 vis.MODEL_R_K {{k_right[0, 0]}} {{k_right[1, 1]}} {{k_right[0, 2]}} {{k_right[1, 2]}}
+
+; Distortion parameters (LEFT)
+; {{d_left[0, 0]|round(2)}}   {{d_left[0, 1]|round(2)}}   {{d_left[0, 2]|round(2)}}   {{d_left[0, 3]|round(2)}}   {{d_left[0, 4]|round(2)}}
+R00:00:00 vis.MODEL_L_D {{d_left[0, 0]}} {{d_left[0, 1]}}   {{d_left[0, 2]}}   {{d_left[0, 3]}}   {{d_left[0, 4]}}
+
+; Distortion parameters (RIGHT)
+; {{d_right[0, 0]|round(2)}}   {{d_right[0, 1]|round(2)}}   {{d_right[0, 2]|round(2)}}   {{d_right[0, 3]|round(2)}}   {{d_right[0, 4]|round(2)}}
+R00:00:00 vis.MODEL_R_D {{d_right[0, 0]}} {{d_right[0, 1]}}   {{d_right[0, 2]}}   {{d_right[0, 3]}}   {{d_right[0, 4]}}
+
+; Rotation Matrix
+; {{R[0, 0]|round(2)}}   {{R[0, 1]|round(2)}}   {{R[0, 2]|round(2)}}
+; {{R[1, 0]|round(2)}}   {{R[1, 1]|round(2)}}   {{R[1, 2]|round(2)}}
+; {{R[2, 0]|round(2)}}   {{R[2, 1]|round(2)}}   {{R[2, 2]|round(2)}}
+;
+; Euler angles: {{R_euler[0]|round(2)}}   {{R_euler[1]|round(2)}}   {{R_euler[2]|round(2)}}
+R00:00:00 vis.MODEL_R {{R_euler[0]}} {{R_euler[1]}} {{R_euler[2]}}
+
+; Translation Vector
+; {{T[0, 0]|round(2)}}   {{T[1, 0]|round(2)}}   {{T[2, 0]|round(2)}}
+R00:00:00 vis.MODEL_T {{T[0, 0]}} {{T[1, 0]}} {{T[2, 0]}}
+
+; Image size
+R00:00:00 vis.MODEL_SIZE {{width}} {{height}}
+
+R00:00:00 cmdDisp.CMD_NO_OP_STRING "Finished loading '{{model}}'"

@@ -39,7 +39,7 @@ namespace Heli
                       rightFrame.getData(),
                       rightFrame.getInfo().stride);
 
-        for (auto& stage : m_stages)
+        for (auto &stage: m_stages)
         {
             // Process is performed in-place
             stage->process(left, right);
@@ -54,29 +54,10 @@ namespace Heli
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void Vis::RECTIFY_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &calibration_file)
+    void Vis::RECTIFY_cmdHandler(U32 opCode, U32 cmdSeq)
     {
-        cv::FileStorage fs;
-        if (fs.open(calibration_file.toChar(), cv::ACCESS_READ))
-        {
-            log_ACTIVITY_LO_CalibrationFileOpened(calibration_file);
-
-            cv::Mat left_x, left_y, right_x, right_y;
-            fs["leftMapX"] >> left_x;
-            fs["leftMapY"] >> left_y;
-            fs["rightMapX"] >> right_x;
-            fs["rightMapY"] >> right_y;
-
-            m_stages.emplace_back(new RectifyStage(
-                    std::move(left_x), std::move(left_y),
-                    std::move(right_x), std::move(right_y)));
-            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-        }
-        else
-        {
-            log_WARNING_LO_CalibrationFileFailed(calibration_file);
-            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        }
+        m_stages.emplace_back(new RectifyStage(m_calib));
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
     void Vis::STEREO_cmdHandler(U32 opCode, U32 cmdSeq, Heli::Vis_StereoAlgorithm algorithm)
@@ -91,33 +72,83 @@ namespace Heli
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void Vis::DEPTH_cmdHandler(U32 opCode, U32 cmdSeq, const Fw::CmdStringArg &calibration_file, bool is_rectified)
+    void Vis::DEPTH_cmdHandler(U32 opCode, U32 cmdSeq)
     {
-        cv::FileStorage fs;
-        if (fs.open(calibration_file.toChar(), cv::ACCESS_READ))
-        {
-            log_ACTIVITY_LO_CalibrationFileOpened(calibration_file);
+        Fw::ParamValid valid;
+        I32 pix = paramGet_DEPTH_LEFT_MASK_PIX(valid);
 
-            cv::Mat left_k, right_k;
-            fs["leftK"] >> left_k;
-            fs["rightK"] >> right_k;
-
-            m_stages.emplace_back(new DepthStage(
-                    this,
-                    std::move(left_k), std::move(right_k),
-                    is_rectified));
-            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-        }
-        else
-        {
-            log_WARNING_LO_CalibrationFileFailed(calibration_file);
-            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        }
+        m_stages.emplace_back(new DepthStage(m_calib, pix));
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
     void Vis::SCALE_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, Heli::Vis_Interpolation interp)
     {
         m_stages.emplace_back(new ScaleStage(fx, fy, interp));
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Vis::MODEL_L_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy)
+    {
+        m_calib.left.k = (cv::Mat_<double>(3, 3)
+                << fx, 0, cx,
+                0, fy, cy,
+                0, 0, 1);
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Vis::MODEL_R_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy)
+    {
+        m_calib.right.k = (cv::Mat_<F64>(3, 3)
+                << fx, 0, cx,
+                0, fy, cy,
+                0, 0, 1);
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Vis::MODEL_L_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e)
+    {
+        m_calib.left.d = (cv::Mat_<F64>(1, 5) << a, b, c, d, e);
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Vis::MODEL_R_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e)
+    {
+        m_calib.right.d = (cv::Mat_<F64>(1, 5) << a, b, c, d, e);
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Vis::MODEL_R_cmdHandler(U32 opCode, U32 cmdSeq, F32 rx, F32 ry, F32 rz)
+    {
+        // Convert from euler angles back to rotation matrix
+
+        cv::Mat R_x = (cv::Mat_<F64>(3, 3)
+                << 1, 0, 0,
+                0, cos(rx), -sin(rx),
+                0, sin(rx), cos(rx));
+
+        cv::Mat R_y = (cv::Mat_<F64>(3, 3)
+                << cos(ry), 0, sin(ry),
+                0, 1, 0,
+                -sin(ry), 0, cos(ry));
+
+        cv::Mat R_z = (cv::Mat_<F64>(3, 3)
+                << cos(rz), -sin(rz), 0,
+                sin(rz), cos(rz), 0,
+                0, 0, 1);
+
+        m_calib.r = R_z.mul(R_y.mul(R_x));
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Vis::MODEL_T_cmdHandler(U32 opCode, U32 cmdSeq, F32 tx, F32 ty, F32 tz)
+    {
+        m_calib.t = (cv::Mat_<F64>(3, 1) << tx, ty, tz);
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    }
+
+    void Vis::MODEL_SIZE_cmdHandler(U32 opCode, U32 cmdSeq, U32 width, U32 height)
+    {
+        m_calib.size = cv::Size(static_cast<I32>(width), static_cast<I32>(height));
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }

@@ -17,6 +17,21 @@ namespace Heli
 {
     class Vis;
 
+    struct Calibration {
+        struct Intrinsic {
+            cv::Mat k;  //!< Camera matrix
+            cv::Mat d;  //!< Distortion parameters
+        };
+
+        Intrinsic left;
+        Intrinsic right;
+
+        cv::Mat r;      //!< Rotation matrix
+        cv::Mat t;      //!< Translation vector
+
+        cv::Size size;  //!< Image frame dimensions
+    };
+
     class VisStage
     {
     public:
@@ -40,10 +55,7 @@ namespace Heli
     class RectifyStage : public VisStage
     {
     public:
-        explicit RectifyStage(cv::Mat &&left_x,
-                              cv::Mat &&left_y,
-                              cv::Mat &&right_x,
-                              cv::Mat &&right_y);
+        explicit RectifyStage(const Calibration& calibration);
 
         void process(cv::Mat &left, cv::Mat &right) override;
 
@@ -85,32 +97,16 @@ namespace Heli
 
     class DepthStage : public VisStage
     {
-        struct CameraCalibration
-        {
-            cv::Mat t;
-            cv::Mat r;
-            cv::Mat k;
-
-            CameraCalibration(cv::Mat &&projection);
-        };
-
     public:
-        explicit DepthStage(Vis* vis,
-                            cv::Mat &&p_left,
-                            cv::Mat &&p_right,
-                            bool is_rectified);
+        explicit DepthStage(const Calibration& calibration, U32 left_mask_pix);
 
         void process(cv::Mat &left, cv::Mat &right) override;
 
     private:
-        bool m_is_rectified;
-        F64 m_f;    // focal length
-        F64 m_b;    // baseline
+        F64 m_fx;    // x focal length in pixels
+        F64 m_b;     // baseline in world coord units (cm)
 
-        I32 m_left_mask_pix;
-
-        CameraCalibration m_left;
-        CameraCalibration m_right;
+        I32 m_left_mask_pix; // number of pixels to mask out
     };
 }
 

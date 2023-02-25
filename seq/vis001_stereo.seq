@@ -1,0 +1,25 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Sequence: Stereo Pipeline
+; Author: Andrei Tumbar
+; Description: Assuming a camera model is loaded,
+; re-initialize the stereo vision pipeline
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+R00:00:00 vis.CLEAR
+R00:00:00 vis.RECTIFY
+
+R00:00:00 vis.STEREO_PRE_FILTER_CAP_PRM_SET 29
+R00:00:00 vis.STEREO_BLOCK_SIZE_PRM_SET 5
+R00:00:00 vis.STEREO_MIN_DISPARITY_PRM_SET -25
+R00:00:00 vis.STEREO_NUM_DISPARITIES_PRM_SET 16
+R00:00:00 vis.STEREO_UNIQUENESS_RATIO_PRM_SET 10
+R00:00:00 vis.STEREO_SPECKLE_WINDOW_SIZE_PRM_SET 100
+R00:00:00 vis.STEREO_SPECKLE_RANGE_PRM_SET 15
+
+; Only used for BM algorithm
+R00:00:00 vis.STEREO_BM_TEXTURE_THRESHOLD_PRM_SET 100
+
+R00:00:00 vis.STEREO BLOCK_MATCHING
+R00:00:00 vis.DEPTH

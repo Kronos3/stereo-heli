@@ -41,16 +41,17 @@ namespace Heli
                    m_interp);
     }
 
-    RectifyStage::RectifyStage(
-            cv::Mat&& left_x,
-            cv::Mat&& left_y,
-            cv::Mat&& right_x,
-            cv::Mat&& right_y)
-    : m_left_x(std::move(left_x)),
-    m_left_y(std::move(left_y)),
-    m_right_x(std::move(right_x)),
-    m_right_y(std::move(right_y))
+    RectifyStage::RectifyStage(const Calibration& calibration)
     {
+        cv::initUndistortRectifyMap(calibration.left.k, calibration.left.d,
+                                    cv::noArray(), cv::noArray(),
+                                    calibration.size, CV_32FC1,
+                                    m_left_x, m_left_y);
+
+        cv::initUndistortRectifyMap(calibration.right.k, calibration.right.d,
+                                    cv::noArray(), cv::noArray(),
+                                    calibration.size, CV_32FC1,
+                                    m_right_x, m_right_y);
     }
 
     void RectifyStage::process(cv::Mat &left, cv::Mat &right)
@@ -127,29 +128,11 @@ namespace Heli
         }
     }
 
-    DepthStage::DepthStage(
-            Vis* vis,
-            cv::Mat &&proj_left,
-            cv::Mat &&proj_right,
-            bool is_rectified)
-    : m_is_rectified(is_rectified),
-      m_left(std::move(proj_left)), m_right(std::move(proj_right))
+    DepthStage::DepthStage(const Calibration& calibration, U32 left_mask_pix)
+    : m_fx(calibration.left.k.at<F64>(0, 0)),
+      m_b(std::abs(calibration.t.at<F64>(0, 0))),
+      m_left_mask_pix(static_cast<I32>(left_mask_pix))
     {
-        // Get focal length of x axis for left camera
-        m_f = m_left.k.at<F64>(0, 0);
-
-        // Calculate baseline of stereo pair
-        if (m_is_rectified)
-        {
-            m_b = m_right.t.at<double>(0) - m_left.t.at<double>(0);
-        }
-        else
-        {
-            m_b = m_left.t.at<double>(0) - m_right.t.at<double>(0);
-        }
-
-        Fw::ParamValid valid;
-        m_left_mask_pix = vis->paramGet_DEPTH_LEFT_MASK_PIX(valid);
     }
 
     void DepthStage::process(cv::Mat &left, cv::Mat &right)
@@ -161,7 +144,7 @@ namespace Heli
         disp.setTo(0.1, disp == -1.0);
 
         // Make empty depth map then fill with depth
-        disp = m_f * m_b / disp;
+        disp = m_fx * m_b / disp;
 
         // Mask out the left side of the image
         // This is caused by the right camera not seeing this portion of the image
@@ -176,10 +159,5 @@ namespace Heli
                 255, -1);
 
         disp.setTo(0, mask);
-    }
-
-    DepthStage::CameraCalibration::CameraCalibration(cv::Mat &&projection)
-    {
-        cv::decomposeProjectionMatrix(projection, k, r, t);
     }
 }

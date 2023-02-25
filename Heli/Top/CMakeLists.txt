@@ -25,6 +25,7 @@ target_link_libraries(${EXECUTABLE_NAME} PUBLIC
         # Work through dependencies
         ${HELI_LIB_PATH}/libopencv_imgcodecs.so.4.6.0
         ${HELI_LIB_PATH}/libopencv_imgproc.so.4.6.0
+        ${HELI_LIB_PATH}/libopencv_calib3d.so.4.6.0
         ${HELI_LIB_PATH}/libopencv_core.so.4.6.0
         ${HELI_LIB_PATH}/libcamera.so.0.0.3
         ${HELI_LIB_PATH}/libcamera-base.so.0.0.3
