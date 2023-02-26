@@ -65,6 +65,7 @@ private:
 
     int drmfd_;
     int conId_;
+    void* drmModeCon;
     uint32_t crtcId_;
     int crtcIdx_;
     uint32_t planeId_;
@@ -127,6 +128,8 @@ void DrmPreview::findCrtc()
                 screen_width_ = crtc->width;
                 screen_height_ = crtc->height;
             }
+
+            drmModeCon = con;
         }
 
         if (!conId_)
@@ -235,10 +238,10 @@ void DrmPreview::findPlane()
     drmModeFreePlaneResources(planes);
 }
 
-DrmPreview::DrmPreview() : Preview(), last_fd_(-1), first_time_(true)
+DrmPreview::DrmPreview() : Preview(), drmModeCon(nullptr), last_fd_(-1), first_time_(true)
 {
     this_preview = this;
-    drmfd_ = drmOpen("vc4", NULL);
+    drmfd_ = drmOpen("vc4", nullptr);
     if (drmfd_ < 0)
         throw std::runtime_error("drmOpen failed: " + std::string(ERRSTR));
 
@@ -275,6 +278,7 @@ DrmPreview::DrmPreview() : Preview(), last_fd_(-1), first_time_(true)
 
 DrmPreview::~DrmPreview()
 {
+    drmModeFreeConnector(static_cast<drmModeConnectorPtr>(drmModeCon));
     close(drmfd_);
 }
 

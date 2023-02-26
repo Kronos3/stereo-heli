@@ -62,12 +62,6 @@ module Heli {
             eye: CamSelect @< Which camera to stream
             )
 
-        enum ImageEncoding {
-            JPEG,   @< JPEG Image (Loss Compression)
-            PNG,    @< Lossy compression with alpha channel
-            TIFF    @< Lossless compression which can store multiple images in a single file
-        }
-
         @ Save the next camera frame that VideoStreamer receives to disk
         async command CAPTURE(
             location: string size 120 @< Where to save the image, should not include the extension
@@ -78,6 +72,10 @@ module Heli {
         # -----------------------------
         # Events
         # -----------------------------
+
+        event H264Failed(message: string size 80) \
+            severity warning high \
+            format "Failed to start H264 encoder: {}"
 
         event StreamingTo(where: DisplayLocation) \
             severity activity low \

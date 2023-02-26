@@ -1,4 +1,3 @@
-
 #include "VideoStreamer.hpp"
 #include "encoder/h264_encoder.hpp"
 #include "output/net_output.hpp"
@@ -10,14 +9,19 @@
 
 namespace Heli
 {
+    struct VideoStreamerImpl
+    {
+        std::unique_ptr<Preview> preview;
+        std::unique_ptr<Encoder> encoder;
+        std::unique_ptr<Output> net;
+    };
+
     VideoStreamer::VideoStreamer(const char* compName)
             : VideoStreamerComponentBase(compName),
               is_showing(false),
               is_capturing(false),
               m_displaying(VideoStreamer_DisplayLocation::NONE),
-              m_preview(nullptr),
-              m_encoder(nullptr),
-              m_net(nullptr),
+              m_impl(new VideoStreamerImpl),
               tlm_total_frames(0),
               m_eye(CamSelect::LEFT)
     {
@@ -25,9 +29,7 @@ namespace Heli
 
     VideoStreamer::~VideoStreamer()
     {
-        delete m_preview;
-        delete m_encoder;
-        delete m_net;
+        delete m_impl;
     }
 
     void VideoStreamer::init(NATIVE_INT_TYPE queueDepth, NATIVE_INT_TYPE instance)
@@ -36,7 +38,7 @@ namespace Heli
 
         try
         {
-            m_preview = make_drm_preview();
+            m_impl->preview = std::unique_ptr<Preview>(make_drm_preview());
         }
         catch (const std::runtime_error &e)
         {
@@ -75,13 +77,13 @@ namespace Heli
 
             switch (m_capture.encoding.e)
             {
-                case VideoStreamer_ImageEncoding::JPEG:
+                case ImageEncoding::JPEG:
                     extension = ".jpg";
                     break;
-                case VideoStreamer_ImageEncoding::PNG:
+                case ImageEncoding::PNG:
                     extension = ".png";
                     break;
-                case VideoStreamer_ImageEncoding::TIFF:
+                case ImageEncoding::TIFF:
                     extension = ".tiff";
                     break;
             }
@@ -125,7 +127,7 @@ namespace Heli
                                     right.getData(),
                                     right.getInfo().stride);
 
-                    if (m_capture.encoding == VideoStreamer_ImageEncoding::TIFF)
+                    if (m_capture.encoding == ImageEncoding::TIFF)
                     {
                         // Store both images in a single tiff file
                         std::vector<cv::Mat> layers;
@@ -152,14 +154,24 @@ namespace Heli
             cmdResponse_out(m_capture.opCode, m_capture.cmdSeq, Fw::CmdResponse::OK);
         }
 
-//        I32 fd = frame->buffer->planes()[0].fd.get();
         if ((m_displaying == VideoStreamer_DisplayLocation::BOTH ||
-             m_displaying == VideoStreamer_DisplayLocation::UDP) && m_net)
+             m_displaying == VideoStreamer_DisplayLocation::UDP) && m_impl->net.get())
         {
-            if (!m_encoder)
+            if (!m_impl->encoder)
             {
-                m_encoder = new H264Encoder(frame.getInfo());
-                m_encoder->SetInputDoneCallback([this](void* mem)
+                try
+                {
+                    m_impl->encoder = std::make_unique<H264Encoder>(frame.getInfo());
+                }
+                catch (const std::exception& e)
+                {
+                    log_WARNING_HI_H264Failed(e.what());
+                    m_displaying = VideoStreamer_DisplayLocation::NONE;
+                    incdec_out(0, frameId, ReferenceCounter::DECREMENT);
+                    return;
+                }
+
+                m_impl->encoder->SetInputDoneCallback([this](void* mem)
                                                 {
                                                     if (encoding_buffers.empty())
                                                     {
@@ -174,7 +186,7 @@ namespace Heli
                                                     encoding_buffers.pop();
                                                 });
 
-                m_encoder->SetOutputReadyCallback(std::bind(&Output::OutputReady, m_net,
+                m_impl->encoder->SetOutputReadyCallback(std::bind(&Output::OutputReady, m_impl->net.get(),
                                                             std::placeholders::_1,
                                                             std::placeholders::_2,
                                                             std::placeholders::_3,
@@ -185,7 +197,7 @@ namespace Heli
             // This will get written out as a UDP stream
             incdec_out(0, frameId, ReferenceCounter::INCREMENT);
             encoding_buffers.push(frame.getBufId());
-            m_encoder->EncodeBuffer(frame.getPlane(),
+            m_impl->encoder->EncodeBuffer(frame.getPlane(),
                                     frame.getBufSize(),
                                     frame.getData(),
                                     frame.getInfo(),
@@ -194,10 +206,10 @@ namespace Heli
         }
 
         if ((m_displaying == VideoStreamer_DisplayLocation::BOTH ||
-             m_displaying == VideoStreamer_DisplayLocation::HDMI) && m_preview)
+             m_displaying == VideoStreamer_DisplayLocation::HDMI) && m_impl->preview.get())
         {
             incdec_out(0, frameId, ReferenceCounter::INCREMENT);
-            m_preview->Show(frame);
+            m_impl->preview->Show(frame);
 
             if (is_showing)
             {
@@ -214,28 +226,12 @@ namespace Heli
     void
     VideoStreamer::NETWORK_SEND_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg &address, U16 portN)
     {
-        // Don't delete this until nobody needs it anymore
-        Output* old = m_net;
+        m_impl->net = std::make_unique<NetOutput>(address.toChar(), portN);
 
-        m_net = new NetOutput(address.toChar(), portN);
-        if (m_encoder)
-        {
-            // Set up an existing encoder to write to a different net
-            m_encoder->SetOutputReadyCallback(std::bind(&Output::OutputReady, m_net,
-                                                        std::placeholders::_1,
-                                                        std::placeholders::_2,
-                                                        std::placeholders::_3,
-                                                        std::placeholders::_4));
-        }
-        else
-        {
-            // Even though we need the encoder for video, we can't create it
-            // yet because we don't have the stream information, we can wait
-            // for the first frame the come in before we set it up
-        }
-
-        // The encoder is no longer referencing the old instance
-        delete old;
+        // We reset the encoder just in case the stream settings changed
+        // This way we can change the stream settings and re-do NETWORK_SEND
+        // to refresh the H264 stream
+        m_impl->encoder = nullptr;
 
         clean();
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -285,7 +281,7 @@ namespace Heli
     void
     VideoStreamer::CAPTURE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
                                       const Fw::CmdStringArg &location, Heli::CamSelect eye,
-                                      Heli::VideoStreamer_ImageEncoding encoding)
+                                      Heli::ImageEncoding encoding)
     {
         if (is_capturing)
         {

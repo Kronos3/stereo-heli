@@ -407,10 +407,7 @@ module Heli {
     instance cam: Cam base id 6000 \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-        cam.configure(/* (width,height) */ 640, 240,
-                      /* left id, right id */ 0, 1,
-                      /* left eye (rotation,vflip,hflip) */ 0, false, false,
-                      /* right eye (rotation,vflip,hflip) */ 0, false, false);
+        cam.configure(/* left id, right id */ 0, 1);
         """
 
         phase Fpp.ToCpp.Phases.startTasks """

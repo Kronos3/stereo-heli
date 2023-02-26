@@ -1,5 +1,11 @@
 module Heli {
 
+    enum ImageEncoding {
+        JPEG,   @< JPEG Image (Loss Compression)
+        PNG,    @< Lossy compression with alpha channel
+        TIFF    @< Lossless compression which can store multiple images in a single file
+    }
+
     active component Vis {
 
         # -----------------------------
@@ -11,6 +17,7 @@ module Heli {
         async input port frame: Frame
         output port frameOut: Frame
 
+        async input port sched: Svc.Sched
 
         # -----------------------------
         # Special ports
@@ -47,22 +54,11 @@ module Heli {
         # Commands
         # -----------------------------
 
-        @ Clear the vision pipeline
-        async command CLEAR()
-
-        # pipeline stages:
-
-        enum Interpolation {
-            NEAREST, @< nearest neighbor interpolation
-            LINEAR,  @< Bilinear interpolation
-            CUBIC,   @< Bicubic interpolation
-        }
-
-        @ Downsample or upsample image
-        async command SCALE(
-            fx: F32, @< Horizontal axis scaling factor
-            fy: F32, @< Vertical axis scaling factor
-            interp: Interpolation @< Interpolation method
+        @ Save the next camera output frame on Vis
+        async command CAPTURE(
+            location: string size 120 @< Where to save the image, should not include the extension
+            eye: CamSelect @< Which camera to save image from. If BOTH, two files are saved, unless TIFF
+            encoding: ImageEncoding @< Image compression format - selects file extension
         )
 
         @ Set the camera model image shape
@@ -105,6 +101,24 @@ module Heli {
             tx: F32,    @< Translation on x-axis in cm
             ty: F32,    @< Translation on y-axis in cm
             tz: F32     @< Translation on z-axis in cm
+        )
+
+        @ Clear the vision pipeline
+        async command CLEAR()
+
+        # pipeline stages:
+
+        enum Interpolation {
+            NEAREST, @< nearest neighbor interpolation
+            LINEAR,  @< Bilinear interpolation
+            CUBIC,   @< Bicubic interpolation
+        }
+
+        @ Downsample or upsample image
+        async command SCALE(
+            fx: F32, @< Horizontal axis scaling factor
+            fy: F32, @< Vertical axis scaling factor
+            interp: Interpolation @< Interpolation method
         )
 
         @ Rectify left and right frames using calibration map
@@ -170,6 +184,17 @@ module Heli {
         # -----------------------------
         # Events
         # -----------------------------
+
+        event CaptureTimeout(
+            destination: string size 120
+        ) severity warning low \
+          format "Timeout occurred during capture of {}"
+
+        event CaptureCompleted(
+            camera: CamSelect,
+            destination: string size 120
+        ) severity activity low \
+          format "Saved capture on {} camera to {}"
     }
 
 }

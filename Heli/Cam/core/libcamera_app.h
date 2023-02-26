@@ -35,6 +35,7 @@
 #include <core/stream_info.hpp>
 #include <CameraConfig.hpp>
 #include <map>
+#include "Heli/Cam/Cam_RotationEnumAc.hpp"
 
 namespace controls = libcamera::controls;
 namespace properties = libcamera::properties;
@@ -92,7 +93,7 @@ namespace Heli
         void CloseCamera();
 
         void ConfigureCameraStream(Size videoSize,
-                                   int rotation = 0,
+                                   const Heli::Cam_Rotation& rotation,
                                    bool hflip = false,
                                    bool vflip = false);
 
@@ -190,7 +191,7 @@ namespace Heli
         std::unique_ptr<CameraConfiguration> configuration_;
         std::map<FrameBuffer *, std::vector<libcamera::Span<uint8_t>>> mapped_buffers_;
         Stream* stream = nullptr;
-        FrameBufferAllocator *allocator_ = nullptr;
+        std::unique_ptr<FrameBufferAllocator> allocator_ = nullptr;
         std::map<Stream *, std::queue<FrameBuffer *>> frame_buffers_;
         std::vector<std::unique_ptr<Request>> requests_;
         std::mutex completed_requests_mutex_;

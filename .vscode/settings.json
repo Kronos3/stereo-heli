@@ -1,4 +1,7 @@
 {
     "rsvpLite.fprime.testbed.evrCommand": false,
-    "rsvpLite.fprime.testbed.evrActivityLow": false
+    "rsvpLite.fprime.testbed.evrActivityLow": false,
+    "files.associations": {
+        "memory": "cpp"
+    }
 }

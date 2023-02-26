@@ -13,11 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 R00:00:00 framePipe.CLEAR
-R00:00:00 framePipe.PUSH STREAMER NO_REPLY
+R00:00:00 framePipe.PUSH VIS DROP_ON_FULL
 R00:00:00 framePipe.CHECK
-
-; Make sure we are not sending out frames
-R00:00:00 videoStreamer.DISPLAY NONE LEFT
 
 R00:00:00 fileManager.ShellCommand "mkdir -p /img/calib" "/dev/null"
 
@@ -25,34 +22,34 @@ R00:00:00 cam.START
 
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "10 images, 5 seconds per image"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture1" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture1" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 1/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture2" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture2" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 2/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture3" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture3" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 3/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture4" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture4" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 4/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture5" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture5" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 5/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture6" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture6" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 6/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture7" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture7" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 7/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture8" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture8" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 8/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture9" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture9" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 9/10 captured"
 
-R00:00:05 videoStreamer.CAPTURE "/img/calib/capture10" BOTH TIFF
+R00:00:05 vis.CAPTURE "/img/calib/capture10" BOTH TIFF
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Image 10/10 captured"
 
 R00:00:00 cmdDisp.CMD_NO_OP_STRING "Finished capture"

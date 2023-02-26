@@ -49,9 +49,27 @@ namespace Heli
 
         void MODEL_SIZE_cmdHandler(U32 opCode, U32 cmdSeq, U32 width, U32 height) override;
 
+        void CAPTURE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
+                                const Fw::CmdStringArg &location, Heli::CamSelect eye,
+                                Heli::ImageEncoding encoding) override;
+
+        void sched_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) override;
+
     PRIVATE:
         Calibration m_calib;
         std::vector<std::unique_ptr<VisStage>> m_stages;
+
+        bool is_capturing;
+        struct {
+            Fw::Time request_time;
+
+            Fw::String location;
+            Heli::CamSelect eye;
+            Heli::ImageEncoding encoding;
+
+            FwOpcodeType opCode;
+            U32 cmdSeq;
+        } m_capture;
     };
 }
 

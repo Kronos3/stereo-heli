@@ -1,0 +1,117 @@
+;?= {"language":"markdown","kind":1}
+; # Camera Calibration
+; 
+; To calibrate the camera, first we must configure it
+; to run at the desired resolution we want to calibrate
+; the model to.
+; 
+; The next step is to capture a sequence of 10 images of
+; a chessboard calibration target at different anges.
+; 
+; You should take 10 images at difference angles with an OpenCV checkerboard calibration target. Check out [this](https://markhedleyjones.com/projects/calibration-checkerboard-collection) to get a checkerboard image to print out.
+; > I used a foam board with a printed paper taped to it to get a rigid calibration target.
+; 
+; Next the actually calibration processing is done on the ground via the `calibration.ipynb` Jupyter notebook. Unzip the downlinked zip file into `proto/calib` and run the entire notebook.
+; This will generate a calibration model sequence with can be used to load the camera calibration.
+;?s
+;?= {"language":"fprime","kind":2}
+; Camera parameter setup
+R00:00:00 cmdSeq.CS_RUN "/seq/cam001_config.bin" BLOCK
+
+; Configure the camera before running the calibration
+; We want to keep 1640x1232 form factor since thats the entire
+; image sensor and doesn't unevenly crop out the frame
+R00:00:00 cam.CONFIGURE 1640 1232 R_0 R_0 FALSE FALSE FALSE FALSE
+
+; Downscale the image for performance reasons
+R00:00:00 vis.CLEAR
+R00:00:00 vis.SCALE 0.4 0.4 LINEAR
+
+; Send frames through vis
+R00:00:00 framePipe.CLEAR
+R00:00:00 framePipe.PUSH VIS DROP_ON_FULL
+R00:00:00 framePipe.CHECK
+;?e {"time":1677354956.778637,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6000 added","args":[{"name":"Id","value":"6000","valueRaw":6000,"type":"U32"}]}
+;?e {"time":1677354956.779285,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6001 added","args":[{"name":"Id","value":"6001","valueRaw":6001,"type":"U32"}]}
+;?e {"time":1677354956.780056,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6002 added","args":[{"name":"Id","value":"6002","valueRaw":6002,"type":"U32"}]}
+;?e {"time":1677354956.780865,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6003 added","args":[{"name":"Id","value":"6003","valueRaw":6003,"type":"U32"}]}
+;?e {"time":1677354956.781598,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6004 added","args":[{"name":"Id","value":"6004","valueRaw":6004,"type":"U32"}]}
+;?e {"time":1677354956.7824,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6005 added","args":[{"name":"Id","value":"6005","valueRaw":6005,"type":"U32"}]}
+;?e {"time":1677354956.783092,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6011 added","args":[{"name":"Id","value":"6011","valueRaw":6011,"type":"U32"}]}
+;?e {"time":1677354956.783407,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/cam001_config.bin complete","args":[{"name":"fileName","value":"/seq/cam001_config.bin","valueRaw":"/seq/cam001_config.bin","type":"string(60)"}]}
+;?e {"time":1677354956.867856,"id":6007,"name":"CameraStreamConfiguring","component":"cam","severity":"ACTIVITY_HI","message":"Initializing camera stream @ 1640x1232","args":[{"name":"width","value":"1640","valueRaw":1640,"type":"U32"},{"name":"height","value":"1232","valueRaw":1232,"type":"U32"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; Take a test image to make this is ok
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 cam.START
+R00:00:00 vis.CAPTURE "/img/test/cal-test" BOTH JPEG
+R00:00:00 cam.STOP
+
+R00:00:00 fileDownlink.SendFile "/img/test/cal-test-left.jpg" "/tmp/cal-test-left.jpg"
+R00:00:00 fileDownlink.SendFile "/img/test/cal-test-right.jpg" "/tmp/cal-test-right.jpg"
+
+R00:00:01 cmdDisp.CMD_NO_OP
+;?e {"time":1677355164.645317,"id":608,"name":"SendStarted","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Downlink of 81712 bytes started from /img/test/cal-test-left.jpg to /tmp/cal-test-left.jpg","args":[{"name":"fileSize","value":"81712","valueRaw":81712,"type":"U32"},{"name":"sourceFileName","value":"/img/test/cal-test-left.jpg","valueRaw":"/img/test/cal-test-left.jpg","type":"string(100)"},{"name":"destFileName","value":"/tmp/cal-test-left.jpg","valueRaw":"/tmp/cal-test-left.jpg","type":"string(100)"}]}
+;?e {"time":1677355164.665013,"id":602,"name":"FileSent","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Sent file /img/test/cal-test-left.jpg to file /tmp/cal-test-left.jpg","args":[{"name":"sourceFileName","value":"/img/test/cal-test-left.jpg","valueRaw":"/img/test/cal-test-left.jpg","type":"string(100)"},{"name":"destFileName","value":"/tmp/cal-test-left.jpg","valueRaw":"/tmp/cal-test-left.jpg","type":"string(100)"}]}
+;?e {"time":1677355165.845303,"id":608,"name":"SendStarted","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Downlink of 89078 bytes started from /img/test/cal-test-right.jpg to /tmp/cal-test-right.jpg","args":[{"name":"fileSize","value":"89078","valueRaw":89078,"type":"U32"},{"name":"sourceFileName","value":"/img/test/cal-test-right.jpg","valueRaw":"/img/test/cal-test-right.jpg","type":"string(100)"},{"name":"destFileName","value":"/tmp/cal-test-right.jpg","valueRaw":"/tmp/cal-test-right.jpg","type":"string(100)"}]}
+;?e {"time":1677355166.068363,"id":602,"name":"FileSent","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Sent file /img/test/cal-test-right.jpg to file /tmp/cal-test-right.jpg","args":[{"name":"sourceFileName","value":"/img/test/cal-test-right.jpg","valueRaw":"/img/test/cal-test-right.jpg","type":"string(100)"},{"name":"destFileName","value":"/tmp/cal-test-right.jpg","valueRaw":"/tmp/cal-test-right.jpg","type":"string(100)"}]}
+;?e {"time":1677355167.161677,"id":407,"name":"NoOpReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP command","args":[]}
+;?s
+;?= {"language":"markdown","kind":1}
+; ## Calibration Acquistion
+; 
+; This step will take a sequence of 10 images. Rotate the calibration board around to get a good variety of calibration images.
+; Try to cover the entire camera frame on both cameras to get a good undistortion model.
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 cmdSeq.CS_RUN "/seq/cam002_calibration.bin" BLOCK
+;?e {"time":1677355297.144028,"id":513,"name":"ShellCommandStarted","component":"fileManager","severity":"ACTIVITY_HI","message":"Running shell command mkdir -p /img/calib...","args":[{"name":"command","value":"mkdir -p /img/calib","valueRaw":"mkdir -p /img/calib","type":"string(256)"}]}
+;?e {"time":1677355297.154266,"id":507,"name":"ShellCommandSucceeded","component":"fileManager","severity":"ACTIVITY_HI","message":"Shell command mkdir -p /img/calib succeeded","args":[{"name":"command","value":"mkdir -p /img/calib","valueRaw":"mkdir -p /img/calib","type":"string(256)"}]}
+;?e {"time":1677355297.264563,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=10 images, 5 seconds per image","args":[{"name":"message","value":"10 images, 5 seconds per image","valueRaw":"10 images, 5 seconds per image","type":"string(40)"}]}
+;?e {"time":1677355303.135337,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 1/10 captured","args":[{"name":"message","value":"Image 1/10 captured","valueRaw":"Image 1/10 captured","type":"string(40)"}]}
+;?e {"time":1677355309.138197,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 2/10 captured","args":[{"name":"message","value":"Image 2/10 captured","valueRaw":"Image 2/10 captured","type":"string(40)"}]}
+;?e {"time":1677355315.12483,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 3/10 captured","args":[{"name":"message","value":"Image 3/10 captured","valueRaw":"Image 3/10 captured","type":"string(40)"}]}
+;?e {"time":1677355321.125904,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 4/10 captured","args":[{"name":"message","value":"Image 4/10 captured","valueRaw":"Image 4/10 captured","type":"string(40)"}]}
+;?e {"time":1677355327.124001,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 5/10 captured","args":[{"name":"message","value":"Image 5/10 captured","valueRaw":"Image 5/10 captured","type":"string(40)"}]}
+;?e {"time":1677355333.14665,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 6/10 captured","args":[{"name":"message","value":"Image 6/10 captured","valueRaw":"Image 6/10 captured","type":"string(40)"}]}
+;?e {"time":1677355339.152534,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 7/10 captured","args":[{"name":"message","value":"Image 7/10 captured","valueRaw":"Image 7/10 captured","type":"string(40)"}]}
+;?e {"time":1677355345.122984,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 8/10 captured","args":[{"name":"message","value":"Image 8/10 captured","valueRaw":"Image 8/10 captured","type":"string(40)"}]}
+;?e {"time":1677355351.167104,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 9/10 captured","args":[{"name":"message","value":"Image 9/10 captured","valueRaw":"Image 9/10 captured","type":"string(40)"}]}
+;?e {"time":1677355357.138272,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Image 10/10 captured","args":[{"name":"message","value":"Image 10/10 captured","valueRaw":"Image 10/10 captured","type":"string(40)"}]}
+;?e {"time":1677355357.138455,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Finished capture","args":[{"name":"message","value":"Finished capture","valueRaw":"Finished capture","type":"string(40)"}]}
+;?e {"time":1677355357.167392,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Zipping & Downlinking","args":[{"name":"message","value":"Zipping & Downlinking","valueRaw":"Zipping & Downlinking","type":"string(40)"}]}
+;?e {"time":1677355357.167601,"id":513,"name":"ShellCommandStarted","component":"fileManager","severity":"ACTIVITY_HI","message":"Running shell command rm -rf /img/calib.zip...","args":[{"name":"command","value":"rm -rf /img/calib.zip","valueRaw":"rm -rf /img/calib.zip","type":"string(256)"}]}
+;?e {"time":1677355357.180845,"id":507,"name":"ShellCommandSucceeded","component":"fileManager","severity":"ACTIVITY_HI","message":"Shell command rm -rf /img/calib.zip succeeded","args":[{"name":"command","value":"rm -rf /img/calib.zip","valueRaw":"rm -rf /img/calib.zip","type":"string(256)"}]}
+;?e {"time":1677355357.181182,"id":513,"name":"ShellCommandStarted","component":"fileManager","severity":"ACTIVITY_HI","message":"Running shell command zip -jr /img/calib.zip /img/calib/*...","args":[{"name":"command","value":"zip -jr /img/calib.zip /img/calib/*","valueRaw":"zip -jr /img/calib.zip /img/calib/*","type":"string(256)"}]}
+;?e {"time":1677355357.67939,"id":507,"name":"ShellCommandSucceeded","component":"fileManager","severity":"ACTIVITY_HI","message":"Shell command zip -jr /img/calib.zip /img/calib/* succeeded","args":[{"name":"command","value":"zip -jr /img/calib.zip /img/calib/*","valueRaw":"zip -jr /img/calib.zip /img/calib/*","type":"string(256)"}]}
+;?e {"time":1677355357.7453,"id":608,"name":"SendStarted","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Downlink of 4052888 bytes started from /img/calib.zip to /home/tumbar/git/stereo-heli/calib.zip","args":[{"name":"fileSize","value":"4052888","valueRaw":4052888,"type":"U32"},{"name":"sourceFileName","value":"/img/calib.zip","valueRaw":"/img/calib.zip","type":"string(100)"},{"name":"destFileName","value":"/home/tumbar/git/stereo-heli/calib.zip","valueRaw":"/home/tumbar/git/stereo-heli/calib.zip","type":"string(100)"}]}
+;?e {"time":1677355360.321042,"id":602,"name":"FileSent","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Sent file /img/calib.zip to file /home/tumbar/git/stereo-heli/calib.zip","args":[{"name":"sourceFileName","value":"/img/calib.zip","valueRaw":"/img/calib.zip","type":"string(100)"},{"name":"destFileName","value":"/home/tumbar/git/stereo-heli/calib.zip","valueRaw":"/home/tumbar/git/stereo-heli/calib.zip","type":"string(100)"}]}
+;?e {"time":1677355360.321299,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/cam002_calibration.bin complete","args":[{"name":"fileName","value":"/seq/cam002_calibration.bin","valueRaw":"/seq/cam002_calibration.bin","type":"string(60)"}]}
+;?s
+;?= {"language":"markdown","kind":1}
+; ### Acquisition Touchup
+; If any of the images failed to detect all the corners
+; Recapture that image and re-downlink the zip file
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 cam.START
+R00:00:05 vis.CAPTURE "/img/calib/capture9" BOTH TIFF
+
+R00:00:00 cmdDisp.CMD_NO_OP_STRING "Touchup captures finished"
+R00:00:00 cam.STOP
+
+
+R00:00:00 cmdDisp.CMD_NO_OP_STRING "Zipping & Downlinking"
+R00:00:00 fileManager.ShellCommand "rm -rf /img/calib.zip" "/dev/null"
+R00:00:00 fileManager.ShellCommand "zip -jr /img/calib.zip /img/calib/*" "/img/calib.log"
+R00:00:00 fileDownlink.SendFile "/img/calib.zip" "/home/tumbar/git/stereo-heli/calib.zip"
+;?e {"time":1677355577.29685,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Touchup captures finished","args":[{"name":"message","value":"Touchup captures finished","valueRaw":"Touchup captures finished","type":"string(40)"}]}
+;?e {"time":1677355577.609265,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Zipping & Downlinking","args":[{"name":"message","value":"Zipping & Downlinking","valueRaw":"Zipping & Downlinking","type":"string(40)"}]}
+;?e {"time":1677355577.741181,"id":513,"name":"ShellCommandStarted","component":"fileManager","severity":"ACTIVITY_HI","message":"Running shell command rm -rf /img/calib.zip...","args":[{"name":"command","value":"rm -rf /img/calib.zip","valueRaw":"rm -rf /img/calib.zip","type":"string(256)"}]}
+;?e {"time":1677355577.74736,"id":507,"name":"ShellCommandSucceeded","component":"fileManager","severity":"ACTIVITY_HI","message":"Shell command rm -rf /img/calib.zip succeeded","args":[{"name":"command","value":"rm -rf /img/calib.zip","valueRaw":"rm -rf /img/calib.zip","type":"string(256)"}]}
+;?e {"time":1677355577.847601,"id":513,"name":"ShellCommandStarted","component":"fileManager","severity":"ACTIVITY_HI","message":"Running shell command zip -jr /img/calib.zip /img/calib/*...","args":[{"name":"command","value":"zip -jr /img/calib.zip /img/calib/*","valueRaw":"zip -jr /img/calib.zip /img/calib/*","type":"string(256)"}]}
+;?e {"time":1677355578.346276,"id":507,"name":"ShellCommandSucceeded","component":"fileManager","severity":"ACTIVITY_HI","message":"Shell command zip -jr /img/calib.zip /img/calib/* succeeded","args":[{"name":"command","value":"zip -jr /img/calib.zip /img/calib/*","valueRaw":"zip -jr /img/calib.zip /img/calib/*","type":"string(256)"}]}
+;?e {"time":1677355578.645312,"id":608,"name":"SendStarted","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Downlink of 4053807 bytes started from /img/calib.zip to /home/tumbar/git/stereo-heli/calib.zip","args":[{"name":"fileSize","value":"4053807","valueRaw":4053807,"type":"U32"},{"name":"sourceFileName","value":"/img/calib.zip","valueRaw":"/img/calib.zip","type":"string(100)"},{"name":"destFileName","value":"/home/tumbar/git/stereo-heli/calib.zip","valueRaw":"/home/tumbar/git/stereo-heli/calib.zip","type":"string(100)"}]}
+;?e {"time":1677355582.159586,"id":602,"name":"FileSent","component":"fileDownlink","severity":"ACTIVITY_HI","message":"Sent file /img/calib.zip to file /home/tumbar/git/stereo-heli/calib.zip","args":[{"name":"sourceFileName","value":"/img/calib.zip","valueRaw":"/img/calib.zip","type":"string(100)"},{"name":"destFileName","value":"/home/tumbar/git/stereo-heli/calib.zip","valueRaw":"/home/tumbar/git/stereo-heli/calib.zip","type":"string(100)"}]}

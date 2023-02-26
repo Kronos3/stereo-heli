@@ -5,8 +5,6 @@
  * libcamera_app.cpp - base class for libcamera apps.
  */
 
-//#include "preview/preview.hpp"
-
 #include <memory>
 
 #include <Heli/Cam/core/libcamera_app.h>
@@ -22,7 +20,6 @@
 #include <linux/videodev2.h>
 #endif
 
-//#include <preview/preview.hpp>
 #include <cstring>
 #include <Assert.hpp>
 
@@ -101,7 +98,7 @@ namespace Heli
     }
 
     void LibcameraApp::ConfigureCameraStream(Size videoSize,
-                                             int rotation,
+                                             const Heli::Cam_Rotation& rotation,
                                              bool hflip, bool vflip)
     {
         StreamRoles stream_roles = {libcamera::StreamRole::Raw};
@@ -115,12 +112,22 @@ namespace Heli
         configuration_->at(0).size = videoSize;
 
         configuration_->transform = libcamera::Transform::Identity;
-        if (rotation == 180)
-            configuration_->transform = libcamera::Transform::Rot180 * configuration_->transform;
-        else if (rotation == 90)
-            configuration_->transform = libcamera::Transform::Rot90 * configuration_->transform;
-        else if (rotation == 270)
-            configuration_->transform = libcamera::Transform::Rot270 * configuration_->transform;
+        switch(rotation.e)
+        {
+            case Cam_Rotation::R_90:
+                configuration_->transform = libcamera::Transform::Rot90 * configuration_->transform;
+                break;
+            case Cam_Rotation::R_180:
+                configuration_->transform = libcamera::Transform::Rot180 * configuration_->transform;
+                break;
+            case Cam_Rotation::R_270:
+                configuration_->transform = libcamera::Transform::Rot270 * configuration_->transform;
+                break;
+            default:
+            case Cam_Rotation::R_0:
+                break;
+        }
+
         if (hflip)
             configuration_->transform = libcamera::Transform::HFlip * configuration_->transform;
         if (vflip)
@@ -142,13 +149,10 @@ namespace Heli
             for (auto &span: iter.second)
                 munmap(span.data(), span.size());
         }
+
         mapped_buffers_.clear();
-
-        delete allocator_;
-        allocator_ = nullptr;
-
+        allocator_.reset();
         configuration_.reset();
-
         frame_buffers_.clear();
 
         stream = nullptr;
@@ -300,7 +304,7 @@ namespace Heli
         auto item = mapped_buffers_.find(buffer);
         if (item == mapped_buffers_.end())
         {
-            FW_ASSERT(0 && "Failed to find memmaped memory for DMA");
+            throw std::runtime_error("Failed to find memmaped memory for DMA");
         }
         return item->second;
     }
@@ -338,7 +342,7 @@ namespace Heli
 
         // Next allocate all the buffers we need, mmap them and store them on a free list.
 
-        allocator_ = new FrameBufferAllocator(camera_);
+        allocator_ = std::make_unique<FrameBufferAllocator>(camera_);
         for (StreamConfiguration &config: *configuration_)
         {
             Stream* stream = config.stream();

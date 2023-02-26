@@ -1,3 +1,5 @@
+; Hardware settings
+
 ; Maximum rate of the camera bus at this resolution
 R00:00:00 cam.FRAME_RATE_PRM_SET 40
 R00:00:00 cam.FRAME_RATE_PRM_SAVE

@@ -48,6 +48,8 @@ namespace Heli
         left_span = libcamera::Span<U8>(nullptr, s);
         right_span = libcamera::Span<U8>(nullptr, s);
         ref_count = 0;
+
+        invalid = false;
     }
 
     bool CamBuffer::in_use() const
@@ -61,9 +63,19 @@ namespace Heli
     }
 
     CamBuffer::CamBuffer()
-    : id(0),
+    : id(0), invalid(false),
     left_request(nullptr), right_request(nullptr),
     left_fb(nullptr), right_fb(nullptr), ref_count(0)
     {
+    }
+
+    bool CamBuffer::is_invalid() const
+    {
+        return invalid;
+    }
+
+    void CamBuffer::invalidate()
+    {
+        invalid = true;
     }
 }

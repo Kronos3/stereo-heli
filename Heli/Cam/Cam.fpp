@@ -84,6 +84,25 @@ module Heli {
         @ Start camera stream
         sync command START()
 
+        enum Rotation {
+            R_0,        @< 0° rotation
+            R_90,       @< 90° rotation
+            R_180,      @< 180° rotation
+            R_270       @< 270° rotation
+        }
+
+        @ Set up the camera stream settings
+        sync command CONFIGURE(
+            width: U32,         @< Image width, check supported dims by this camera
+            height: U32,        @< Image height, check supported dims by this camera
+            l_rot: Rotation,    @< Left camera rotation angle
+            r_rot: Rotation,    @< Right camera rotation angle
+            l_vflip: bool,      @< Vertical flip of left camera
+            r_vflip: bool,      @< Vertical flip of right camera
+            l_hflip: bool,      @< Horizontal flip of left camera
+            r_hflip: bool       @< Horizontal flip of right camera
+        )
+
         # -----------------------------
         # Events
         # -----------------------------
@@ -117,9 +136,25 @@ module Heli {
             severity activity low \
             format "Sending configuration to camera"
 
-        event CameraInvalidGet(bufId: U32) \
+        event CameraStreamConfiguring(width: U32, height: U32) \
+            severity activity high \
+            format "Initializing camera stream @ {}x{}"
+
+        event CameraConfigError(eye: CamSelect, err: string size 80) \
+            severity warning high \
+            format "Failed to configure {} camera: {}"
+
+        event CameraStreamNotConfigured() \
+            severity warning high \
+            format "Camera stream is not initialized"
+
+        event InvalidBuffer(bufId: U32) \
             severity warning low \
-            format "Attempting to get frame buffer with ID not in use {}"
+            format "Attempting to get invalid frame buffer: {}"
+
+        event BufferNotInUse(bufId: U32) \
+            severity warning low \
+            format "Attempting to get frame buffer not in use: {}"
 
         event CameraInvalidIncref(bufId: U32) \
             severity warning low \

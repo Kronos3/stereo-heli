@@ -141,10 +141,10 @@ H264Encoder::H264Encoder(StreamInfo const &info)
 
     v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
     if (xioctl(fd_, VIDIOC_STREAMON, &type) < 0)
-        throw std::runtime_error("failed to start output streaming");
+        throw std::runtime_error("failed to start output streaming " + std::string(strerror(errno)));
     type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
     if (xioctl(fd_, VIDIOC_STREAMON, &type) < 0)
-        throw std::runtime_error("failed to start capture streaming");
+        throw std::runtime_error("failed to start capture streaming " + std::string(strerror(errno)));
 
     output_thread_ = std::thread(&H264Encoder::outputThread, this);
     poll_thread_ = std::thread(&H264Encoder::pollThread, this);

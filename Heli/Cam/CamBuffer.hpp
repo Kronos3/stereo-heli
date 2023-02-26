@@ -30,12 +30,16 @@ namespace Heli
         void incref();
         void decref();
         bool in_use() const;
+        bool is_invalid() const;
 
         void register_callback(std::function<void(CompletedRequest*, CompletedRequest*)> return_cb);
+
+        void invalidate();
 
     private:
         std::function<void(CompletedRequest*, CompletedRequest*)> return_buffer;
         std::atomic<I32> ref_count;
+        std::atomic<bool> invalid;
 
         void clear();
     };

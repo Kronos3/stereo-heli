@@ -15,6 +15,7 @@
 
 namespace Heli
 {
+    struct VideoStreamerImpl;
     class VideoStreamer : public VideoStreamerComponentBase
     {
     public:
@@ -35,7 +36,7 @@ namespace Heli
         void CAPTURE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
                                 const Fw::CmdStringArg &location,
                                 Heli::CamSelect eye,
-                                Heli::VideoStreamer_ImageEncoding encoding) override;
+                                Heli::ImageEncoding encoding) override;
 
         void sched_handler(NATIVE_INT_TYPE portNum, NATIVE_UINT_TYPE context) override;
 
@@ -48,7 +49,7 @@ namespace Heli
 
             Fw::String location;
             Heli::CamSelect eye;
-            Heli::VideoStreamer_ImageEncoding encoding;
+            Heli::ImageEncoding encoding;
 
             FwOpcodeType opCode;
             U32 cmdSeq;
@@ -59,11 +60,9 @@ namespace Heli
         VideoStreamer_DisplayLocation m_displaying;
         CamSelect m_eye;
 
-        Preview* m_preview;
+        VideoStreamerImpl* m_impl;
 
         std::queue<U32> encoding_buffers;
-        Encoder* m_encoder;
-        Output* m_net;
 
         Fw::Time m_last_frame;          //!< Last sent frame for calculate frame rate
         U32 tlm_total_frames;

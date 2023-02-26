@@ -8,6 +8,9 @@ namespace Heli
 
     Cam::Cam(const char *compName)
             : CamComponentBase(compName),
+              m_configured(false),
+              m_left_id(0),
+              m_right_id(0),
               m_left(new LibcameraApp()),
               m_right(new LibcameraApp()),
               tlm_dropped(0),
@@ -21,10 +24,7 @@ namespace Heli
         CamComponentBase::init(instance);
     }
 
-    void Cam::configure(I32 videoWidth, I32 videoHeight,
-                        I32 left_id, I32 right_id,
-                        I32 l_rotation, bool l_vflip, bool l_hflip,
-                        I32 r_rotation, bool r_vflip, bool r_hflip)
+    void Cam::configure(I32 left_id, I32 right_id)
     {
         for (auto &buffer: m_buffers)
         {
@@ -33,13 +33,13 @@ namespace Heli
                                         m_right->queueRequest(cr_r); });
         }
 
-        m_left->OpenCamera(left_id);
-        m_right->OpenCamera(right_id);
+        m_left_id = left_id;
+        m_right_id = right_id;
 
-        m_left->ConfigureCameraStream(libcamera::Size(videoWidth, videoHeight),
-                                      l_rotation, l_vflip, l_hflip);
-        m_right->ConfigureCameraStream(libcamera::Size(videoWidth, videoHeight),
-                                       r_rotation, r_vflip, r_hflip);
+        m_left->OpenCamera(m_left_id);
+        m_right->OpenCamera(m_right_id);
+
+        m_configured = false;
     }
 
     Cam::~Cam()
@@ -103,8 +103,16 @@ namespace Heli
             FW_ASSERT(buffer->right_fb);
 
             // Get the userland pointer
-            buffer->left_span = m_left->Mmap(buffer->left_fb)[0];
-            buffer->right_span = m_right->Mmap(buffer->right_fb)[0];
+            try
+            {
+                buffer->left_span = m_left->Mmap(buffer->left_fb)[0];
+                buffer->right_span = m_right->Mmap(buffer->right_fb)[0];
+            }
+            catch(const std::exception& e)
+            {
+                // This buffer may be old after the stream changed
+                continue;
+            }
 
             // Stream info should be identical on both streams
             // They are configured with identical parameters
@@ -237,8 +245,16 @@ namespace Heli
 
     void Cam::START_cmdHandler(U32 opCode, U32 cmdSeq)
     {
-        start();
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        if (m_configured)
+        {
+            start();
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        }
+        else
+        {
+            log_WARNING_HI_CameraStreamNotConfigured();
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        }
     }
 
     void Cam::parametersLoaded()
@@ -262,9 +278,15 @@ namespace Heli
         FW_ASSERT(frameId < CAMERA_BUFFER_N, frameId);
         const auto &buf = m_buffers[frameId];
 
-        if (!buf.in_use())
+        if (!buf.in_use() || !buf.left_fb || !buf.right_fb)
         {
-            log_WARNING_LO_CameraInvalidGet(frameId);
+            log_WARNING_LO_BufferNotInUse(frameId);
+            return false;
+        }
+
+        if (buf.is_invalid())
+        {
+            log_WARNING_LO_InvalidBuffer(frameId);
             return false;
         }
 
@@ -313,5 +335,62 @@ namespace Heli
                 buf.decref();
                 break;
         }
+    }
+
+    void Cam::CONFIGURE_cmdHandler(U32 opCode, U32 cmdSeq, U32 width, U32 height, Heli::Cam_Rotation l_rot,
+                                   Heli::Cam_Rotation r_rot, bool l_vflip, bool r_vflip, bool l_hflip, bool r_hflip)
+    {
+        // Make sure the cameras are stopped
+        stop();
+
+        // Re-open the cameras to re-initialize the image buffers
+        m_left->CloseCamera();
+        m_left->Teardown();
+
+        m_right->CloseCamera();
+        m_right->Teardown();
+
+        m_left->OpenCamera(m_left_id);
+        m_right->OpenCamera(m_right_id);
+
+        try
+        {
+            m_left->ConfigureCameraStream(libcamera::Size(width, height),
+                                          l_rot, l_vflip, l_hflip);
+        }
+        catch(const std::exception& e)
+        {
+            log_WARNING_HI_CameraConfigError(CamSelect::LEFT, e.what());
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        try
+        {
+            m_right->ConfigureCameraStream(libcamera::Size(width, height),
+                                           r_rot, r_vflip, r_hflip);
+        }
+        catch(const std::exception& e)
+        {
+            log_WARNING_HI_CameraConfigError(CamSelect::RIGHT, e.what());
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        // Invalidate all the buffers
+        // The memory maps are no longer valid and therefore
+        // access should not be attempted
+        for (auto& buf : m_buffers)
+        {
+            if (buf.in_use())
+            {
+                buf.invalidate();
+            }
+        }
+
+        log_ACTIVITY_HI_CameraStreamConfiguring(width, height);
+
+        m_configured = true;
+        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }

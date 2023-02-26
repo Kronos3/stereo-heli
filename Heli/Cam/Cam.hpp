@@ -23,10 +23,7 @@ namespace Heli
 
         void init(NATIVE_INT_TYPE instance);
 
-        void configure(I32 videoWidth, I32 videoHeight,
-                       I32 left_id, I32 right_id,
-                       I32 l_rotation, bool l_vflip, bool l_hflip,
-                       I32 r_rotation, bool r_vflip, bool r_hflip);
+        void configure(I32 left_id, I32 right_id);
 
         void startStreamThread(const Fw::StringBase &name);
         void quitStreamThread();
@@ -42,6 +39,12 @@ namespace Heli
         void STOP_cmdHandler(U32 opCode, U32 cmdSeq) override;
         void START_cmdHandler(U32 opCode, U32 cmdSeq) override;
 
+        void CONFIGURE_cmdHandler(U32 opCode, U32 cmdSeq,
+                                  U32 width, U32 height,
+                                  Heli::Cam_Rotation l_rot, Heli::Cam_Rotation r_rot,
+                                  bool l_vflip, bool r_vflip,
+                                  bool l_hflip, bool r_hflip) override;
+
         CamBuffer* get_buffer();
 
         static void streaming_thread_entry(void* this_);
@@ -53,6 +56,10 @@ namespace Heli
 
         std::mutex m_buffer_mutex;
         CamBuffer m_buffers[CAMERA_BUFFER_N];
+
+        bool m_configured;
+        I32 m_left_id;
+        I32 m_right_id;
 
         LibcameraApp* m_left;
         LibcameraApp* m_right;

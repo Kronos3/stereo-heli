@@ -6,7 +6,7 @@
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-R00:00:00 cmdDisp.CMD_NO_OP_STRING "Loading camera model '{{model}}'"
+R00:00:00 cmdDisp.CMD_NO_OP_STRING "Loading camera model '{{width}}x{{height}} - {{model}}'"
 
 ; Intrinsic camera model (LEFT)
 ; {{k_left[0, 0]|round(2)}}   {{k_left[0, 1]|round(2)}}   {{k_left[0, 2]|round(2)}}
@@ -22,11 +22,11 @@ R00:00:00 vis.MODEL_R_K {{k_right[0, 0]}} {{k_right[1, 1]}} {{k_right[0, 2]}} {{
 
 ; Distortion parameters (LEFT)
 ; {{d_left[0, 0]|round(2)}}   {{d_left[0, 1]|round(2)}}   {{d_left[0, 2]|round(2)}}   {{d_left[0, 3]|round(2)}}   {{d_left[0, 4]|round(2)}}
-R00:00:00 vis.MODEL_L_D {{d_left[0, 0]}} {{d_left[0, 1]}}   {{d_left[0, 2]}}   {{d_left[0, 3]}}   {{d_left[0, 4]}}
+R00:00:00 vis.MODEL_L_D {{d_left[0, 0]}} {{d_left[0, 1]}} {{d_left[0, 2]}} {{d_left[0, 3]}} {{d_left[0, 4]}}
 
 ; Distortion parameters (RIGHT)
 ; {{d_right[0, 0]|round(2)}}   {{d_right[0, 1]|round(2)}}   {{d_right[0, 2]|round(2)}}   {{d_right[0, 3]|round(2)}}   {{d_right[0, 4]|round(2)}}
-R00:00:00 vis.MODEL_R_D {{d_right[0, 0]}} {{d_right[0, 1]}}   {{d_right[0, 2]}}   {{d_right[0, 3]}}   {{d_right[0, 4]}}
+R00:00:00 vis.MODEL_R_D {{d_right[0, 0]}} {{d_right[0, 1]}} {{d_right[0, 2]}} {{d_right[0, 3]}} {{d_right[0, 4]}}
 
 ; Rotation Matrix
 ; {{R[0, 0]|round(2)}}   {{R[0, 1]|round(2)}}   {{R[0, 2]|round(2)}}
@@ -43,4 +43,4 @@ R00:00:00 vis.MODEL_T {{T[0, 0]}} {{T[1, 0]}} {{T[2, 0]}}
 ; Image size
 R00:00:00 vis.MODEL_SIZE {{width}} {{height}}
 
-R00:00:00 cmdDisp.CMD_NO_OP_STRING "Finished loading '{{model}}'"
+R00:00:00 cmdDisp.CMD_NO_OP_STRING "Finished loading '{{width}}x{{height}} - {{model}}'"
