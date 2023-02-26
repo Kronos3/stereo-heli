@@ -393,7 +393,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "dot_projector.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
