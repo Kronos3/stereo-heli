@@ -17,6 +17,14 @@
 
 namespace Heli
 {
+    // Parallelization params
+    enum ParallelThreadInfo
+    {
+        T_LEFT = 0,
+        T_RIGHT = 1,
+        T_N
+    };
+
     class Vis;
 
     struct Calibration {
@@ -49,7 +57,7 @@ namespace Heli
         void process(cv::Mat &left, cv::Mat &right) override;
 
     private:
-        libparallel::Parallelize<2, cv::Mat*> m_proc;
+        libparallel::Parallelize<T_N, cv::Mat&> m_proc;
 
         F32 m_fx;
         F32 m_fy;
@@ -64,7 +72,7 @@ namespace Heli
         void process(cv::Mat &left, cv::Mat &right) override;
 
     private:
-        libparallel::Parallelize<2, std::tuple<cv::Mat&, cv::Mat&, cv::Mat&>> m_proc;
+        libparallel::Parallelize<T_N, std::tuple<cv::Mat&, cv::Mat&, cv::Mat&>> m_proc;
 
         // Rectification maps to reproject epi-polar lines to be
         // parallel on both land and right images. Gets rid of distortion
