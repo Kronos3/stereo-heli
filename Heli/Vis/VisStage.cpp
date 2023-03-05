@@ -5,7 +5,6 @@
 #include <Heli/Vis/Vis.hpp>
 #include <Heli/Vis/VisStage.hpp>
 
-#include <utility>
 #include "Assert.hpp"
 #include "opencv2/imgproc.hpp"
 

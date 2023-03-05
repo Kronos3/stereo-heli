@@ -1,7 +1,5 @@
 module Heli {
 
-
-
     active component Nav {
 
         # -----------------------------
@@ -13,6 +11,11 @@ module Heli {
         async input port frame: Frame
         output port frameOut: Frame
 
+        output port getPosition: PositionGet
+        output port getAttitude: AttitudeGet
+        output port getQuality: QualityGet
+
+        output port fcMsg: FcMessage
 
         # -----------------------------
         # Special ports
@@ -49,6 +52,9 @@ module Heli {
         # Commands
         # -----------------------------
 
+        @ Begin tracking motion given rectified stereo images
+        async command TRACK()
+        async command STOP()
 
     }
 

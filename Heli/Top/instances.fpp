@@ -447,6 +447,11 @@ module Heli {
     instance joystick: Joystick base id 6700
     instance joystickTimer: IntervalTimer base id 6800
 
+    instance nav: Nav base id 6900 \
+        queue size Default.queueSize \
+        stack size Default.stackSize \
+        priority 100
+
     instance serial0: Drv.LinuxSerialDriver base id 8000 \
       {
 

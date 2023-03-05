@@ -50,6 +50,7 @@ module Heli {
         instance sapp
         instance joystick
         instance joystickTimer
+        instance nav
 
         # Serial lines
         instance serial0

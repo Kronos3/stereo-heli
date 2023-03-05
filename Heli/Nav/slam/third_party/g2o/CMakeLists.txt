@@ -1,0 +1,97 @@
+
+# Set up the top-level include directories
+set(g2o_INCLUDE_DIR
+        ${CMAKE_CURRENT_LIST_DIR}/core
+        ${g2o_SOURCE_DIR}/types
+        ${g2o_SOURCE_DIR}/stuff
+        ${G2O_EIGEN3_INCLUDE})
+
+# Include the subdirectories
+add_library(g2o
+        #types
+        types/types_sba.h
+        types/types_six_dof_expmap.h
+        types/types_sba.cpp
+        types/types_six_dof_expmap.cpp
+        types/types_seven_dof_expmap.cpp
+        types/types_seven_dof_expmap.h
+        types/se3quat.h
+        types/se3_ops.h
+        types/se3_ops.hpp
+        #core
+        core/base_edge.h
+        core/base_binary_edge.h
+        core/hyper_graph_action.cpp
+        core/base_binary_edge.hpp
+        core/hyper_graph_action.h
+        core/base_multi_edge.h
+        core/hyper_graph.cpp
+        core/base_multi_edge.hpp
+        core/hyper_graph.h
+        core/base_unary_edge.h
+        core/linear_solver.h
+        core/base_unary_edge.hpp
+        core/marginal_covariance_cholesky.cpp
+        core/base_vertex.h
+        core/marginal_covariance_cholesky.h
+        core/base_vertex.hpp
+        core/matrix_structure.cpp
+        core/batch_stats.cpp
+        core/matrix_structure.h
+        core/batch_stats.h
+        core/openmp_mutex.h
+        core/block_solver.h
+        core/block_solver.hpp
+        core/parameter.cpp
+        core/parameter.h
+        core/cache.cpp
+        core/cache.h
+        core/optimizable_graph.cpp
+        core/optimizable_graph.h
+        core/solver.cpp
+        core/solver.h
+        core/creators.h
+        core/optimization_algorithm_factory.cpp
+        core/estimate_propagator.cpp
+        core/optimization_algorithm_factory.h
+        core/estimate_propagator.h
+        core/factory.cpp
+        core/optimization_algorithm_property.h
+        core/factory.h
+        core/sparse_block_matrix.h
+        core/sparse_optimizer.cpp
+        core/sparse_block_matrix.hpp
+        core/sparse_optimizer.h
+        core/hyper_dijkstra.cpp
+        core/hyper_dijkstra.h
+        core/parameter_container.cpp
+        core/parameter_container.h
+        core/optimization_algorithm.cpp
+        core/optimization_algorithm.h
+        core/optimization_algorithm_with_hessian.cpp
+        core/optimization_algorithm_with_hessian.h
+        core/optimization_algorithm_levenberg.cpp
+        core/optimization_algorithm_levenberg.h
+        core/jacobian_workspace.cpp
+        core/jacobian_workspace.h
+        core/robust_kernel.cpp
+        core/robust_kernel.h
+        core/robust_kernel_factory.cpp
+        core/robust_kernel_factory.h
+        core/robust_kernel_impl.cpp
+        core/robust_kernel_impl.h
+        #stuff
+        stuff/string_tools.h
+        stuff/color_macros.h
+        stuff/macros.h
+        stuff/timeutil.cpp
+        stuff/misc.h
+        stuff/timeutil.h
+        stuff/os_specific.c
+        stuff/os_specific.h
+        stuff/string_tools.cpp
+        stuff/property.cpp
+        stuff/property.h
+        )
+
+target_include_directories(g2o PUBLIC ${g2o_INCLUDE_DIR})

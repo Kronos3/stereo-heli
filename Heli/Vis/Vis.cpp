@@ -50,7 +50,6 @@ namespace Heli
             stage->process(left, right);
         }
 
-
         if (is_capturing)
         {
             std::string filename = m_capture.location.toChar();
