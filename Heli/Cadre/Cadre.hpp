@@ -6,8 +6,6 @@
 #define HELI_CADREIMPL_H
 
 #include <Heli/Cadre/CadreComponentAc.hpp>
-#include <Heli/Cam/CamFrame.hpp>
-
 #include <Os/Mutex.hpp>
 
 namespace Heli

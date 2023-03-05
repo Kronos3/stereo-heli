@@ -11,7 +11,9 @@
 
 #include <opencv2/core.hpp>
 #include <opencv2/calib3d.hpp>
-#include "opencv2/imgproc.hpp"
+#include <opencv2/imgproc.hpp>
+
+#include <Heli/parallel/parallel.hpp>
 
 namespace Heli
 {
@@ -43,10 +45,12 @@ namespace Heli
     class ScaleStage : public VisStage
     {
     public:
-        ScaleStage(F32 x_scale, F32 y_scale, Vis_Interpolation interp);
+        ScaleStage(F32 x_scale, F32 y_scale, const Vis_Interpolation& interp);
         void process(cv::Mat &left, cv::Mat &right) override;
 
     private:
+        libparallel::Parallelize<2, cv::Mat*> m_proc;
+
         F32 m_fx;
         F32 m_fy;
         cv::InterpolationFlags m_interp;
@@ -60,6 +64,8 @@ namespace Heli
         void process(cv::Mat &left, cv::Mat &right) override;
 
     private:
+        libparallel::Parallelize<2, std::tuple<cv::Mat&, cv::Mat&, cv::Mat&>> m_proc;
+
         // Rectification maps to reproject epi-polar lines to be
         // parallel on both land and right images. Gets rid of distortion
         // using intrinsic parameters and epi-polar projection with extrinsic

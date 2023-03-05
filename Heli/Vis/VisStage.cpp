@@ -11,10 +11,16 @@
 namespace Heli
 {
 
-    ScaleStage::ScaleStage(F32 x_scale, F32 y_scale, Vis_Interpolation interp)
-            : m_fx(x_scale), m_fy(y_scale)
+    ScaleStage::ScaleStage(F32 x_scale, F32 y_scale, const Vis_Interpolation& interp)
+            : m_fx(x_scale), m_fy(y_scale),
+              m_proc([this](cv::Mat* src_dest) {
+                  cv::resize(*src_dest, *src_dest,
+                             cv::Size(0, 0),
+                             m_fx, m_fy,
+                             m_interp);
+              })
     {
-        switch(interp.e)
+        switch (interp.e)
         {
             case Vis_Interpolation::NEAREST:
                 m_interp = cv::INTER_NEAREST;
@@ -28,19 +34,21 @@ namespace Heli
         }
     }
 
-    void ScaleStage::process(cv::Mat &left, cv::Mat &right)
+    void ScaleStage::process(cv::Mat& left, cv::Mat& right)
     {
-        cv::resize(left, left,
-                   cv::Size(0, 0),
-                   m_fx, m_fy,
-                   m_interp);
-        cv::resize(right, right,
-                   cv::Size(0, 0),
-                   m_fx, m_fy,
-                   m_interp);
+        auto& a1 = m_proc.feed<0>(&left);
+        auto& a2 = m_proc.feed<1>(&right);
+
+        a1.await();
+        a2.await();
     }
 
     RectifyStage::RectifyStage(const Calibration& calibration)
+            : m_proc([](std::tuple<cv::Mat&, cv::Mat&, cv::Mat&> t) {
+        cv::remap(std::get<0>(t), std::get<0>(t),
+                  std::get<1>(t), std::get<2>(t),
+                  cv::INTER_LINEAR);
+    })
     {
         cv::initUndistortRectifyMap(calibration.left.k, calibration.left.d,
                                     cv::noArray(), cv::noArray(),
@@ -53,10 +61,13 @@ namespace Heli
                                     m_right_x, m_right_y);
     }
 
-    void RectifyStage::process(cv::Mat &left, cv::Mat &right)
+    void RectifyStage::process(cv::Mat& left, cv::Mat& right)
     {
-        cv::remap(left, left, m_left_x, m_left_y, cv::INTER_LINEAR);
-        cv::remap(right, right, m_right_x, m_right_y, cv::INTER_LINEAR);
+        auto& a1 = m_proc.feed<0>({left, m_left_x, m_left_y});
+        auto& a2 = m_proc.feed<1>({right, m_right_x, m_right_y});
+
+        a1.await();
+        a2.await();
     }
 
     StereoStage::StereoStage(
@@ -66,7 +77,7 @@ namespace Heli
         I32 preFilterCap = vis->paramGet_STEREO_PRE_FILTER_CAP(valid);
         I32 uniquenessRatio = vis->paramGet_STEREO_UNIQUENESS_RATIO(valid);
 
-        switch(algorithm.e)
+        switch (algorithm.e)
         {
             case Vis_StereoAlgorithm::BLOCK_MATCHING:
             {
@@ -103,18 +114,18 @@ namespace Heli
         m_stereo->setDisp12MaxDiff(1);
     }
 
-    void StereoStage::process(cv::Mat &left, cv::Mat &right)
+    void StereoStage::process(cv::Mat& left, cv::Mat& right)
     {
         m_stereo->compute(left, right, m_disparity);
         m_disparity.convertTo(right, CV_8U);
     }
 
-    ColormapStage::ColormapStage(const Vis_ColorMap &colormap, const CamSelect &select)
-    : m_colormap(colormap), m_select(select)
+    ColormapStage::ColormapStage(const Vis_ColorMap& colormap, const CamSelect& select)
+            : m_colormap(colormap), m_select(select)
     {
     }
 
-    void ColormapStage::process(cv::Mat &left, cv::Mat &right)
+    void ColormapStage::process(cv::Mat& left, cv::Mat& right)
     {
         if (m_select == CamSelect::LEFT || m_select == CamSelect::BOTH)
         {
@@ -128,13 +139,13 @@ namespace Heli
     }
 
     DepthStage::DepthStage(const Calibration& calibration, U32 left_mask_pix)
-    : m_fx(calibration.left.k.at<F64>(0, 0)),
-      m_b(std::abs(calibration.t.at<F64>(0, 0))),
-      m_left_mask_pix(static_cast<I32>(left_mask_pix))
+            : m_fx(calibration.left.k.at<F64>(0, 0)),
+              m_b(std::abs(calibration.t.at<F64>(0, 0))),
+              m_left_mask_pix(static_cast<I32>(left_mask_pix))
     {
     }
 
-    void DepthStage::process(cv::Mat &left, cv::Mat &right)
+    void DepthStage::process(cv::Mat& left, cv::Mat& right)
     {
         cv::Mat& disp = right;
 
