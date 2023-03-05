@@ -874,7 +874,7 @@ namespace ORB_SLAM2
             // Search in a radius
             const float radius = th * pKF->mvScaleFactors[nPredictedLevel];
 
-            const std::vector <size_t> vIndices = pKF->GetFeaturesInArea(u, v, radius);
+            const std::vector<size_t> vIndices = pKF->GetFeaturesInArea(u, v, radius);
 
             if (vIndices.empty())
                 continue;
@@ -1032,7 +1032,7 @@ namespace ORB_SLAM2
             // Search in a radius
             const float radius = th * pKF->mvScaleFactors[nPredictedLevel];
 
-            const std::vector <size_t> vIndices = pKF->GetFeaturesInArea(u, v, radius);
+            const std::vector<size_t> vIndices = pKF->GetFeaturesInArea(u, v, radius);
 
             if (vIndices.empty())
                 continue;
@@ -1171,7 +1171,7 @@ namespace ORB_SLAM2
             // Search in a radius
             const float radius = th * pKF2->mvScaleFactors[nPredictedLevel];
 
-            const std::vector <size_t> vIndices = pKF2->GetFeaturesInArea(u, v, radius);
+            const std::vector<size_t> vIndices = pKF2->GetFeaturesInArea(u, v, radius);
 
             if (vIndices.empty())
                 continue;
@@ -1249,7 +1249,7 @@ namespace ORB_SLAM2
             // Search in a radius of 2.5*sigma(ScaleLevel)
             const float radius = th * pKF1->mvScaleFactors[nPredictedLevel];
 
-            const std::vector <size_t> vIndices = pKF1->GetFeaturesInArea(u, v, radius);
+            const std::vector<size_t> vIndices = pKF1->GetFeaturesInArea(u, v, radius);
 
             if (vIndices.empty())
                 continue;
@@ -1359,7 +1359,7 @@ namespace ORB_SLAM2
                     // Search in a window. Size depends on scale
                     float radius = th * CurrentFrame.mvScaleFactors[nLastOctave];
 
-                    std::vector <size_t> vIndices2;
+                    std::vector<size_t> vIndices2;
 
                     if (bForward)
                         vIndices2 = CurrentFrame.GetFeaturesInArea(u, v, radius, nLastOctave);
@@ -1504,8 +1504,9 @@ namespace ORB_SLAM2
                     // Search in a window
                     const float radius = th * CurrentFrame.mvScaleFactors[nPredictedLevel];
 
-                    const std::vector <size_t> vIndices2 = CurrentFrame.GetFeaturesInArea(u, v, radius, nPredictedLevel - 1,
-                                                                                     nPredictedLevel + 1);
+                    const std::vector<size_t> vIndices2 = CurrentFrame.GetFeaturesInArea(u, v, radius,
+                                                                                         nPredictedLevel - 1,
+                                                                                         nPredictedLevel + 1);
 
                     if (vIndices2.empty())
                         continue;

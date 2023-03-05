@@ -62,7 +62,8 @@ using namespace std;
 namespace ORB_SLAM2
 {
     PnPsolver::PnPsolver(const Frame &F, const vector<MapPoint*> &vpMapPointMatches) :
-            pws(nullptr), us(nullptr), alphas(nullptr), pcs(nullptr), maximum_number_of_correspondences(0), number_of_correspondences(0),
+            pws(nullptr), us(nullptr), alphas(nullptr), pcs(nullptr), maximum_number_of_correspondences(0),
+            number_of_correspondences(0),
             mnInliersi(0),
             mnIterations(0), mnBestInliers(0), N(0)
     {
@@ -274,7 +275,7 @@ namespace ORB_SLAM2
 
         reset_correspondences();
 
-        for (int idx : vIndices)
+        for (int idx: vIndices)
         {
             add_correspondence(mvP3Dw[idx].x, mvP3Dw[idx].y, mvP3Dw[idx].z, mvP2D[idx].x, mvP2D[idx].y);
         }
@@ -435,7 +436,7 @@ namespace ORB_SLAM2
         }
     }
 
-    void PnPsolver::fill_M(cv::Mat& M,
+    void PnPsolver::fill_M(cv::Mat &M,
                            const int row, const double* as, const double u, const double v) const
     {
         auto M1 = M.row(row);
@@ -455,7 +456,7 @@ namespace ORB_SLAM2
 
     void PnPsolver::compute_ccs(const double* betas, const double* ut)
     {
-        for (auto & cc : ccs)
+        for (auto &cc: ccs)
             cc[0] = cc[1] = cc[2] = 0.0f;
 
         for (int i = 0; i < 4; i++)
@@ -650,8 +651,8 @@ namespace ORB_SLAM2
     {
         if (pcs[2] < 0.0)
         {
-            for (auto & cc : ccs)
-                for (double & j : cc)
+            for (auto &cc: ccs)
+                for (double &j: cc)
                     j = -j;
 
             for (int i = 0; i < number_of_correspondences; i++)
@@ -679,7 +680,7 @@ namespace ORB_SLAM2
 // betas10        = [B11 B12 B22 B13 B23 B33 B14 B24 B34 B44]
 // betas_approx_1 = [B11 B12     B13         B14]
 
-    void PnPsolver::find_betas_approx_1(const cv::Mat& L_6x10, const cv::Mat& Rho,
+    void PnPsolver::find_betas_approx_1(const cv::Mat &L_6x10, const cv::Mat &Rho,
                                         double* betas)
     {
         double l_6x4[6 * 4], b4[4];
@@ -715,7 +716,7 @@ namespace ORB_SLAM2
 // betas10        = [B11 B12 B22 B13 B23 B33 B14 B24 B34 B44]
 // betas_approx_2 = [B11 B12 B22                            ]
 
-    void PnPsolver::find_betas_approx_2(const cv::Mat& L_6x10, const cv::Mat& Rho,
+    void PnPsolver::find_betas_approx_2(const cv::Mat &L_6x10, const cv::Mat &Rho,
                                         double* betas)
     {
         double l_6x3[6 * 3], b3[3];
@@ -751,7 +752,7 @@ namespace ORB_SLAM2
 // betas10        = [B11 B12 B22 B13 B23 B33 B14 B24 B34 B44]
 // betas_approx_3 = [B11 B12 B22 B13 B23                    ]
 
-    void PnPsolver::find_betas_approx_3(const cv::Mat& L_6x10, const cv::Mat& Rho,
+    void PnPsolver::find_betas_approx_3(const cv::Mat &L_6x10, const cv::Mat &Rho,
                                         double* betas)
     {
         double l_6x5[6 * 5], b5[5];
@@ -840,18 +841,26 @@ namespace ORB_SLAM2
         rho[5] = dist2(cws[2], cws[3]);
     }
 
-    void PnPsolver::compute_A_and_b_gauss_newton(const cv::Mat& l_6x10, const cv::Mat& rho,
-                                                 const double betas[4], cv::Mat& A, cv::Mat& b)
+    void PnPsolver::compute_A_and_b_gauss_newton(const cv::Mat &l_6x10, const cv::Mat &rho,
+                                                 const double betas[4], cv::Mat &A, cv::Mat &b)
     {
         for (int i = 0; i < 6; i++)
         {
-            const auto& rowL = l_6x10.row(i);
+            const auto &rowL = l_6x10.row(i);
             auto rowA = A.row(i);
 
-            rowA.at<double>(0) = 2 * rowL.at<double>(0) * betas[0] + rowL.at<double>(1) * betas[1] + rowL.at<double>(3) * betas[2] + rowL.at<double>(6) * betas[3];
-            rowA.at<double>(1) = rowL.at<double>(1) * betas[0] + 2 * rowL.at<double>(2) * betas[1] + rowL.at<double>(4) * betas[2] + rowL.at<double>(7) * betas[3];
-            rowA.at<double>(2) = rowL.at<double>(3) * betas[0] + rowL.at<double>(4) * betas[1] + 2 * rowL.at<double>(5) * betas[2] + rowL.at<double>(8) * betas[3];
-            rowA.at<double>(3) = rowL.at<double>(6) * betas[0] + rowL.at<double>(7) * betas[1] + rowL.at<double>(8) * betas[2] + 2 * rowL.at<double>(9) * betas[3];
+            rowA.at<double>(0) =
+                    2 * rowL.at<double>(0) * betas[0] + rowL.at<double>(1) * betas[1] + rowL.at<double>(3) * betas[2] +
+                    rowL.at<double>(6) * betas[3];
+            rowA.at<double>(1) =
+                    rowL.at<double>(1) * betas[0] + 2 * rowL.at<double>(2) * betas[1] + rowL.at<double>(4) * betas[2] +
+                    rowL.at<double>(7) * betas[3];
+            rowA.at<double>(2) =
+                    rowL.at<double>(3) * betas[0] + rowL.at<double>(4) * betas[1] + 2 * rowL.at<double>(5) * betas[2] +
+                    rowL.at<double>(8) * betas[3];
+            rowA.at<double>(3) =
+                    rowL.at<double>(6) * betas[0] + rowL.at<double>(7) * betas[1] + rowL.at<double>(8) * betas[2] +
+                    2 * rowL.at<double>(9) * betas[3];
 
             b.at<double>(i, i) = rho.at<double>(i) -
                                  (
@@ -869,7 +878,7 @@ namespace ORB_SLAM2
         }
     }
 
-    void PnPsolver::gauss_newton(const cv::Mat& L_6x10, const cv::Mat& Rho,
+    void PnPsolver::gauss_newton(const cv::Mat &L_6x10, const cv::Mat &Rho,
                                  double betas[4])
     {
         const int iterations_number = 5;
@@ -889,7 +898,7 @@ namespace ORB_SLAM2
         }
     }
 
-    void PnPsolver::qr_solve(cv::Mat& A, cv::Mat& b, cv::Mat& X)
+    void PnPsolver::qr_solve(cv::Mat &A, cv::Mat &b, cv::Mat &X)
     {
         static int max_nr = 0;
         static double* A1, * A2;

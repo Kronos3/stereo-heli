@@ -511,7 +511,7 @@ namespace ORB_SLAM2
         const float maxD = mbf / minZ;
 
         // For each left keypoint search a match in the right image
-        std::vector <std::pair<int, int>> vDistIdx;
+        std::vector<std::pair<int, int>> vDistIdx;
         vDistIdx.reserve(N);
 
         for (int iL = 0; iL < N; iL++)
@@ -521,7 +521,7 @@ namespace ORB_SLAM2
             const float &vL = kpL.pt.y;
             const float &uL = kpL.pt.x;
 
-            const std::vector <size_t> &vCandidates = vRowIndices[vL];
+            const std::vector<size_t> &vCandidates = vRowIndices[vL];
 
             if (vCandidates.empty())
                 continue;

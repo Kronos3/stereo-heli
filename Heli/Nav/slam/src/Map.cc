@@ -81,46 +81,46 @@ namespace ORB_SLAM2
 
     std::vector<KeyFrame*> Map::GetAllKeyFrames()
     {
-        std::unique_lock <std::mutex> lock(mMutexMap);
+        std::unique_lock<std::mutex> lock(mMutexMap);
         return {mspKeyFrames.begin(), mspKeyFrames.end()};
     }
 
     std::vector<MapPoint*> Map::GetAllMapPoints()
     {
-        std::unique_lock <std::mutex> lock(mMutexMap);
+        std::unique_lock<std::mutex> lock(mMutexMap);
         return {mspMapPoints.begin(), mspMapPoints.end()};
     }
 
     long unsigned int Map::MapPointsInMap()
     {
-        std::unique_lock <std::mutex> lock(mMutexMap);
+        std::unique_lock<std::mutex> lock(mMutexMap);
         return mspMapPoints.size();
     }
 
     long unsigned int Map::KeyFramesInMap()
     {
-        std::unique_lock <std::mutex> lock(mMutexMap);
+        std::unique_lock<std::mutex> lock(mMutexMap);
         return mspKeyFrames.size();
     }
 
     std::vector<MapPoint*> Map::GetReferenceMapPoints()
     {
-        std::unique_lock <std::mutex> lock(mMutexMap);
+        std::unique_lock<std::mutex> lock(mMutexMap);
         return mvpReferenceMapPoints;
     }
 
     long unsigned int Map::GetMaxKFid()
     {
-        std::unique_lock <std::mutex> lock(mMutexMap);
+        std::unique_lock<std::mutex> lock(mMutexMap);
         return mnMaxKFid;
     }
 
     void Map::clear()
     {
-        for (auto mspMapPoint : mspMapPoints)
+        for (auto mspMapPoint: mspMapPoints)
             delete mspMapPoint;
 
-        for (auto mspKeyFrame : mspKeyFrames)
+        for (auto mspKeyFrame: mspKeyFrames)
             delete mspKeyFrame;
 
         mspMapPoints.clear();

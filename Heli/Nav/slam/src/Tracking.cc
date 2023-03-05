@@ -1294,10 +1294,10 @@ namespace ORB_SLAM2
         // If enough matches are found we setup a PnP solver
         ORBmatcher matcher(0.75, true);
 
-        std::vector < PnPsolver * > vpPnPsolvers;
+        std::vector<PnPsolver*> vpPnPsolvers;
         vpPnPsolvers.resize(nKFs);
 
-        std::vector <std::vector<MapPoint*>> vvpMapPointMatches;
+        std::vector<std::vector<MapPoint*>> vvpMapPointMatches;
         vvpMapPointMatches.resize(nKFs);
 
         std::vector<bool> vbDiscarded;
@@ -1360,7 +1360,7 @@ namespace ORB_SLAM2
                 {
                     Tcw.copyTo(mCurrentFrame.mTcw);
 
-                    std::set < MapPoint * > sFound;
+                    std::set<MapPoint*> sFound;
 
                     const int np = vbInliers.size();
 
