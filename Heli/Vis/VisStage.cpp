@@ -10,6 +10,11 @@
 
 namespace Heli
 {
+    enum
+    {
+        LEFT_THREAD = 0,
+        RIGHT_THREAD = 1,
+    };
 
     ScaleStage::ScaleStage(F32 x_scale, F32 y_scale, const Vis_Interpolation& interp)
             : m_fx(x_scale), m_fy(y_scale),
@@ -36,8 +41,8 @@ namespace Heli
 
     void ScaleStage::process(cv::Mat& left, cv::Mat& right)
     {
-        auto& a1 = m_proc.feed<0>(&left);
-        auto& a2 = m_proc.feed<1>(&right);
+        auto& a1 = m_proc.feed<LEFT_THREAD>(&left);
+        auto& a2 = m_proc.feed<RIGHT_THREAD>(&right);
 
         a1.await();
         a2.await();
@@ -63,8 +68,8 @@ namespace Heli
 
     void RectifyStage::process(cv::Mat& left, cv::Mat& right)
     {
-        auto& a1 = m_proc.feed<0>({left, m_left_x, m_left_y});
-        auto& a2 = m_proc.feed<1>({right, m_right_x, m_right_y});
+        auto& a1 = m_proc.feed<LEFT_THREAD>({left, m_left_x, m_left_y});
+        auto& a2 = m_proc.feed<RIGHT_THREAD>({right, m_right_x, m_right_y});
 
         a1.await();
         a2.await();

@@ -20,6 +20,8 @@
 
 namespace libparallel
 {
+    using Token = I32;
+
     class QuitException : std::exception
     {
     };
@@ -27,37 +29,44 @@ namespace libparallel
     class Awaitable
     {
     public:
-        Awaitable() : ready(false)
+        Awaitable() : ready(false), token(0)
         {}
 
         Awaitable(const Awaitable& a)
-                : ready(a.ready)
+                : ready(a.ready), token(a.token)
         {
         }
 
         void reset()
         {
             ready = false;
+            token = 0;
         }
 
-        void await()
+        Token await()
         {
             std::unique_lock<std::mutex> lock(mutex);
             while (!ready)
             {
                 cv.wait(lock);
             }
+
+            Token tok = token;
+            reset();
+            return tok;
         }
 
-        void signal()
+        void signal(Token tok)
         {
             std::unique_lock<std::mutex> lock(mutex);
             ready = true;
+            token = tok;
             cv.notify_all();
         }
 
     PRIVATE:
         bool ready;
+        Token token;
 
         std::mutex mutex;
         std::condition_variable cv;
@@ -116,8 +125,9 @@ namespace libparallel
             {
                 try
                 {
-                    (*function)(m_queue.pop());
-                    awaiter.signal();
+                    auto p = m_queue.pop();
+                    (*function)(p.second);
+                    awaiter.signal(p.first);
                 }
                 catch(QuitException&)
                 {
@@ -133,33 +143,27 @@ namespace libparallel
         {
         }
 
-        void join()
-        {
-            m_queue.quit();
-            m_thread.join();
-        }
-
         void set(std::function<void(A)> f)
         {
             function = std::make_unique<std::function<void(A)>>(f);
         }
 
-        Awaitable& feed(const A& a)
+        Awaitable& feed(const A& a, Token tok)
         {
-            awaiter.reset();
-            m_queue.push(a);
+            m_queue.push({tok, a});
             return awaiter;
         }
 
         ~ParallelThread()
         {
-            join();
+            m_queue.quit();
+            m_thread.join();
         }
 
     private:
         std::unique_ptr<std::function<void(A)>> function;
         Awaitable awaiter;
-        Queue<A> m_queue;
+        Queue<std::pair<Token, A>> m_queue;
         std::thread m_thread;
     };
 
@@ -169,17 +173,14 @@ namespace libparallel
     public:
         explicit Parallelize(std::function<void(A)> f)
         {
-            for (auto& i : m_threads)
-            {
-                i.set(f);
-            }
+            for (auto& i : m_threads) i.set(f);
         }
 
-        template<U32 i>
+        template<U32 i, Token tok = 0>
         Awaitable& feed(A&& args)
         {
-            static_assert(i < n);
-            return m_threads[i].feed(args);
+            static_assert(i < n, "Thread index is out of range");
+            return m_threads[i].feed(args, tok);
         }
 
     PRIVATE:
