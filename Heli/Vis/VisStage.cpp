@@ -7,7 +7,6 @@
 
 #include "Assert.hpp"
 #include "opencv2/imgproc.hpp"
-#include "Heli/Fm/Transform.hpp"
 
 namespace Heli
 {
@@ -138,9 +137,9 @@ namespace Heli
         }
     }
 
-    DepthStage::DepthStage(const Calibration& calibration, const Transform& lTr, U32 left_mask_pix)
+    DepthStage::DepthStage(const Calibration& calibration, F32 baseline, U32 left_mask_pix)
             : m_fx(calibration.left.k.at<F64>(0, 0)),
-              m_b(std::abs(lTr.t()(0))),
+              m_b(baseline),
               m_left_mask_pix(static_cast<I32>(left_mask_pix))
     {
     }

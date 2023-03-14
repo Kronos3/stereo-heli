@@ -43,7 +43,6 @@ namespace Heli
 
     private:
         bool m_valid;
-
         cv::Mat4f m_tf;
     };
 }

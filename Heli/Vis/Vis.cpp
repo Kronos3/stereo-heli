@@ -144,8 +144,7 @@ namespace Heli
         I32 pix = paramGet_DEPTH_LEFT_MASK_PIX(valid);
 
         auto lTr = transformGet_out(0, CoordinateFrame::CAM_R, CoordinateFrame::CAM_L);
-
-        m_stages.emplace_back(new DepthStage(m_calib, lTr, pix));
+        m_stages.emplace_back(new DepthStage(m_calib, std::abs(lTr.t()(0)), pix));
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 

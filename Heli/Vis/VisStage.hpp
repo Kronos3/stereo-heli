@@ -14,7 +14,6 @@
 #include <opencv2/imgproc.hpp>
 
 #include <Heli/parallel/parallel.hpp>
-#include <Heli/Fm/Transform.hpp>
 
 namespace Heli
 {
@@ -110,13 +109,13 @@ namespace Heli
     class DepthStage : public VisStage
     {
     public:
-        explicit DepthStage(const Calibration& calibration, const Transform& lTr, U32 left_mask_pix);
+        explicit DepthStage(const Calibration& calibration, F32 baseline, U32 left_mask_pix);
 
         void process(cv::Mat &left, cv::Mat &right) override;
 
     private:
-        F64 m_fx;    // x focal length in pixels
-        F64 m_b;     // baseline in world coord units (cm)
+        F32 m_fx;    // x focal length in pixels
+        F32 m_b;     // baseline in world coord units (cm)
 
         I32 m_left_mask_pix; // number of pixels to mask out
     };
