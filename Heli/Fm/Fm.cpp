@@ -40,20 +40,29 @@ namespace Heli
     }
 
     static inline
-    void get_euler_angles(const cv::Mat& r, F32& rx, F32& ry, F32& rz)
+    void get_euler_angles(const cv::Mat &R, F32 &rx, F32 &ry, F32 &rz)
     {
-        F32 r11 = r.at<F32>(0, 0), r12 = r.at<F32>(0, 1), r13 = r.at<F32>(0, 2);
-        F32 r21 = r.at<F32>(1, 0), r22 = r.at<F32>(1, 1), r23 = r.at<F32>(1, 2);
-        F32 r31 = r.at<F32>(2, 0), r32 = r.at<F32>(2, 1), r33 = r.at<F32>(2, 2);
+        float sy = sqrtf(R.at<F32>(0, 0) * R.at<F32>(0, 0) + R.at<F32>(1, 0) * R.at<F32>(1, 0));
 
-        rx = atan2f(r32, r33);
-        ry = atan2f(-r31, sqrtf(r32 * r32 + r33 * r33));
-        rz = atan2f(r21, r11);
+        bool singular = sy < 1e-6; // If
+
+        if (!singular)
+        {
+            rx = atan2f(R.at<F32>(2, 1), R.at<F32>(2, 2));
+            ry = atan2f(-R.at<F32>(2, 0), sy);
+            rz = atan2f(R.at<F32>(1, 0), R.at<F32>(0, 0));
+        }
+        else
+        {
+            rx = atan2f(-R.at<F32>(1, 2), R.at<F32>(1, 1));
+            ry = atan2f(-R.at<F32>(2, 0), sy);
+            rz = 0;
+        }
     }
 
     CoordinateFrame Fm::get_common_parent(
-            const CoordinateFrame& a,
-            const CoordinateFrame& b) const
+            const CoordinateFrame &a,
+            const CoordinateFrame &b) const
     {
         if (a == CoordinateFrame::NONE || b == CoordinateFrame::NONE)
         {
@@ -98,7 +107,7 @@ namespace Heli
 
         Transform rTp;
         auto rTp_f = r;
-        while(rTp_f != p)
+        while (rTp_f != p)
         {
             rTp = rTp * m_frame_tree[p.e].inverse();
             rTp_f = m_parent[p.e];
@@ -106,7 +115,7 @@ namespace Heli
 
         Transform fTp;
         auto fTp_f = f;
-        while(fTp_f != p)
+        while (fTp_f != p)
         {
             fTp = fTp * m_frame_tree[p.e].inverse();
             fTp_f = m_parent[p.e];
@@ -144,12 +153,12 @@ namespace Heli
         }
 
         F32 rx, ry, rz;
-        get_euler_angles(tform.r(), rx, ry, rz);
+        get_euler_angles(tform.R(), rx, ry, rz);
 
-        F32 tx = tform.t().at<F32>(0), ty = tform.t().at<F32>(1), tz = tform.t().at<F32>(2);
+        const auto& t = tform.t();
 
         log_ACTIVITY_HI_TransformR(p, f, rx, ry, rz);
-        log_ACTIVITY_HI_TransformT(p, f, tx, ty, tz);
+        log_ACTIVITY_HI_TransformT(p, f, t(0), t(1), t(2));
 
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }

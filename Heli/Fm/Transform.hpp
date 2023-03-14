@@ -14,12 +14,13 @@ namespace Heli
     public:
         enum
         {
-            SERIALIZED_SIZE = sizeof(F32) * (9 + 3)
+            SERIALIZED_SIZE = sizeof(F32) * (4 * 4)
         };
 
         explicit Transform();
         explicit Transform(bool valid);
-        explicit Transform(const cv::Mat& r, const cv::Mat& t);
+        explicit Transform(const cv::Mat3f& r, const cv::Vec3f& t);
+        explicit Transform(cv::Mat4f  tf);
         Transform(const Transform& tf);
 
         Fw::SerializeStatus serialize(Fw::SerializeBufferBase &buffer) const override;
@@ -27,31 +28,23 @@ namespace Heli
 
         bool is_valid() const;
 
-        cv::Mat r() { return m_r; }
-        const cv::Mat& r() const  { return m_r; }
+        cv::Mat R() const;
+        cv::Vec3f t() const;
+        const cv::Mat4f& tf() const { return m_tf; }
 
-        cv::Mat t() { return m_t; }
-        const cv::Mat& t() const { return m_t; }
+        F32 operator()(I32 i, I32 j) const;
 
         Transform inverse() const;
 
-        /**
-         * Perform Rx + t
-         * @param x
-         * @return Rx + t
-         */
-        cv::Mat operator*(const cv::Mat& x) const;
+        cv::Mat operator*(const cv::Vec3f& x) const;
+        cv::Mat operator*(const cv::Vec4f& x) const;
         Transform operator*(const Transform& tf);
         Transform operator=(const Transform& tf);
 
     private:
         bool m_valid;
 
-        F32 m_r_raw[9];
-        F32 m_t_raw[3];
-
-        cv::Mat m_r;
-        cv::Mat m_t;
+        cv::Mat4f m_tf;
     };
 }
 
