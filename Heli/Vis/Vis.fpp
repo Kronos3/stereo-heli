@@ -1,5 +1,7 @@
 module Heli {
 
+    type Mat;
+
     enum ImageEncoding {
         JPEG,   @< JPEG Image (Loss Compression)
         PNG,    @< Lossy compression with alpha channel
@@ -13,6 +15,7 @@ module Heli {
         # -----------------------------
 
         output port frameGet: FrameGet
+        output port transformGet: CoordFrameGet
 
         async input port frame: Frame
         output port frameOut: Frame
@@ -88,20 +91,6 @@ module Heli {
 
         @ Set the right camera distortion parameters
         async command MODEL_R_D(a: F32, b: F32, c: F32, d: F32, e: F32)
-
-        @ Rotation transform from left camera frame to right camera frame
-        async command MODEL_R(
-            rx: F32,    @< Rotation about the x-axis
-            ry: F32,    @< Rotation about the y-axis
-            rz: F32     @< Rotation about the z-axis
-        )
-
-        @ Translation from the left camera frame to right camera frame
-        async command MODEL_T(
-            tx: F32,    @< Translation on x-axis in cm
-            ty: F32,    @< Translation on y-axis in cm
-            tz: F32     @< Translation on z-axis in cm
-        )
 
         @ Clear the vision pipeline
         async command CLEAR()

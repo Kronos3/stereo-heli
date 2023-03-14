@@ -452,6 +452,8 @@ module Heli {
         stack size Default.stackSize \
         priority 100
 
+    instance fm: Fm base id 7000
+
     instance serial0: Drv.LinuxSerialDriver base id 8000 \
       {
 

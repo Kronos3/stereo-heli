@@ -44,8 +44,6 @@ namespace Heli
         void MODEL_R_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy) override;
         void MODEL_L_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e) override;
         void MODEL_R_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e) override;
-        void MODEL_R_cmdHandler(U32 opCode, U32 cmdSeq, F32 rx, F32 ry, F32 rz) override;
-        void MODEL_T_cmdHandler(U32 opCode, U32 cmdSeq, F32 tx, F32 ty, F32 tz) override;
 
         void MODEL_SIZE_cmdHandler(U32 opCode, U32 cmdSeq, U32 width, U32 height) override;
 

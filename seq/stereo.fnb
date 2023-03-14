@@ -26,14 +26,14 @@
 ;?= {"language":"fprime","kind":2}
 ; Camera parameter setup
 R00:00:00 cmdSeq.CS_RUN "/seq/cam001_config.bin" BLOCK
-;?e {"time":1677356061.843259,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6000 added","args":[{"name":"Id","value":"6000","valueRaw":6000,"type":"U32"}]}
-;?e {"time":1677356061.843973,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6001 added","args":[{"name":"Id","value":"6001","valueRaw":6001,"type":"U32"}]}
-;?e {"time":1677356061.84475,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6002 added","args":[{"name":"Id","value":"6002","valueRaw":6002,"type":"U32"}]}
-;?e {"time":1677356061.845513,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6003 added","args":[{"name":"Id","value":"6003","valueRaw":6003,"type":"U32"}]}
-;?e {"time":1677356061.846253,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6004 added","args":[{"name":"Id","value":"6004","valueRaw":6004,"type":"U32"}]}
-;?e {"time":1677356061.847025,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6005 added","args":[{"name":"Id","value":"6005","valueRaw":6005,"type":"U32"}]}
-;?e {"time":1677356061.847753,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6011 added","args":[{"name":"Id","value":"6011","valueRaw":6011,"type":"U32"}]}
-;?e {"time":1677356061.848053,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/cam001_config.bin complete","args":[{"name":"fileName","value":"/seq/cam001_config.bin","valueRaw":"/seq/cam001_config.bin","type":"string(60)"}]}
+;?e {"time":1677991412.248,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6000 added","args":[{"name":"Id","value":"6000","valueRaw":6000,"type":"U32"}]}
+;?e {"time":1677991412.248753,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6001 added","args":[{"name":"Id","value":"6001","valueRaw":6001,"type":"U32"}]}
+;?e {"time":1677991412.249414,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6002 added","args":[{"name":"Id","value":"6002","valueRaw":6002,"type":"U32"}]}
+;?e {"time":1677991412.250113,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6003 added","args":[{"name":"Id","value":"6003","valueRaw":6003,"type":"U32"}]}
+;?e {"time":1677991412.250815,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6004 added","args":[{"name":"Id","value":"6004","valueRaw":6004,"type":"U32"}]}
+;?e {"time":1677991412.251546,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6005 added","args":[{"name":"Id","value":"6005","valueRaw":6005,"type":"U32"}]}
+;?e {"time":1677991412.252188,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6011 added","args":[{"name":"Id","value":"6011","valueRaw":6011,"type":"U32"}]}
+;?e {"time":1677991412.25253,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/cam001_config.bin complete","args":[{"name":"fileName","value":"/seq/cam001_config.bin","valueRaw":"/seq/cam001_config.bin","type":"string(60)"}]}
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 cam.CONFIGURE 1640 1232 R_0 R_0 FALSE FALSE FALSE FALSE
@@ -45,7 +45,7 @@ R00:00:00 framePipe.CLEAR
 ;R00:00:00 framePipe.PUSH VIS DROP_ON_FULL
 R00:00:00 framePipe.PUSH STREAMER NO_REPLY
 R00:00:00 framePipe.CHECK
-;?e {"time":1677356733.033669,"id":6007,"name":"CameraStreamConfiguring","component":"cam","severity":"ACTIVITY_HI","message":"Initializing camera stream @ 1640x1232","args":[{"name":"width","value":"1640","valueRaw":1640,"type":"U32"},{"name":"height","value":"1232","valueRaw":1232,"type":"U32"}]}
+;?e {"time":1677991414.675591,"id":6007,"name":"CameraStreamConfiguring","component":"cam","severity":"ACTIVITY_HI","message":"Initializing camera stream @ 1640x1232","args":[{"name":"width","value":"1640","valueRaw":1640,"type":"U32"},{"name":"height","value":"1232","valueRaw":1232,"type":"U32"}]}
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 cam.START
@@ -68,9 +68,9 @@ R00:00:00 cam.STOP
 R00:00:00 cmdSeq.CS_RUN "/seq/vis000_model-2.bin" BLOCK
 
 ;R00:00:00 cmdSeq.CS_RUN "/seq/vis001_stereo.bin" BLOCK
-;?e {"time":1677356752.452731,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Loading camera model '656x493 - 2'","args":[{"name":"message","value":"Loading camera model '656x493 - 2'","valueRaw":"Loading camera model '656x493 - 2'","type":"string(40)"}]}
-;?e {"time":1677356752.455695,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Finished loading '656x493 - 2'","args":[{"name":"message","value":"Finished loading '656x493 - 2'","valueRaw":"Finished loading '656x493 - 2'","type":"string(40)"}]}
-;?e {"time":1677356752.455913,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/vis000_model-2.bin complete","args":[{"name":"fileName","value":"/seq/vis000_model-2.bin","valueRaw":"/seq/vis000_model-2.bin","type":"string(60)"}]}
+;?e {"time":1677991426.857539,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Loading camera model '656x493 - 2'","args":[{"name":"message","value":"Loading camera model '656x493 - 2'","valueRaw":"Loading camera model '656x493 - 2'","type":"string(40)"}]}
+;?e {"time":1677991426.860994,"id":408,"name":"NoOpStringReceived","component":"cmdDisp","severity":"ACTIVITY_HI","message":"Received a NO-OP string=Finished loading '656x493 - 2'","args":[{"name":"message","value":"Finished loading '656x493 - 2'","valueRaw":"Finished loading '656x493 - 2'","type":"string(40)"}]}
+;?e {"time":1677991426.861232,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/vis000_model-2.bin complete","args":[{"name":"fileName","value":"/seq/vis000_model-2.bin","valueRaw":"/seq/vis000_model-2.bin","type":"string(60)"}]}
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 framePipe.CLEAR
@@ -78,7 +78,9 @@ R00:00:00 framePipe.PUSH VIS DROP_ON_FULL
 R00:00:00 framePipe.PUSH STREAMER NO_REPLY
 R00:00:00 framePipe.CHECK
 
-;?e {"time":1677356761.628452,"id":6102,"name":"NotValidated","component":"framePipe","severity":"WARNING_LO","message":"Frame pipeline has not been validated by 'CHECK'","args":[]}
+R00:00:00 videoStreamer.DISPLAY NONE LEFT
+
+;?e {"time":1677991939.546076,"id":6102,"name":"NotValidated","component":"framePipe","severity":"WARNING_LO","message":"Frame pipeline has not been validated by 'CHECK'","args":[]}
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 vis.CLEAR
@@ -88,6 +90,9 @@ R00:00:00 vis.RECTIFY
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 framePipe.SHOW
+;?s
+;?= {"language":"fprime","kind":2}
+R00:00:00 cam.START
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 cam.STOP

@@ -7,7 +7,8 @@
 namespace Heli
 {
 
-    Nav::Nav(const char* compName) : NavComponentBase(compName)
+    Nav::Nav(const char* compName) : NavComponentBase(compName),
+    vo(nullptr)
     {
     }
 
@@ -31,5 +32,8 @@ namespace Heli
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 
-    Nav::~Nav() = default;
+    Nav::~Nav()
+    {
+        delete vo;
+    }
 }

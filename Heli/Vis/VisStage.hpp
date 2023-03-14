@@ -14,6 +14,7 @@
 #include <opencv2/imgproc.hpp>
 
 #include <Heli/parallel/parallel.hpp>
+#include <Heli/Fm/Transform.hpp>
 
 namespace Heli
 {
@@ -35,9 +36,6 @@ namespace Heli
 
         Intrinsic left;
         Intrinsic right;
-
-        cv::Mat r;      //!< Rotation matrix
-        cv::Mat t;      //!< Translation vector
 
         cv::Size size;  //!< Image frame dimensions
     };
@@ -112,7 +110,7 @@ namespace Heli
     class DepthStage : public VisStage
     {
     public:
-        explicit DepthStage(const Calibration& calibration, U32 left_mask_pix);
+        explicit DepthStage(const Calibration& calibration, const Transform& lTr, U32 left_mask_pix);
 
         void process(cv::Mat &left, cv::Mat &right) override;
 

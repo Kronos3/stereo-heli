@@ -101,6 +101,24 @@ namespace libparallel
             return r;
         }
 
+        bool empty() const
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            return queue.empty();
+        }
+
+        void clear()
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            std::queue<T>().swap(queue);
+        }
+
+        size_t size() const
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            return queue.size();
+        }
+
         void quit()
         {
             quiting = true;
@@ -110,7 +128,7 @@ namespace libparallel
     private:
         bool quiting = false;
 
-        std::mutex mutex;
+        mutable std::mutex mutex;
         std::condition_variable condition;
         std::queue<T> queue;
     };

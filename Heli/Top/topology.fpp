@@ -51,6 +51,7 @@ module Heli {
         instance joystick
         instance joystickTimer
         instance nav
+        instance fm
 
         # Serial lines
         instance serial0
@@ -192,6 +193,10 @@ module Heli {
               uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
               fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
+        }
+
+        connections FrameManager {
+            vis.transformGet -> fm.getFrame
         }
 
         # --------------------------------

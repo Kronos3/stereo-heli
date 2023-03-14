@@ -143,7 +143,9 @@ namespace Heli
         Fw::ParamValid valid;
         I32 pix = paramGet_DEPTH_LEFT_MASK_PIX(valid);
 
-        m_stages.emplace_back(new DepthStage(m_calib, pix));
+        auto lTr = transformGet_out(0, CoordinateFrame::CAM_R, CoordinateFrame::CAM_L);
+
+        m_stages.emplace_back(new DepthStage(m_calib, lTr, pix));
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
@@ -157,8 +159,8 @@ namespace Heli
     {
         m_calib.left.k = (cv::Mat_<double>(3, 3)
                 << fx, 0, cx,
-                0, fy, cy,
-                0, 0, 1);
+                   0, fy, cy,
+                   0, 0, 1);
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
@@ -166,8 +168,8 @@ namespace Heli
     {
         m_calib.right.k = (cv::Mat_<F64>(3, 3)
                 << fx, 0, cx,
-                0, fy, cy,
-                0, 0, 1);
+                   0, fy, cy,
+                   0, 0, 1);
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
@@ -180,35 +182,6 @@ namespace Heli
     void Vis::MODEL_R_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e)
     {
         m_calib.right.d = (cv::Mat_<F64>(1, 5) << a, b, c, d, e);
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    }
-
-    void Vis::MODEL_R_cmdHandler(U32 opCode, U32 cmdSeq, F32 rx, F32 ry, F32 rz)
-    {
-        // Convert from euler angles back to rotation matrix
-
-        cv::Mat R_x = (cv::Mat_<F64>(3, 3)
-                << 1, 0, 0,
-                0, cos(rx), -sin(rx),
-                0, sin(rx), cos(rx));
-
-        cv::Mat R_y = (cv::Mat_<F64>(3, 3)
-                << cos(ry), 0, sin(ry),
-                0, 1, 0,
-                -sin(ry), 0, cos(ry));
-
-        cv::Mat R_z = (cv::Mat_<F64>(3, 3)
-                << cos(rz), -sin(rz), 0,
-                sin(rz), cos(rz), 0,
-                0, 0, 1);
-
-        m_calib.r = R_z.mul(R_y.mul(R_x));
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    }
-
-    void Vis::MODEL_T_cmdHandler(U32 opCode, U32 cmdSeq, F32 tx, F32 ty, F32 tz)
-    {
-        m_calib.t = (cv::Mat_<F64>(3, 1) << tx, ty, tz);
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 

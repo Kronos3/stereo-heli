@@ -33,12 +33,9 @@ R00:00:00 vis.MODEL_R_D {{d_right[0, 0]}} {{d_right[0, 1]}} {{d_right[0, 2]}} {{
 ; {{R[1, 0]|round(2)}}   {{R[1, 1]|round(2)}}   {{R[1, 2]|round(2)}}
 ; {{R[2, 0]|round(2)}}   {{R[2, 1]|round(2)}}   {{R[2, 2]|round(2)}}
 ;
+; Translation Vector: {{T[0, 0]|round(2)}}   {{T[1, 0]|round(2)}}   {{T[2, 0]|round(2)}}
 ; Euler angles: {{R_euler[0]|round(2)}}   {{R_euler[1]|round(2)}}   {{R_euler[2]|round(2)}}
-R00:00:00 vis.MODEL_R {{R_euler[0]}} {{R_euler[1]}} {{R_euler[2]}}
-
-; Translation Vector
-; {{T[0, 0]|round(2)}}   {{T[1, 0]|round(2)}}   {{T[2, 0]|round(2)}}
-R00:00:00 vis.MODEL_T {{T[0, 0]}} {{T[1, 0]}} {{T[2, 0]}}
+R00:00:00 fm.SET CAM_R CAM_L {{T[0, 0]}} {{T[1, 0]}} {{T[2, 0]}} {{R_euler[0]}} {{R_euler[1]}} {{R_euler[2]}}
 
 ; Image size
 R00:00:00 vis.MODEL_SIZE {{width}} {{height}}

@@ -2,6 +2,14 @@
     "rsvpLite.fprime.testbed.evrCommand": false,
     "rsvpLite.fprime.testbed.evrActivityLow": false,
     "files.associations": {
-        "memory": "cpp"
+        "memory": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "vector": "cpp",
+        "system_error": "cpp"
     }
 }
