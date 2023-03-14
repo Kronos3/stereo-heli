@@ -16,22 +16,21 @@ namespace Heli
         FmComponentBase::init(instance);
     }
 
-    static inline
-    cv::Mat get_rotation_matrix(F64 rx, F64 ry, F64 rz)
+    template<typename T, typename R = cv::Mat3f>
+    static inline R get_rotation_matrix(T rx, T ry, T rz)
     {
-
         // Convert from euler angles back to rotation matrix
-        cv::Mat R_x = (cv::Mat_<F64>(3, 3)
+        R R_x = (R(3, 3)
                 << 1, 0, 0,
                 0, cos(rx), -sin(rx),
                 0, sin(rx), cos(rx));
 
-        cv::Mat R_y = (cv::Mat_<F64>(3, 3)
+        R R_y = (R(3, 3)
                 << cos(ry), 0, sin(ry),
                 0, 1, 0,
                 -sin(ry), 0, cos(ry));
 
-        cv::Mat R_z = (cv::Mat_<F64>(3, 3)
+        R R_z = (R(3, 3)
                 << cos(rz), -sin(rz), 0,
                 sin(rz), cos(rz), 0,
                 0, 0, 1);
@@ -170,10 +169,9 @@ namespace Heli
     {
         m_parent[f.e] = p;
 
-        cv::Mat r = get_rotation_matrix(rx, ry, rz);
-        cv::Mat t({3, 1}, {tx, ty, tz});
-
-        m_frame_tree[f.e] = Transform(r, t);
+        m_frame_tree[f.e] = Transform(
+                get_rotation_matrix(rx, ry, rz),
+                {tx, ty, tz});
 
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
