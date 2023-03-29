@@ -1,19 +1,21 @@
 module Heli {
     type Transform;
+    type CameraModel;
 
-    enum CoordinateFrame {
+    enum Fm_Frame {
         NONE,       @< No frame select (identity and reference frame)
         WORLD,      @< World frame
+        SITE,       @< Site frame
+        LANDING,    @< Landing frame
         MECH,       @< Mechanical frame
         IMU,        @< IMU frame
         CAM_L,      @< Left camera frame (optical center and orientation)
         CAM_R,      @< Right camera frame (optical center and orientation)
     }
 
-    port CoordFrameSetParent(f: CoordinateFrame, parent: CoordinateFrame, ref t: Transform);
-    port CoordFrameGetParent(f: CoordinateFrame) -> CoordinateFrame
-    port CoordFrameSet(f: CoordinateFrame, ref t: Transform);
-    port CoordFrameGet(f: CoordinateFrame, respective: CoordinateFrame) -> Transform;
+    port CoordFrameGetParent(f: Fm_Frame) -> Fm_Frame
+    port CoordFrameGet(f: Fm_Frame, respective: Fm_Frame) -> Transform;
+    port CoordFrameTransform(f: Fm_Frame, delta: Transform);
 
     passive component Fm {
 
@@ -21,10 +23,14 @@ module Heli {
         # General ports
         # -----------------------------
 
-        sync input port setParent: CoordFrameSetParent
         sync input port getParent: CoordFrameGetParent
-        sync input port setFrame: CoordFrameSet
+        sync input port transform: CoordFrameTransform
         sync input port getFrame: CoordFrameGet
+
+        enum Relationship {
+            DYNAMIC,        @< Transforming the child will just update the relationship with the parent
+            RIGID,          @< Transforming the child will keep the same relationship with the parent. The closest DYNAMIC ancestor will be changed.
+        }
 
         # -----------------------------
         # Special ports
@@ -57,8 +63,9 @@ module Heli {
 
         @ Set the transform between pTf
         sync command SET(
-            f: CoordinateFrame, @< Frame to set parent to frame transform
-            p: CoordinateFrame, @< Parent coordinate frame
+            f: Fm_Frame, @< Frame to set parent to frame transform
+            p: Fm_Frame, @< Parent coordinate frame
+            relation: Relationship, @< Child-parent relationship
             tx: F32,    @< Translation on x-axis in cm
             ty: F32,    @< Translation on y-axis in cm
             tz: F32,    @< Translation on z-axis in cm
@@ -69,8 +76,8 @@ module Heli {
 
         @ Get the transform between pTf, report as EVR
         sync command GET(
-            f: CoordinateFrame, @< Target coordinate frame
-            p: CoordinateFrame, @< Parent coordinate frame
+            f: Fm_Frame, @< Target coordinate frame
+            p: Fm_Frame, @< Parent coordinate frame
         )
 
         # -----------------------------
@@ -78,8 +85,8 @@ module Heli {
         # -----------------------------
 
         event TransformR(
-            p: CoordinateFrame, @< Parent coordinate frame
-            f: CoordinateFrame, @< Target coordinate frame
+            p: Fm_Frame, @< Parent coordinate frame
+            f: Fm_Frame, @< Target coordinate frame
             rx: F32,    @< Translation on x-axis in cm
             ry: F32,    @< Translation on y-axis in cm
             rz: F32,    @< Translation on z-axis in cm
@@ -87,8 +94,8 @@ module Heli {
           format "{} -> {} R: {} (x) {} (y) {} (z)"
 
         event TransformT(
-            p: CoordinateFrame, @< Parent coordinate frame
-            f: CoordinateFrame, @< Target coordinate frame
+            p: Fm_Frame, @< Parent coordinate frame
+            f: Fm_Frame, @< Target coordinate frame
             tx: F32,    @< Translation on x-axis in cm
             ty: F32,    @< Translation on y-axis in cm
             tz: F32,    @< Translation on z-axis in cm
@@ -96,8 +103,8 @@ module Heli {
           format "{} -> {} T: {} (x) {} (y) {} (z)"
 
         event NoCommonParent(
-            p: CoordinateFrame, @< Parent coordinate frame
-            f: CoordinateFrame, @< Target coordinate frame
+            p: Fm_Frame, @< Parent coordinate frame
+            f: Fm_Frame, @< Target coordinate frame
         ) severity warning high \
           format "Cannot form transform between {} -> {}, no common parent"
     }

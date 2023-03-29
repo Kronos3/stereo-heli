@@ -15,12 +15,12 @@ namespace Heli
     Joystick::Joystick(const char* compName)
             : JoystickComponentBase(compName),
               m_joystick(0), is_running(false), cmd_waiting(false),
-              m_opcode(0), m_cmdSeq(0), m_fd(-1), channels{},
-              inav_msg(Fc_MspMessageId::MSP_SET_RAW_RC),
-              m_failsafe_arr(0),
+              m_opcode(0), m_cmdSeq(0), m_fd(-1), m_failsafe_arr(0),
               m_failsafe_ticks(0),
               m_inav_msg_last_checksum(0),
-              m_inav_msg_last_checksum_valid(false)
+              m_inav_msg_last_checksum_valid(false),
+              inav_msg(Fc_MspMessageId::MSP_SET_RAW_RC),
+              channels{}
     {
         inav_msg.set_flags(/* Tell iNAV not to reply */ 1);
     }
@@ -504,7 +504,7 @@ namespace Heli
     }
 
     Joystick::AxisMapping::AxisMapping()
-            : deadzone(0), inverted(false),
+            : inverted(false), deadzone(0),
             min_value(0), max_value(0),
             delta_scale(0.0), delta_offset(0.0),
             last_control(0)
@@ -568,7 +568,6 @@ namespace Heli
     {
         channel = Joystick_AETRChannel::UNMAPPED;
         type = Joystick_ButtonMapType::HOLD;
-        channel = 0;
         off_value = 0;
         on_value = 0;
     }

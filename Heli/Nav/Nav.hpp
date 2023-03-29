@@ -6,7 +6,7 @@
 #define STEREO_HELI_NAV_HPP
 
 #include <Heli/Nav/NavComponentAc.hpp>
-#include "NavVo.hpp"
+#include "Vo.hpp"
 
 namespace Heli
 {
@@ -22,7 +22,7 @@ namespace Heli
         );
 
     PRIVATE:
-        VoSystem* vo;
+        Vo::System* vo;
 
         void frame_handler(NATIVE_INT_TYPE portNum, U32 frameId) override;
         void STOP_cmdHandler(U32 opCode, U32 cmdSeq) override;

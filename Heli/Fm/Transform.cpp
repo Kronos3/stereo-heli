@@ -40,8 +40,8 @@ namespace Heli
     }
 
     Transform::Transform()
-    : m_tf(cv::Mat4f::eye(4, 4)),
-      m_valid(true)
+    : m_valid(true),
+      m_tf(cv::Mat4f::eye(4, 4))
     {
     }
 
@@ -125,7 +125,7 @@ namespace Heli
     }
 
     Transform::Transform(const Transform &tf)
-    : m_tf(tf.m_tf.clone()), m_valid(tf.m_valid)
+    : m_valid(tf.m_valid), m_tf(tf.m_tf.clone())
     {
     }
 }

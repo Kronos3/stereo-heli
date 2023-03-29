@@ -122,8 +122,16 @@ namespace Heli
 
     void Vis::RECTIFY_cmdHandler(U32 opCode, U32 cmdSeq)
     {
-        m_stages.emplace_back(new RectifyStage(m_calib));
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        if (m_calib.isValid())
+        {
+            m_stages.emplace_back(new RectifyStage(m_calib));
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+        }
+        else
+        {
+            log_WARNING_HI_NoValidCameraModel();
+            cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        }
     }
 
     void Vis::STEREO_cmdHandler(U32 opCode, U32 cmdSeq, Heli::Vis_StereoAlgorithm algorithm)
@@ -143,7 +151,7 @@ namespace Heli
         Fw::ParamValid valid;
         I32 pix = paramGet_DEPTH_LEFT_MASK_PIX(valid);
 
-        auto lTr = transformGet_out(0, CoordinateFrame::CAM_R, CoordinateFrame::CAM_L);
+        auto lTr = transformGet_out(0, Fm_Frame::CAM_R, Fm_Frame::CAM_L);
         m_stages.emplace_back(new DepthStage(m_calib, std::abs(lTr.t()(0)), pix));
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
@@ -154,35 +162,35 @@ namespace Heli
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
-    void Vis::MODEL_L_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy)
-    {
-        m_calib.left.k = (cv::Mat_<double>(3, 3)
-                << fx, 0, cx,
-                   0, fy, cy,
-                   0, 0, 1);
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    }
-
-    void Vis::MODEL_R_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy)
-    {
-        m_calib.right.k = (cv::Mat_<F64>(3, 3)
-                << fx, 0, cx,
-                   0, fy, cy,
-                   0, 0, 1);
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    }
-
-    void Vis::MODEL_L_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e)
-    {
-        m_calib.left.d = (cv::Mat_<F64>(1, 5) << a, b, c, d, e);
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    }
-
-    void Vis::MODEL_R_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e)
-    {
-        m_calib.right.d = (cv::Mat_<F64>(1, 5) << a, b, c, d, e);
-        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    }
+//    void Vis::MODEL_L_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy)
+//    {
+//        m_calib.left.k = (cv::Mat_<double>(3, 3)
+//                << fx, 0, cx,
+//                   0, fy, cy,
+//                   0, 0, 1);
+//        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+//    }
+//
+//    void Vis::MODEL_R_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy)
+//    {
+//        m_calib.right.k = (cv::Mat_<F64>(3, 3)
+//                << fx, 0, cx,
+//                   0, fy, cy,
+//                   0, 0, 1);
+//        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+//    }
+//
+//    void Vis::MODEL_L_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e)
+//    {
+//        m_calib.left.d = (cv::Mat_<F64>(1, 5) << a, b, c, d, e);
+//        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+//    }
+//
+//    void Vis::MODEL_R_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e)
+//    {
+//        m_calib.right.d = (cv::Mat_<F64>(1, 5) << a, b, c, d, e);
+//        cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+//    }
 
     void Vis::MODEL_SIZE_cmdHandler(U32 opCode, U32 cmdSeq, U32 width, U32 height)
     {

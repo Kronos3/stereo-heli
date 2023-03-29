@@ -8,10 +8,15 @@ namespace Heli
 {
     Fc::Fc(const char* componentName)
             : FcComponentBase(componentName),
-              m_buffer{},
-              m_cmdSeq(0), m_opcode(0), m_command_awaiting(false),
+              m_command_awaiting(false),
+              m_opcode(0), m_cmdSeq(0), lineEnabled{},
               m_state(Fc_State::NOT_CONNECTED),
-              lineEnabled{}
+              m_buffer{},
+              m_tlm_Packets(0),
+              m_tlm_Errors(0),
+              m_tlm_BytesSent(0),
+              m_tlm_BytesRecv(0),
+              m_tlm_MspQueueBytes(0)
     {
         memset(&lineEnabled, true, sizeof(lineEnabled));
     }
@@ -21,30 +26,8 @@ namespace Heli
         FcComponentBase::init(queueDepth, instance);
     }
 
-    void Fc::allocate(NATIVE_UINT_TYPE number)
-    {
-        // request a buffer and pass it on to the UART for each requested
-        for (NATIVE_UINT_TYPE buffNum = 0; buffNum < number; buffNum++)
-        {
-            for (NATIVE_INT_TYPE lineNum = 0; lineNum < NUM_SERIAL_LINES; lineNum++)
-            {
-                allocate_for(lineNum);
-            }
-        }
-    }
-
-    void Fc::allocate_for(I32 serial_line)
-    {
-        Fw::Buffer buff;
-        buff = allocate_out(0, MAX_PACKET_SIZE);
-        FW_ASSERT(buff.getSize() >= MAX_PACKET_SIZE, buff.getSize(), MAX_PACKET_SIZE);
-        FW_ASSERT(buff.getData());
-        readBufferSend_out(serial_line, buff);
-    }
-
     void Fc::preamble()
     {
-        allocate(FcCfg::FC_NUM_BUFFERS);
         reset();
     }
 
@@ -117,7 +100,7 @@ namespace Heli
                 }
                 else
                 {
-                    strncpy(m_metadata.fc_variant, *response, 4);
+                    memcpy(m_metadata.fc_variant, *response, 4);
 
                     // Ask for the next piece of information
                     queue_message(

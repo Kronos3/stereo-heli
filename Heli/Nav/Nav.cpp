@@ -19,6 +19,8 @@ namespace Heli
 
     void Nav::frame_handler(NATIVE_INT_TYPE portNum, U32 frameId)
     {
+
+
         frameOut_out(0, frameId);
     }
 

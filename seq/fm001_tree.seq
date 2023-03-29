@@ -1,0 +1,24 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Sequence: Frame tree
+; Author: Andrei Tumbar
+; Description: Load the frame tree
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; All of these transforms are computed using AutoDesk Fusion 360
+; 
+
+; Frame descriptions:
+; WORLD         World frame is set at takeoff to be identical to the landing frame
+;               The world frame is the parent frame that stays fixed 
+; SITE,       @< Site frame
+; LANDING
+; MECH,       @< Mechanical frame
+; IMU,        @< IMU frame
+; CAM_L,      @< Left camera frame (optical center and orientation)
+; CAM_R
+
+R00:00:00 fm.SET CAM_L MECH
+
+

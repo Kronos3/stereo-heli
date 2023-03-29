@@ -20,7 +20,7 @@ namespace Heli
     }
 
     Fc::ReplyAwaiter::ReplyAwaiter(const Fc_MspMessageId& opcode, I32 port, I32 ctx, const Fc_ReplyAction &action)
-            : inUse(true), port(port), opcode(opcode), ctx(ctx), action(action)
+            : inUse(true), opcode(opcode), port(port), ctx(ctx), action(action)
     {
 
     }
@@ -31,7 +31,7 @@ namespace Heli
     }
 
     Fc::QueueItem::QueueItem()
-            : ctx(0), port(0)
+            : port(0), ctx(0)
     {
     }
 
@@ -101,7 +101,7 @@ namespace Heli
             if (lineEnabled[i] && !bucket.inUse)
             {
                 m_tlm_Packets++;
-                m_tlm_BytesSent += msg.get_buffer().getSize();
+                m_tlm_BytesSent += msg.get_size();
 
                 if (reply != Fc_ReplyAction::NO_REPLY)
                 {
@@ -120,7 +120,9 @@ namespace Heli
                 m_await_mut.unlock();
 
                 // Send the message out on the correct serial line
-                serialSend_out(i, msg.get_buffer());
+                auto buff = allocate_out(0, msg.get_size());
+                msg.to_buffer(buff);
+                send_out(i, buff);
 
                 // Not waiting for a reply, this bucket is good to go
                 if (reply == Fc_ReplyAction::NO_REPLY)
@@ -139,7 +141,7 @@ namespace Heli
         }
 
         // Make sure there was a free serial line
-        FW_ASSERT(message_sent, FcComponentBase::NUM_SERIALSEND_OUTPUT_PORTS);
+        FW_ASSERT(message_sent, NUM_SERIAL_LINES);
     }
 
     Fc_ReplyStatus Fc::queue_message(const MspMessage &msg, I32 port, I32 ctx, const Fc_ReplyAction &reply)

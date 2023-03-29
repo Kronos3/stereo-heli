@@ -40,16 +40,16 @@ namespace Heli
         status = buffer.deserialize(row);
         if (status != Fw::FW_SERIALIZE_OK) return status;
 
-        status = buffer.serialize(col);
+        status = buffer.deserialize(col);
         if (status != Fw::FW_SERIALIZE_OK) return status;
 
-        status = buffer.serialize(type);
+        status = buffer.deserialize(type);
         if (status != Fw::FW_SERIALIZE_OK) return status;
 
-        status = buffer.serialize(step);
+        status = buffer.deserialize(step);
         if (status != Fw::FW_SERIALIZE_OK) return status;
 
-        status = buffer.serialize(data);
+        status = buffer.deserialize(data);
         if (status != Fw::FW_SERIALIZE_OK) return status;
 
         m_mat = cv::Mat(row, col, type,

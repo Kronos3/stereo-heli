@@ -13,7 +13,7 @@ namespace Heli
     : SappComponentBase(compName),
     m_last_pose_update_valid(false),
     m_quality(SappQuality::INVALID),
-    m_position(0, 0, 0), m_attitude(0, 0, 0, 0),
+    m_attitude(0, 0, 0, 0), m_position(0, 0, 0),
     m_polling_fc(false), m_command_waiting(false), m_opCode(0), m_cmdSeq(0)
     {
     }
@@ -154,7 +154,7 @@ namespace Heli
         }
 
         m_command_waiting = false;
-        m_waiting_for_reply = 0;
+        m_waiting_for_reply = Fc_MspMessageId::MSP_MSG_NONE;
         m_opCode = 0;
         m_cmdSeq = 0;
     }

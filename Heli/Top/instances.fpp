@@ -129,9 +129,8 @@ module Heli {
         stack size Default.stackSize \
         priority 96 \
     {
-
-        phase Fpp.ToCpp.Phases.instances """
-        Svc::PrmDb prmDb(FW_OPTIONAL_NAME("prmDb"), "heli_prm.dat");
+        phase Fpp.ToCpp.Phases.configComponents """
+        prmDb.configure("heli_prm.dat");
         """
 
         phase Fpp.ToCpp.Phases.readParameters """
@@ -454,16 +453,16 @@ module Heli {
 
     instance fm: Fm base id 7000
 
-    instance serial0: Drv.LinuxSerialDriver base id 8000 \
+    instance serial0: Drv.LinuxUartDriver base id 8000 \
       {
 
         phase Fpp.ToCpp.Phases.configComponents """
         {
           // Use serial 2 + 3 (PL011) that don't overlap with BT
           const bool status = serial0.open("/dev/ttyAMA1",
-              Drv::LinuxSerialDriverComponentImpl::BAUD_115K,
-              Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
-              Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+              Drv::LinuxUartDriver::BAUD_115K,
+              Drv::LinuxUartDriver::NO_FLOW,
+              Drv::LinuxUartDriver::PARITY_NONE,
               true
           );
           if (!status) {
@@ -488,16 +487,16 @@ module Heli {
 
       }
 
-    instance serial1: Drv.LinuxSerialDriver base id 8100 \
+    instance serial1: Drv.LinuxUartDriver base id 8100 \
       {
 
         phase Fpp.ToCpp.Phases.configComponents """
         {
           // Use serial 2 + 3 (PL011) that don't overlap with BT
           const bool status = serial1.open("/dev/ttyAMA2",
-              Drv::LinuxSerialDriverComponentImpl::BAUD_115K,
-              Drv::LinuxSerialDriverComponentImpl::NO_FLOW,
-              Drv::LinuxSerialDriverComponentImpl::PARITY_NONE,
+              Drv::LinuxUartDriver::BAUD_115K,
+              Drv::LinuxUartDriver::NO_FLOW,
+              Drv::LinuxUartDriver::PARITY_NONE,
               true
           );
           if (!status) {

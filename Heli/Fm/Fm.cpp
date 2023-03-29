@@ -59,13 +59,13 @@ namespace Heli
         }
     }
 
-    CoordinateFrame Fm::get_common_parent(
-            const CoordinateFrame &a,
-            const CoordinateFrame &b) const
+    Fm_Frame Fm::get_common_parent(
+            const Fm_Frame &a,
+            const Fm_Frame &b) const
     {
-        if (a == CoordinateFrame::NONE || b == CoordinateFrame::NONE)
+        if (a == Fm_Frame::NONE || b == Fm_Frame::NONE)
         {
-            return CoordinateFrame::NONE;
+            return Fm_Frame::NONE;
         }
 
         if (a == b)
@@ -73,23 +73,23 @@ namespace Heli
             return a;
         }
 
-        auto pa = get_common_parent(m_parent[a.e], b);
-        if (pa != CoordinateFrame::NONE)
+        auto pa = get_common_parent(m_tree[a.e].parent, b);
+        if (pa != Fm_Frame::NONE)
         {
             return pa;
         }
 
-        auto pb = get_common_parent(a, m_parent[b.e]);
-        if (pa != CoordinateFrame::NONE)
+        auto pb = get_common_parent(a, m_tree[b.e].parent);
+        if (pa != Fm_Frame::NONE)
         {
             return pb;
         }
 
-        return CoordinateFrame::NONE;
+        return Fm_Frame::NONE;
     }
 
     Heli::Transform
-    Fm::getFrame_handler(NATIVE_INT_TYPE portNum, const CoordinateFrame &f, const CoordinateFrame &r)
+    Fm::getFrame_handler(NATIVE_INT_TYPE portNum, const Fm_Frame &f, const Fm_Frame &r)
     {
         if (f == r)
         {
@@ -97,8 +97,8 @@ namespace Heli
             return Transform();
         }
 
-        CoordinateFrame p = get_common_parent(f, r);
-        if (p == CoordinateFrame::NONE)
+        Fm_Frame p = get_common_parent(f, r);
+        if (p == Fm_Frame::NONE)
         {
             log_WARNING_HI_NoCommonParent(p, f);
             return Transform(false);
@@ -108,41 +108,27 @@ namespace Heli
         auto rTp_f = r;
         while (rTp_f != p)
         {
-            rTp = rTp * m_frame_tree[p.e].inverse();
-            rTp_f = m_parent[p.e];
+            rTp = rTp * m_tree[p.e].T.inverse();
+            rTp_f = m_tree[p.e].parent;
         }
 
         Transform fTp;
         auto fTp_f = f;
         while (fTp_f != p)
         {
-            fTp = fTp * m_frame_tree[p.e].inverse();
-            fTp_f = m_parent[p.e];
+            fTp = fTp * m_tree[p.e].T.inverse();
+            fTp_f = m_tree[p.e].parent;
         }
 
         return rTp * fTp.inverse();
     }
 
-    Heli::CoordinateFrame Fm::getParent_handler(NATIVE_INT_TYPE portNum, const CoordinateFrame &f)
+    Fm_Frame Fm::getParent_handler(NATIVE_INT_TYPE portNum, const Fm_Frame &f)
     {
-        return m_parent[f.e];
+        return m_tree[f.e].parent;
     }
 
-    void Fm::setFrame_handler(NATIVE_INT_TYPE portNum, const CoordinateFrame &f, Transform &t)
-    {
-        m_frame_tree[f.e] = t;
-    }
-
-    void Fm::setParent_handler(NATIVE_INT_TYPE portNum,
-                               const CoordinateFrame &f,
-                               const CoordinateFrame &parent,
-                               Transform &t)
-    {
-        m_parent[f.e] = parent;
-        m_frame_tree[f.e] = t;
-    }
-
-    void Fm::GET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Heli::CoordinateFrame f, Heli::CoordinateFrame p)
+    void Fm::GET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Fm_Frame f, Fm_Frame p)
     {
         auto tform = getFrame_handler(0, f, p);
         if (!tform.is_valid())
@@ -163,13 +149,14 @@ namespace Heli
     }
 
     void Fm::SET_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,
-                            Heli::CoordinateFrame f,
-                            Heli::CoordinateFrame p,
+                            Fm_Frame f,
+                            Fm_Frame p,
+                            Fm_Relationship relation,
                             F32 tx, F32 ty, F32 tz, F32 rx, F32 ry, F32 rz)
     {
-        m_parent[f.e] = p;
-
-        m_frame_tree[f.e] = Transform(
+        m_tree[f.e].parent = p;
+        m_tree[f.e].relation = relation;
+        m_tree[f.e].T = Transform(
                 get_rotation_matrix(rx, ry, rz),
                 {tx, ty, tz});
 

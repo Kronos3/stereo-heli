@@ -8,6 +8,16 @@ module Heli {
         TIFF    @< Lossless compression which can store multiple images in a single file
     }
 
+    array CamDistortionParams = [5] F32
+
+    struct FisheyeModel {
+        fx: F32,    @< X focal length in pixels
+        fy: F32,    @< Y focal length center in pixels
+        cx: F32,    @< Optical center X coordinate in pixels
+        cy: F32,    @< Optical center Y coordinate in pixels
+        d: CamDistortionParams  @< Distortion parameters
+    }
+
     active component Vis {
 
         # -----------------------------
@@ -70,27 +80,11 @@ module Heli {
             height: U32     @< Image height in pixels
         )
 
-        @ Set the left camera intrinsic calibration parameters
-        async command MODEL_L_K(
-            fx: F32,    @< X focal length in pixels
-            fy: F32,    @< Y focal length center in pixels
-            cx: F32,    @< Optical center X coordinate in pixels
-            cy: F32     @< Optical center Y coordinate in pixels
-        )
+        @ Left camera intrinsic calibration parameters
+        param LEFT: FisheyeModel
 
-        @ Set the right camera intrinsic calibration parameters
-        async command MODEL_R_K(
-            fx: F32,    @< X focal length in pixels
-            fy: F32,    @< Y focal length center in pixels
-            cx: F32,    @< Optical center X coordinate in pixels
-            cy: F32     @< Optical center Y coordinate in pixels
-        )
-
-        @ Set the left camera distortion parameters
-        async command MODEL_L_D(a: F32, b: F32, c: F32, d: F32, e: F32)
-
-        @ Set the right camera distortion parameters
-        async command MODEL_R_D(a: F32, b: F32, c: F32, d: F32, e: F32)
+        @ Right camera intrinsic calibration parameters
+        param RIGHT: FisheyeModel
 
         @ Clear the vision pipeline
         async command CLEAR()
@@ -184,6 +178,10 @@ module Heli {
             destination: string size 120
         ) severity activity low \
           format "Saved capture on {} camera to {}"
+
+        event NoValidCameraModel() \
+            severity warning high \
+            format "No valid camera model loaded"
     }
 
 }

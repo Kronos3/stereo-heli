@@ -104,7 +104,7 @@ module Heli {
             format "Got frame {} reply from port {} that is not in the pipeline"
 
         event FramePipeline(pipeline: string) \
-            severity activity low \
+            severity activity high \
             format "{}"
 
         event StageAdded(cmp: Component) \

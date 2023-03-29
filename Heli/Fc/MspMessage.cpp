@@ -12,20 +12,20 @@
 namespace Heli
 {
     MspMessage::MspMessage(const Heli::Fc_MspMessageId& function)
-    : m_message{}, m_buf(m_message, MSP_OVERHEAD)
+    : m_buf(m_message, MSP_OVERHEAD), m_message{}
     {
         initialize();
         set_function(function);
     }
 
     MspMessage::MspMessage()
-    : m_message{}, m_buf(m_message, MSP_OVERHEAD)
+    : m_buf(m_message, MSP_OVERHEAD), m_message{}
     {
         initialize();
     }
 
     MspMessage::MspMessage(const MspMessage &other)
-    : m_message{}, m_buf(m_message, other.get_payload_size(), MSP_OVERHEAD)
+    : m_buf(m_message, other.get_payload_size(), MSP_OVERHEAD), m_message{}
     {
         std::copy_n(other.m_message, other.get_payload_size() + MSP_OVERHEAD, m_message);
     }
@@ -222,11 +222,6 @@ namespace Heli
         m_message[offset + 3] = (element >> 24) & 0xFF;
     }
 
-    Fw::Buffer &MspMessage::get_buffer() const
-    {
-        return m_buf;
-    }
-
     void MspMessage::set_flags(U8 flags)
     {
         m_message[3] = flags;
@@ -241,5 +236,17 @@ namespace Heli
     {
         recompute();
         return m_message[get_payload_size() + 8];
+    }
+
+    U32 MspMessage::get_size() const
+    {
+        return m_buf.getSize();
+    }
+
+    void MspMessage::to_buffer(Fw::Buffer &out_buf) const
+    {
+        FW_ASSERT(out_buf.getSize() >= m_buf.getSize());
+        memcpy(out_buf.getData(), m_buf.getData(), m_buf.getSize());
+        out_buf.setSize(m_buf.getSize());
     }
 }

@@ -36,6 +36,10 @@ namespace Heli
         Intrinsic left;
         Intrinsic right;
 
+        bool isValid() const {
+            return size.height > 0 && size.width > 0;
+        }
+
         cv::Size size;  //!< Image frame dimensions
     };
 

@@ -18,12 +18,12 @@ namespace Heli
 
     VideoStreamer::VideoStreamer(const char* compName)
             : VideoStreamerComponentBase(compName),
-              is_showing(false),
               is_capturing(false),
+              is_showing(false),
               m_displaying(VideoStreamer_DisplayLocation::NONE),
+              m_eye(CamSelect::LEFT),
               m_impl(new VideoStreamerImpl),
-              tlm_total_frames(0),
-              m_eye(CamSelect::LEFT)
+              tlm_total_frames(0)
     {
     }
 

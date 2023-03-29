@@ -80,18 +80,15 @@ module Heli {
         # Serial ports
         # -----------------------------
 
-        @ port to send a buffer for reads to the UART driver
-        output port readBufferSend: [FcSerialLines] Fw.BufferSend
-
         @ port to request a buffer from the manager
         output port allocate: Fw.BufferGet
         output port deallocate: Fw.BufferSend
 
         @ send a UART buffer
-        output port serialSend: [FcSerialLines] Drv.SerialWrite
+        output port send: [FcSerialLines] Drv.ByteStreamSend
 
         @ receive a buffer from the UART - one of the above
-        sync input port serialRecv: [FcSerialLines] Drv.SerialRead
+        sync input port $recv: [FcSerialLines] Drv.ByteStreamRecv
 
         # -----------------------------
         # Message ports
@@ -235,7 +232,7 @@ module Heli {
             severity activity high \
             format "Fc connection has been established: API version: {}.{}, Fc firmware: {}, Fc board: {}"
 
-        event SerialRecvError(reason: Drv.SerialReadStatus) \
+        event SerialRecvError(reason: Drv.RecvStatus) \
             severity warning high \
             format "Fc had a recv() serial error: {}"
 

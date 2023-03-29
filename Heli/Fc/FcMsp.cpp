@@ -7,39 +7,37 @@
 namespace Heli
 {
 
-    void Fc::serialRecv_handler(NATIVE_INT_TYPE portNum,
-                                Fw::Buffer &serBuffer,
-                                Drv::SerialReadStatus &status)
+    void Fc::recv_handler(NATIVE_INT_TYPE portNum,
+                          Fw::Buffer &recvBuffer,
+                          const Drv::RecvStatus &recvStatus)
     {
-        allocate_for(portNum);
-
-        if (status != Drv::SerialReadStatus::SER_OK)
+        if (recvStatus != Drv::RecvStatus::RECV_OK)
         {
             if (m_state == Fc_State::OK
                 || m_state == Fc_State::NOT_CONNECTED)
             {
                 // State will swap to bad state
                 // Send out a warning
-                log_WARNING_HI_SerialRecvError(status);
+                log_WARNING_HI_SerialRecvError(recvStatus);
                 set_state(Fc_State::BAD_SERIAL);
             }
 
             // Data is bad, exit early
             // Don't queue it to the ring buffer
         }
-        else if (serBuffer.getSize() > 0)
+        else if (recvBuffer.getSize() > 0)
         {
-            m_tlm_BytesRecv += serBuffer.getSize();
+            m_tlm_BytesRecv += recvBuffer.getSize();
 
             // Data is good, queue it to the ring buffer
-            m_buffer[portNum].serialize(serBuffer.getData(), serBuffer.getSize());
+            m_buffer[portNum].serialize(recvBuffer.getData(), recvBuffer.getSize());
 
             // Ping our main thread to let them know new data is ready
             data_ready(portNum);
         }
 
         // Return the read buffer to the uart driver
-        deallocate_out(0, serBuffer);
+        deallocate_out(0, recvBuffer);
     }
 
 #define READ(v, o) do { \
@@ -49,13 +47,13 @@ namespace Heli
 
     void Fc::data_ready(I32 serialChannel)
     {
-        while(true)
+        while (true)
         {
             // Rotate the data to the front of a packet
             U32 off = 0;
             U8 b;
             Fw::SerializeStatus stat;
-            while(true)
+            while (true)
             {
                 if ((stat = m_buffer[serialChannel].peek(b, off)) != Fw::SerializeStatus::FW_SERIALIZE_OK
                     || b == '$')
@@ -102,7 +100,7 @@ namespace Heli
         // If it's not valid rotate out the bytes and exit out
         bool is_v2;
         READ(b, 1);
-        switch(b)
+        switch (b)
         {
             case 'M':
                 is_v2 = false;
@@ -118,14 +116,14 @@ namespace Heli
 
         // Is there enough data for a single packet?
         if (m_buffer[serialChannel].get_allocated_size() <
-                (is_v2 ? MSP_OVERHEAD : MSP_V1_OVERHEAD))
+            (is_v2 ? MSP_OVERHEAD : MSP_V1_OVERHEAD))
         {
             return false;
         }
 
         U8 direction;
         READ(direction, 2);
-        switch(direction)
+        switch (direction)
         {
             case Fc_MspPacketType::RESPONSE:
             case Fc_MspPacketType::REQUEST:

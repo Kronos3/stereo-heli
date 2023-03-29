@@ -26,14 +26,14 @@
 ;?= {"language":"fprime","kind":2}
 ; Camera parameter setup
 R00:00:00 cmdSeq.CS_RUN "/seq/cam001_config.bin" BLOCK
-;?e {"time":1677991412.248,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6000 added","args":[{"name":"Id","value":"6000","valueRaw":6000,"type":"U32"}]}
-;?e {"time":1677991412.248753,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6001 added","args":[{"name":"Id","value":"6001","valueRaw":6001,"type":"U32"}]}
-;?e {"time":1677991412.249414,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6002 added","args":[{"name":"Id","value":"6002","valueRaw":6002,"type":"U32"}]}
-;?e {"time":1677991412.250113,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6003 added","args":[{"name":"Id","value":"6003","valueRaw":6003,"type":"U32"}]}
-;?e {"time":1677991412.250815,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6004 added","args":[{"name":"Id","value":"6004","valueRaw":6004,"type":"U32"}]}
-;?e {"time":1677991412.251546,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6005 added","args":[{"name":"Id","value":"6005","valueRaw":6005,"type":"U32"}]}
-;?e {"time":1677991412.252188,"id":903,"name":"PrmIdAdded","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6011 added","args":[{"name":"Id","value":"6011","valueRaw":6011,"type":"U32"}]}
-;?e {"time":1677991412.25253,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/cam001_config.bin complete","args":[{"name":"fileName","value":"/seq/cam001_config.bin","valueRaw":"/seq/cam001_config.bin","type":"string(60)"}]}
+;?e {"time":1679251884.67619,"id":901,"name":"PrmIdUpdated","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6000 updated","args":[{"name":"Id","value":"6000","valueRaw":6000,"type":"U32"}]}
+;?e {"time":1679251884.67695,"id":901,"name":"PrmIdUpdated","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6001 updated","args":[{"name":"Id","value":"6001","valueRaw":6001,"type":"U32"}]}
+;?e {"time":1679251884.677659,"id":901,"name":"PrmIdUpdated","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6002 updated","args":[{"name":"Id","value":"6002","valueRaw":6002,"type":"U32"}]}
+;?e {"time":1679251884.678392,"id":901,"name":"PrmIdUpdated","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6003 updated","args":[{"name":"Id","value":"6003","valueRaw":6003,"type":"U32"}]}
+;?e {"time":1679251884.679097,"id":901,"name":"PrmIdUpdated","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6004 updated","args":[{"name":"Id","value":"6004","valueRaw":6004,"type":"U32"}]}
+;?e {"time":1679251884.679808,"id":901,"name":"PrmIdUpdated","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6005 updated","args":[{"name":"Id","value":"6005","valueRaw":6005,"type":"U32"}]}
+;?e {"time":1679251884.680552,"id":901,"name":"PrmIdUpdated","component":"prmDb","severity":"ACTIVITY_HI","message":"Parameter ID 6011 updated","args":[{"name":"Id","value":"6011","valueRaw":6011,"type":"U32"}]}
+;?e {"time":1679251884.680839,"id":2009,"name":"CS_SequenceComplete","component":"cmdSeq","severity":"ACTIVITY_HI","message":"Sequence file /seq/cam001_config.bin complete","args":[{"name":"fileName","value":"/seq/cam001_config.bin","valueRaw":"/seq/cam001_config.bin","type":"string(60)"}]}
 ;?s
 ;?= {"language":"fprime","kind":2}
 R00:00:00 cam.CONFIGURE 1640 1232 R_0 R_0 FALSE FALSE FALSE FALSE

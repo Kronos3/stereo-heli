@@ -37,7 +37,8 @@ namespace Heli
 
         MspMessage &operator=(const MspMessage &other);
 
-        Fw::Buffer& get_buffer() const;
+        U32 get_size() const;
+        void to_buffer(Fw::Buffer& out_buf) const;
 
         Fw::SerializeStatus serialize(Fw::SerializeBufferBase& buffer) const override;
         Fw::SerializeStatus deserialize(Fw::SerializeBufferBase& buffer) override;

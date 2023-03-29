@@ -49,8 +49,8 @@ namespace Heli
     }
 
     LibcameraApp::LibcameraApp()
-            : controls_(controls::controls), last_timestamp_(0),
-              stream(nullptr)
+            : stream(nullptr), controls_(controls::controls),
+              last_timestamp_(0)
     {
         check_camera_stack();
     }

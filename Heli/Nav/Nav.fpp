@@ -56,6 +56,13 @@ module Heli {
         async command TRACK()
         async command STOP()
 
+        # ----------------------
+        # Telemetry
+        # ----------------------
+
+        @ Number of TrackPoints found on consecutive images
+        telemetry TrackPoints: U32 update on change
+
     }
 
 }

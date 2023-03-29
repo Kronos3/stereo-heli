@@ -20,7 +20,7 @@ namespace Heli
     public:
         enum
         {
-            NUM_SERIAL_LINES = FcComponentBase::NUM_SERIALSEND_OUTPUT_PORTS
+            NUM_SERIAL_LINES = FcComponentBase::NUM_SEND_OUTPUT_PORTS
         };
 
         explicit Fc(const char* componentName);
@@ -30,13 +30,8 @@ namespace Heli
                 NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
         );
 
-        //! Allocate pool of buffers for UART receive - BufferManager and UART
-        //  instances must be connected and ready. BufferManager should have at least
-        //  number+1 buffers allocated
-        void allocate(NATIVE_UINT_TYPE number);
-
     PRIVATE:
-        void serialRecv_handler(NATIVE_INT_TYPE portNum, Fw::Buffer &serBuffer, Drv::SerialReadStatus &status) override;
+        void recv_handler(NATIVE_INT_TYPE portNum, Fw::Buffer &recvBuffer, const Drv::RecvStatus &recvStatus) override;
         void mspRecv_internalInterfaceHandler(I32 serialChannel, const Heli::MspMessage& msg) override;
         void data_ready(I32 serialChannel);
 
@@ -111,7 +106,6 @@ namespace Heli
         U32 m_cmdSeq;
 
         void set_state(const Fc_State& state);
-        void allocate_for(I32 serial_line);
 
     PRIVATE:
 

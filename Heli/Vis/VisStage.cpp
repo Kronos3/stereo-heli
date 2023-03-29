@@ -11,13 +11,13 @@
 namespace Heli
 {
     ScaleStage::ScaleStage(F32 x_scale, F32 y_scale, const Vis_Interpolation& interp)
-            : m_fx(x_scale), m_fy(y_scale),
-              m_proc([this](cv::Mat& src_dest) {
+            : m_proc([this](cv::Mat& src_dest) {
                   cv::resize(src_dest, src_dest,
                              cv::Size(0, 0),
                              m_fx, m_fy,
                              m_interp);
-              })
+              }), m_fx(x_scale),
+              m_fy(y_scale)
     {
         switch (interp.e)
         {

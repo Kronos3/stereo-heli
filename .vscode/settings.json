@@ -1,6 +1,6 @@
 {
-    "rsvpLite.fprime.testbed.evrCommand": false,
-    "rsvpLite.fprime.testbed.evrActivityLow": false,
+    "rsvpLite.fprime.notebook.evrCommand": false,
+    "rsvpLite.fprime.notebook.evrActivityLow": false,
     "files.associations": {
         "memory": "cpp",
         "*.tcc": "cpp",

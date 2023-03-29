@@ -201,6 +201,12 @@ namespace libparallel
             return m_threads[i].feed(args, tok);
         }
 
+        Awaitable& feed(A&& args, U32 i, Token tok = 0)
+        {
+            FW_ASSERT(i < n, i);
+            return m_threads[i].feed(args, tok);
+        }
+
     PRIVATE:
         std::array<ParallelThread<A>, n> m_threads;
     };

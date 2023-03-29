@@ -28,29 +28,29 @@ namespace Heli
     StreamInfo CamFrame::getInfo() const
     {
         StreamInfo info;
-        info.width = m_width;
-        info.height = m_height;
-        info.stride = m_stride;
+        info.width = width;
+        info.height = height;
+        info.stride = stride;
         return info;
     }
 
     U64 CamFrame::getTimestamp() const
     {
-        return m_timestamp;
+        return timestamp;
     }
 
     I32 CamFrame::getPlane() const
     {
-        return m_plane;
+        return plane;
     }
 
     U32 CamFrame::getBufSize() const
     {
-        return m_bufSize;
+        return bufSize;
     }
 
     U32 CamFrame::getBufId() const
     {
-        return m_bufId;
+        return bufId;
     }
 }

@@ -134,18 +134,16 @@ module Heli {
         connections Fc {
             # Get buffers from the manager
             fc.allocate -> serialBufferManager.bufferGetCallee
-
-            # Give the buffers to the serial driver for recv
-            fc.readBufferSend[0] -> serial0.readBufferSend
-            fc.readBufferSend[1] -> serial1.readBufferSend
-
-            # Give the buffers back to the manager
             fc.deallocate ->  serialBufferManager.bufferSendIn
+            serial0.allocate -> serialBufferManager.bufferGetCallee
+            serial0.deallocate ->  serialBufferManager.bufferSendIn
+            serial1.allocate -> serialBufferManager.bufferGetCallee
+            serial1.deallocate ->  serialBufferManager.bufferSendIn
 
-            fc.serialSend[0] -> serial0.serialSend
-            fc.serialSend[1] -> serial1.serialSend
-            serial0.serialRecv -> fc.serialRecv[0]
-            serial1.serialRecv -> fc.serialRecv[1]
+            fc.send[0] -> serial0.send
+            fc.send[1] -> serial1.send
+            serial0.$recv -> fc.$recv[0]
+            serial1.$recv -> fc.$recv[1]
         }
 
         # Navigation and localization related

@@ -40,11 +40,6 @@ namespace Heli
         void DEPTH_cmdHandler(U32 opCode, U32 cmdSeq) override;
         void COLORMAP_cmdHandler(U32 opCode, U32 cmdSeq, Vis_ColorMap colormap, CamSelect select) override;
 
-        void MODEL_L_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy) override;
-        void MODEL_R_K_cmdHandler(U32 opCode, U32 cmdSeq, F32 fx, F32 fy, F32 cx, F32 cy) override;
-        void MODEL_L_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e) override;
-        void MODEL_R_D_cmdHandler(U32 opCode, U32 cmdSeq, F32 a, F32 b, F32 c, F32 d, F32 e) override;
-
         void MODEL_SIZE_cmdHandler(U32 opCode, U32 cmdSeq, U32 width, U32 height) override;
 
         void CAPTURE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq,

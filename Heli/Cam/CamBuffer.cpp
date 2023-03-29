@@ -63,9 +63,10 @@ namespace Heli
     }
 
     CamBuffer::CamBuffer()
-    : id(0), invalid(false),
-    left_request(nullptr), right_request(nullptr),
-    left_fb(nullptr), right_fb(nullptr), ref_count(0)
+    : id(0), left_request(nullptr),
+    right_request(nullptr), left_fb(nullptr),
+    right_fb(nullptr), ref_count(0),
+    invalid(false)
     {
     }
 

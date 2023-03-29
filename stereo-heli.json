@@ -1,0 +1,9 @@
+[
+  {
+    "provider": "FPrime Server",
+    "settings": {
+      "port": 8000,
+      "clientName": "stereo-heli"
+    }
+  }
+]

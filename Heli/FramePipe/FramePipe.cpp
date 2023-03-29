@@ -83,11 +83,11 @@ namespace Heli
         // Find the correct stage this frameId comes from
         m_mutex.lock();
         I32 stageIdx = -1;
-        for (I32 i = 0; i < m_pipeline_n; i++)
+        for (U32 i = 0; i < m_pipeline_n; i++)
         {
-            if (m_pipeline[i].inStage == frameId)
+            if (m_pipeline[i].inStage == static_cast<I32>(frameId))
             {
-                stageIdx = i;
+                stageIdx = static_cast<I32>(i);
                 break;
             }
         }
@@ -214,7 +214,7 @@ namespace Heli
         }
 
         Fw::LogStringArg arg(str.c_str());
-        log_ACTIVITY_LO_FramePipeline(arg);
+        log_ACTIVITY_HI_FramePipeline(arg);
         cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 
